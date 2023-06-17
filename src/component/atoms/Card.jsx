@@ -1,15 +1,15 @@
 import React from "react";
 
-const Card = ({ children }) => {
+const Card = ({ children, size }) => {
   return (
     <div
       style={{
         backgroundColor: "white",
         color: "white",
-        borderRadius: "8px",
+        borderRadius: "4px",
         borderColor: "black",
-        height: "calc(100vh - 164px)",
-        width: "80.5%",
+        height: size.height,
+        width: size.width,
         padding: "16px",
         float: "right",
         marginRight: "8px",

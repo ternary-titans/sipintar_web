@@ -13,6 +13,12 @@ const variants = {
 
 function Button({ variant, ...props }) {
   return (
-    <button className={cn("py-2 px-4 rounded", variants[variant])} {...props} />
+    <button
+      className={cn(
+        "py-2 px-4 rounded flex items-center justify-center",
+        variants[variant]
+      )}
+      {...props}
+    />
   );
 }

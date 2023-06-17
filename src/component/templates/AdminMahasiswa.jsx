@@ -5,30 +5,35 @@ import Table from "../molecules/Tabel";
 import Text from "../atoms/Text";
 import Search from "../molecules/Search";
 
-export const AdminDosen = () => {
-  const columns = ["No", "Nama", "NIP", "Password", "Edit", "Hapus"];
+export const AdminMahasiswa = () => {
+  const columns = [
+    "No",
+    "Nama",
+    "NIM",
+    "Kelas",
+    "Prodi",
+    "Jurusan",
+    "Status",
+    "Aksi",
+  ];
   const data = [
     {
       No: 1,
-      Nama: "Rifka",
-      NIP: 12345,
-      Password: "R123",
-      Edit: "-",
-      Hapus: "-",
-    },
-    {
-      No: 2,
-      Nama: "Anggun",
-      NIP: 12345,
-      Password: "A123",
-      Edit: "-",
-      Hapus: "-",
+      Nama: "Rifka Anggun Puspitaningrum",
+      NIM: 12345,
+      Kelas: "IK3A",
+      Prodi: "D3-Teknik Informatika",
+      Jurusan: "Teknik Elektro",
+      Status: "Aktif",
+      Aksi: "-",
     },
   ];
 
   const columnAlignments = [
     "center",
     "left",
+    "center",
+    "center",
     "center",
     "center",
     "center",
@@ -74,7 +79,7 @@ export const AdminDosen = () => {
                 marginLeft: "10px",
               }}
             >
-              <Text type="title" text="TABEL DATA DOSEN"></Text>
+              <Text type="title" text="TABEL DATA MAHASISWA"></Text>
             </div>
 
             <div
@@ -86,16 +91,14 @@ export const AdminDosen = () => {
             >
               <Search onSearch={handleSearch} />
             </div>
-            <div>
-              <Table
-                columns={columns}
-                data={data}
-                columnAlignments={columnAlignments}
-                headerBackgroundColor={headerBackgroundColor}
-                headerBorderColor={headerBorderColor}
-                style={{ marginTop: "10px" }}
-              />
-            </div>
+            <Table
+              columns={columns}
+              data={data}
+              columnAlignments={columnAlignments}
+              headerBackgroundColor={headerBackgroundColor}
+              headerBorderColor={headerBorderColor}
+              style={{ marginTop: "10px" }}
+            />
           </Card>
         </div>
       </div>
@@ -103,4 +106,4 @@ export const AdminDosen = () => {
   );
 };
 
-export default AdminDosen;
+export default AdminMahasiswa;
