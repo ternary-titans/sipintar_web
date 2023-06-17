@@ -1,5 +1,4 @@
 import React from "react";
-import user from "../../assest/logo pcc.png";
 import { BsPersonCircle } from "react-icons/bs";
 
 export const UserProfile = ({ toggle }) => {
