@@ -2,22 +2,13 @@ import React from "react";
 
 const Input = ({ label, value, onChange, placeholder }) => {
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <label style={{ color: "black", fontWeight: "bold", fontSize: "0.8rem" }}>
-        {label}
-      </label>
+    <div className="flex flex-col">
+      <label className="text-black font-bold text-sm">{label}</label>
       <input
         type="text"
         value={value}
         placeholder={placeholder}
-        style={{
-          backgroundColor: "rgb(209 213 219)",
-          border: "0.2px rgb(156 163 175)",
-          borderRadius: "2px",
-          padding: "0.1rem",
-          color: "black",
-          fontSize: "0.8rem",
-        }}
+        className="bg-gray-300 border border-gray-600 rounded px-2 py-1 text-black text-sm"
         onChange={onChange}
       />
     </div>

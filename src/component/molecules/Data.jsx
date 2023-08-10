@@ -2,9 +2,9 @@ import { RxDashboard } from "react-icons/rx";
 import { IoIosPerson } from "react-icons/io";
 import { BsFillPersonFill } from "react-icons/bs";
 import { SlCalender } from "react-icons/sl";
-import { FiLogOut } from "react-icons/fi";
-import { AiFillBook } from "react-icons/ai";
+import { AiFillBook, AiTwotoneSchedule } from "react-icons/ai";
 import { SiGoogleclassroom } from "react-icons/si";
+import { MdCastForEducation, MdRoomPreferences } from "react-icons/md";
 
 export const datas = [
   {
@@ -39,7 +39,18 @@ export const datas = [
   },
   {
     id: 7,
-    icon: <FiLogOut style={{ color: "#FFC300", fontSize: "24px" }} />,
-    text: "Logout",
+    icon: <MdRoomPreferences style={{ color: "#FFC300", fontSize: "24px" }} />,
+    text: "Kelola Prodi",
+  },
+
+  {
+    id: 8,
+    icon: <MdCastForEducation style={{ color: "#FFC300", fontSize: "24px" }} />,
+    text: "Kelola Jurusan",
+  },
+  {
+    id: 9,
+    icon: <AiTwotoneSchedule style={{ color: "#FFC300", fontSize: "24px" }} />,
+    text: "Kelola Tahun Ajaran",
   },
 ];

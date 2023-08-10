@@ -1,57 +1,57 @@
 import React from "react";
 import Admin from "../templates/Admin";
 import CardManage from "../molecules/CardManage";
-import { BsFillPersonFill } from "react-icons/bs";
+import { BsFillPersonFill, BsCheck } from "react-icons/bs";
 
 export const AdminManageAlpa = () => {
-  const TbAlpa = [
+  const columns = [
+    "No",
+    "Nama",
+    "NIM",
+    "Tanggal Realisasi",
+    "Mata Kuliah",
+    "Dosen",
+    "Presensi",
+    "Simpan",
+  ];
+  const data = [
     {
-      No: "1",
+      No: 1,
       Nama: "Rifka",
-      NIM: "3.34.20.0.21",
-      Hari: "Senin",
-      Tanggal: "6 Mei 2023",
-      "Mata Kuliah": "Pemrograman Basis Data",
+      NIM: "33420021",
+      "Tanggal Realisasi": "21 Jan 2023",
+      "Mata Kuliah": "Jaringan",
       Dosen: "Amran Yobioktabera",
-      Presensi: "-",
-      "Validasi Kehadiran": "-",
+      Presensi: (
+        <select>
+          <option value="Alpa">Alpa</option>
+          <option value="Sakit">Sakit</option>
+          <option value="Izin">Izin</option>
+        </select>
+      ),
+      Simpan: (
+        <button className="text-green-500">
+          <BsCheck size={20} />
+        </button>
+      ),
     },
   ];
   return (
-    <div style={{ position: "relative" }}>
-      <Admin />
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          marginTop: "5px",
-          justifyContent: "space-between",
-          gap: "20px",
-          position: "absolute",
-          top: "200%",
-          left: "20%",
-        }}
-      >
-        <CardManage
-          width="985px"
-          height="490px"
-          icon={<BsFillPersonFill />}
-          iconColor="#FF0000"
-          text1="000"
-          text2="Alpa"
-          columns={[
-            "No",
-            "Nama",
-            "NIM",
-            "Hari",
-            "Tanggal",
-            "Mata Kuliah",
-            "Dosen",
-            "Presensi",
-            "Validasi Kehadiran",
-          ]}
-          data={TbAlpa}
-        />
+    <div className="bg-gray-300 w-screen h-screen">
+      <div className="relative">
+        <Admin />
+        <div className="flex items-center mt-5 justify-between gap-20 absolute top-[180%] left-[21%]">
+          <CardManage
+            width="985px"
+            height="490px"
+            icon={<BsFillPersonFill />}
+            iconColor="#FF0000"
+            text1="000"
+            text2="Alpa"
+            columns={columns}
+            data={data}
+          />
+        </div>
       </div>
     </div>
   );

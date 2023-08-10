@@ -15,7 +15,7 @@ const Text = ({ type, text }) => {
       className = "font-bold text-base text-black";
       break;
     case "warning":
-      className = "text-red-600 text-sm-";
+      className = "text-red-600 text-sm font-bold italic";
       break;
     case "user":
       className = "font-bold text-xl";

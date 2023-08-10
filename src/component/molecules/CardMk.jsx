@@ -1,25 +1,26 @@
 import React from "react";
-import Text from "../atoms/Text";
 
-const CardMk = ({ width, height, text1, text2 }) => {
-  const randomImage = `https://source.unsplash.com/random/${width}x${height}`;
+const CardMk = ({ height, text1, text2 }) => {
+  const randomImage = `https://source.unsplash.com/random/230x${height}`;
 
   return (
     <div
+      className="w-full"
       style={{
-        width: `${width}px`,
         height: `${height}px`,
-        borderRadius: "8px",
+        borderRadius: "5px",
         overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-end",
+        backgroundColor: "#d1d5db",
       }}
     >
-      <img
-        src={randomImage}
-        alt="Random"
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-      />
-      <Text type="text2" text={text1} />
-      <Text type="text2" text={text2} />
+      <img src={randomImage} alt="Random" />
+      <div style={{ padding: "6px" }}>
+        <div>{text1}</div>
+        <div>{text2}</div>
+      </div>
     </div>
   );
 };

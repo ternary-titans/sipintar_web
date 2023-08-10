@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 
 const Search = ({ onSearch }) => {
@@ -14,25 +13,20 @@ const Search = ({ onSearch }) => {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div className="flex gap-4">
       <Input
         type="text"
         value={searchTerm}
         onChange={handleChange}
-        placeholder="  Search..."
+        placeholder="Search..."
+        className="mr-2"
       />
-      <Button
-        variant="kuning"
+      <button
+        className="px-4 py-0 bg-blue-700 text-white rounded"
         onClick={handleSearch}
-        style={{
-          marginLeft: "8px",
-          display: "flex",
-          justifyContent: "flex-end",
-          height: "24px",
-        }}
       >
         Search
-      </Button>
+      </button>
     </div>
   );
 };

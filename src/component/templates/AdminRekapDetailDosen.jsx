@@ -1,52 +1,55 @@
 import Admin from "./Admin";
 import Card from "../atoms/Card";
 import Text from "../atoms/Text";
-import CustomTable from "../molecules/CustomTable";
+import Table from "../molecules/Tabel";
 
 export const AdminRekapDetailDosen = () => {
   const columns = [
     "No",
-    "Hari,Tanggal",
-    "Jam",
+    "Hari,Tanggal Realisasi",
     "Jam Realisasi",
     "Mata Kuliah",
     "Topik",
-    "Pertemuan ke- ",
     "Hadir",
-    "Ijin",
+    "Sakit",
+    "Izin",
     "Alpa",
-    "Aktivasi",
   ];
 
   const data = [
     {
-      no: "1",
-      hari: "Senin",
-      jam: ["a", "a"],
-      jamRealisasi: ["a", "a"],
-      mataKuliah: ["Indo", "Jepang"],
-      topik: ["a", "b"],
-      pertemuan: ["1", "2"],
-      hadir: ["22", "22"],
-      ijin: ["1", "1"],
-      alpa: ["1", "1"],
-      aktivasi: ["Slamet", "Bejo"],
+      No: 1,
+      "Hari,Tanggal Realisasi": "Senin, 4 Januari 2023",
+      "Jam Realisasi": "08:00 - 09:00",
+      "Mata Kuliah": "Basis Data",
+      Topik: "Topik 1",
+      Hadir: "22",
+      Sakit: "1",
+      Izin: "5",
+      Alpa: "1",
     },
   ];
+  const columnAlignments = [
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+  ];
+  const headerBackgroundColor = "white";
+  const headerBorderColor = "#2563eb";
+  const pageSizeOptions = [10, 25, 50];
 
   return (
-    <div className="bg-gray-300 w-screen h-screen">
+    <div className="bg-gray-300 h-screen">
       <Admin />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "start",
-          height: "100vh",
-        }}
-      >
-        <div style={{ marginTop: "10px" }}>
-          <Card size={{ height: "calc(100vh - 72px)", width: "81.5%" }}>
+      <div className="flex flex-col justify-start">
+        <div style={{ marginTop: "50px" }}>
+          <Card size={{ height: "31rem", width: "78%" }}>
             <div
               style={{
                 marginLeft: "10px",
@@ -55,7 +58,15 @@ export const AdminRekapDetailDosen = () => {
               <Text type="title" text="REKAP PRESENSI DOSEN"></Text>
             </div>
             <div style={{ margin: "10px 10px" }}>
-              <CustomTable columns={columns} data={data} />
+              <Table
+                columns={columns}
+                data={data}
+                columnAlignments={columnAlignments}
+                headerBackgroundColor={headerBackgroundColor}
+                headerBorderColor={headerBorderColor}
+                pageSizeOptions={pageSizeOptions}
+                style={{ marginTop: "10px" }}
+              />
             </div>
           </Card>
         </div>

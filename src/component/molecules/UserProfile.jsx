@@ -1,30 +1,14 @@
 import React from "react";
-import { BsPersonCircle } from "react-icons/bs";
+import logo from "../../assest/polines.png";
 
-export const UserProfile = ({ toggle }) => {
+export const UserProfile = () => {
   return (
-    <div
-      className={`flex gap-3 items-center ${
-        toggle
-          ? "bg-none transition-all duration-300 delay-200"
-          : "bg-indigo-800 rounded-b-lg border-b-4 border-yellow-400 p-1"
-      }`}
-    >
-      <div className="min-w-[4rem] h-[4rem]">
-        <BsPersonCircle
-          style={{
-            color: "#FFC300",
-            fontSize: "50px",
-            rounded: "full",
-            object: "cover",
-            width: "96%",
-            height: "96%",
-            padding: "0.2rem",
-          }}
-        />
+    <div className="bg-indigo-800 rounded-b-lg border-b-4 border-yellow-400 p-2 flex items-center">
+      <div className="min-w-[4rem] h-[4rem] ml-4 mt-1">
+        <img src={logo} alt="" className="object-cover w-14" />
       </div>
-      <div className={toggle ? "opacity-0 delay-200" : ""}>
-        <h3 className="text-xl font-bold text-white">Hi, Admin!</h3>
+      <div>
+        <h3 className="text-3xl font-bold text-white p-1">PINTAR</h3>
       </div>
     </div>
   );

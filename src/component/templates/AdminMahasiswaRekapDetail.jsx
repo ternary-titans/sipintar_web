@@ -1,8 +1,9 @@
 import Admin from "./Admin";
+import { Link } from "react-router-dom";
 import Card from "../atoms/Card";
 import Text from "../atoms/Text";
 import TabelData from "../molecules/TabelData";
-import CustomTable from "../molecules/CustomTable"; //belum fix
+import Tabel from "../molecules/Tabel";
 
 export const AdminMahasiswaRekapDetail = () => {
   const colomsData = [
@@ -16,68 +17,79 @@ export const AdminMahasiswaRekapDetail = () => {
   ];
   const dataData = [
     {
-      Nama: " :",
-      NIM: " :",
-      Jurusan: " :",
-      "Program Studi": " :",
-      Kelas: " :",
-      Semester: " :",
-      "Dosen Wali": " :",
-    },
-    {
-      Nama: "Rifka Anggun",
-      NIM: "3.34.20.0.21",
-      Jurusan: "Teknik Elektro",
-      "Program Studi": "Teknik Informatika",
-      Kelas: "IK3A",
-      Semester: "VI(Enam",
-      "Dosen Wali": "Amran Yobioktabera, S.Kom., M.Kom.",
+      Nama: ": Rifka Anggun",
+      NIM: ": 3.34.20.0.21",
+      Jurusan: ": Teknik Elektro",
+      "Program Studi": ": Teknik Informatika",
+      Kelas: ": IK3A",
+      Semester: ": VI(Enam)",
+      "Dosen Wali": ": Amran Yobioktabera, S.Kom., M.Kom.",
     },
   ];
-
   const columns = [
     "No",
-    "Hari,Tanggal",
-    "Jam",
-    "Jam Realisasi",
     "Mata Kuliah",
-    "Topik",
-    "Pertemuan ke- ",
+    "Total Jam Pertemuan",
     "Hadir",
-    "Ijin",
+    "Sakit",
+    "Izin",
     "Alpa",
-    "Aktivasi",
+    "Aksi",
   ];
-
   const data = [
     {
-      no: "1",
-      hari: "Senin",
-      jam: ["a", "a"],
-      jamRealisasi: ["a", "a"],
-      mataKuliah: ["Indo", "Jepang"],
-      topik: ["a", "b"],
-      pertemuan: ["1", "2"],
-      hadir: ["22", "22"],
-      ijin: ["1", "1"],
-      alpa: ["1", "1"],
-      aktivasi: ["Slamet", "Bejo"],
+      No: 1,
+      "Mata Kuliah": "PBO",
+      "Total Jam Pertemuan": "32 jam",
+      Hadir: "30 jam",
+      Sakit: "1",
+      Izin: "1",
+      Alpa: "1",
+      Aksi: (
+        <div className="text-center">
+          <Link
+            to="/admin/mahasiswa/rekap/detailmk/:id"
+            className="text-blue-500 hover:text-blue-700 underline"
+          >
+            Detail
+          </Link>
+        </div>
+      ),
     },
   ];
 
+  const columnAlignments = [
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+  ];
+  const headerBackgroundColor = "white";
+  const headerBorderColor = "#2563eb";
+  const pageSizeOptions = [16, 25, 50];
+
+  const columns2 = ["Sakit", "Izin", "Alpa"];
+  const data2 = [
+    {
+      Sakit: [":", "36", " jam"],
+      Izin: [":", "84", " jam"],
+      Alpa: [":", "84", " jam"],
+    },
+  ];
+  const columnWidths = ["100px"];
+  const fontSize = "14px";
+  const textAlign = "start";
+
   return (
-    <div className="bg-gray-300 w-screen h-screen">
+    <div className="bg-gray-300 h-screen">
       <Admin />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "start",
-          height: "100vh",
-        }}
-      >
-        <div style={{ marginTop: "10px" }}>
-          <Card size={{ height: "calc(100vh - 72px)", width: "81.5%" }}>
+      <div className="flex flex-col justify-start">
+        <div style={{ marginTop: "50px" }}>
+          <Card size={{ height: "31rem", width: "78%" }}>
             <div
               style={{
                 marginLeft: "10px",
@@ -90,13 +102,31 @@ export const AdminMahasiswaRekapDetail = () => {
                 colomsData={colomsData}
                 dataData={dataData}
                 layout="vertical"
-                columnWidths={["1px", "1px", "250px"]}
+                columnWidths={["250px"]}
                 fontSize="14px"
                 textAlign="left"
               />
             </div>
-            <div style={{ margin: "10px 10px" }}>
-              <CustomTable columns={columns} data={data} />
+            <div className="mt-2 overflow-y-scroll">
+              <Tabel
+                columns={columns}
+                data={data}
+                columnAlignments={columnAlignments}
+                headerBackgroundColor={headerBackgroundColor}
+                headerBorderColor={headerBorderColor}
+                pageSizeOptions={pageSizeOptions}
+                style={{ marginTop: "10px" }}
+              />
+            </div>
+            <div className="flex flex-col mt-2 ml-2">
+              <TabelData
+                colomsData={columns2}
+                dataData={data2}
+                layout="vertical"
+                columnWidths={columnWidths}
+                fontSize={fontSize}
+                textAlign={textAlign}
+              />
             </div>
           </Card>
         </div>

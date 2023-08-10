@@ -1,44 +1,29 @@
 import React from "react";
-import { FiChevronDown } from "react-icons/fi";
 
-const InputDropdown = ({ label, value, options, onChange }) => {
+const InputDropdown = ({
+  label,
+  value,
+  uniqueKeys,
+  options,
+  onChange,
+  isDisabled,
+}) => {
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <label style={{ color: "black", fontWeight: "bold", fontSize: "0.8rem" }}>
-        {label}
-      </label>
-      <div
-        style={{
-          color: "black",
-          fontWeight: "bold",
-          fontSize: "0.8rem",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+    <div className="flex flex-col">
+      <label className="text-black font-bold text-sm">{label}</label>
+      <div className="flex items-center">
         <select
+          disabled={isDisabled}
           value={value}
           onChange={onChange}
-          style={{
-            backgroundColor: "rgb(209 213 219)",
-            border: "0.2px rgb(156 163 175)",
-            borderRadius: "2px",
-            padding: "0.1rem",
-            fontSize: "0.8rem",
-            appearance: "none",
-            marginRight: "5px",
-            color: "black",
-            width: "100%",
-            fontWeight: "normal",
-          }}
+          className="bg-gray-300 border border-gray-600 rounded px-2 py-1 text-black text-sm mr-2 w-full"
         >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
+          {options?.map((option, key) => (
+            <option key={key} value={option.id}>
+              {option[uniqueKeys]}
             </option>
           ))}
         </select>
-        <FiChevronDown style={{ marginRight: "5px" }} />
       </div>
     </div>
   );

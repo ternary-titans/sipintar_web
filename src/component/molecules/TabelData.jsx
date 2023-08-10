@@ -1,6 +1,6 @@
 import React from "react";
 
-const Table = ({
+const TabelData = ({
   colomsData,
   dataData,
   layout,
@@ -85,4 +85,4 @@ const Table = ({
   );
 };
 
-export default Table;
+export default TabelData;

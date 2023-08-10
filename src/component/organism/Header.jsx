@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import logo from "./../../assest/polines.png";
 import Logout from "./Logout";
+import { useDosenContext } from "../../context/DosenContext";
 
-const Header = ({ userName, webName }) => {
+const Header = ({ webName }) => {
+  const { dosenData } = useDosenContext();
   const [isOpen, setIsOpen] = useState(false);
   const [isLogoutVisible, setLogoutVisible] = useState(false);
 
@@ -22,38 +24,28 @@ const Header = ({ userName, webName }) => {
   return (
     <div className="flex justify-between items-center bg-indigo-900 p-1">
       <div className="flex items-center">
-        <img
-          src={logo}
-          alt="Logo"
-          style={{
-            marginLeft: "20px",
-            marginRight: "20px",
-            width: "50px",
-            height: "50px",
-          }}
-        />
+        <img src={logo} alt="Logo" className="ml-8 mr-4 w-10 h-10" />
         <div style={{ fontSize: "30px", color: "white", fontWeight: "bold" }}>
           {webName}
         </div>
       </div>
-      <div className="flex items-center " onClick={handleProfileClick}>
-        <div
-          style={{
-            marginLeft: "10px",
-            fontSize: "16px",
-            fontWeight: "bold",
-            color: "white",
-          }}
-        >
-          {userName}
+      <div
+        className="flex items-center cursor-pointer "
+        onClick={handleProfileClick}
+      >
+        <div className="ml-10 text-base font-bold text-white">
+          {dosenData.userName}
         </div>
         <div style={{ marginLeft: "10px", marginRight: "20px" }}>
           <IoPersonCircleSharp style={{ fontSize: "50px", color: "white" }} />
         </div>
         {isOpen && (
-          <div className="absolute top-12 bg-gray-300 shadow-md">
+          <div className="fixed top-[3.62rem] ml-[71.5rem] w-36 bg-gray-300 shadow-md hover:bg-gray-500">
             <ul className="py-2 px-4">
-              <li className="cursor-pointer" onClick={handleLogoutClick}>
+              <li
+                className="cursor-pointer font-semibold "
+                onClick={handleLogoutClick}
+              >
                 Logout
               </li>
             </ul>

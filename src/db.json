@@ -1,0 +1,22 @@
+{
+  "login-api": [
+    {
+      "id": 1,
+      "email": "admin@mail.com",
+      "password": "123",
+      "role": "Admin"
+    },
+    {
+      "id": 2,
+      "email": "dosen@mail.com",
+      "password": "123",
+      "role": "Dosen"
+    },
+    {
+      "id": 3,
+      "email": "mahasiswa@mail.com",
+      "password": "123",
+      "role": "Mahasiswa"
+    }
+  ]
+}

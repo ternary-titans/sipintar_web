@@ -1,61 +1,51 @@
 import Admin from "./Admin";
+import React, { useState } from "react";
 import Card from "../atoms/Card";
 import Text from "../atoms/Text";
 import Button from "../atoms/Button";
 import Table from "../molecules/Tabel.jsx";
+import KelolaMK from "../organism/KelolaMK";
 
 export const AdminKelolaMK = () => {
-  const columns = ["No", "Kode MK", "Mata Kuliah", "Edit", "Hapus"];
+  const [isActive, setIsActive] = useState(false);
+
+  const handleOKClick = () => {
+    setIsActive(true);
+  };
+  const columns = ["No", "Kode MK", "Mata Kuliah", "Aksi"];
   const data = [
     {
       No: 1,
       "Kode MK": "1234Mk",
       "Mata Kuliah": "Pemrogramam Basis Data",
-      Edit: "-",
-      Hapus: "-",
+      Aksi: (
+        <div className="text-center text-red-500 hover:text-red-700 underline">
+          Hapus
+        </div>
+      ),
     },
   ];
 
-  const columnAlignments = ["center", "center", "center", "center", "center"];
+  const columnAlignments = ["center", "center", "center", "center"];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [];
+  const pageSizeOptions = [10, 20];
 
   return (
-    <div className="bg-gray-300 w-screen h-screen">
+    <div
+      className={`bg-gray-300 h-screen relative ${
+        isActive ? "backdrop-blur-2xl" : ""
+      }`}
+    >
       <Admin />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "start",
-          height: "100vh",
-        }}
-      >
-        <div style={{ marginTop: "10px" }}>
-          <Card size={{ height: "calc(100vh - 72px)", width: "81.5%" }}>
-            <div
-              style={{
-                marginLeft: "10px",
-                display: "flex",
-                gap: "30px",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
+      <div className="flex flex-col justify-start">
+        <div style={{ marginTop: "50px" }}>
+          <Card size={{ height: "31rem", width: "78%" }}>
+            <div className="ml-2 flex gap-30 justify-between items-center">
               <Text type="title" text="MATA KULIAH"></Text>
               <div>
-                <Button
-                  variant="biru"
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    height: "36px",
-                    marginRight: "10px",
-                  }}
-                >
-                  {" "}
-                  Tambah Mata Kuliah{" "}
+                <Button variant="biru" onClick={handleOKClick}>
+                  Tambah Mata Kuliah
                 </Button>
               </div>
             </div>
@@ -73,6 +63,7 @@ export const AdminKelolaMK = () => {
           </Card>
         </div>
       </div>
+      <KelolaMK isActive={isActive} setIsActive={setIsActive} />
     </div>
   );
 };

@@ -3,17 +3,17 @@ import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
 
-const KelolaMK = ({ setLogoutOn, setChoice }) => {
+const KelolaMK = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
+  const [kodeMKValue, setkodeMKValue] = useState("");
+  const [matakuliahValue, setMataKuliahValue] = useState("");
+
   const handleOKClick = () => {
     setChoice(true);
     setLogoutOn(false);
   };
   const handleCancelClick = () => {
-    setChoice(false);
-    setLogoutOn(false);
+    setIsActive(false);
   };
-  const [kodeMKValue, setkodeMKValue] = useState("");
-  const [matakuliahValue, setMataKuliahValue] = useState("");
 
   const handlekodeMKChange = (event) => {
     setkodeMKValue(event.target.value);
@@ -23,8 +23,12 @@ const KelolaMK = ({ setLogoutOn, setChoice }) => {
   };
 
   return (
-    <div className="flex h-screen justify-center items-center">
-      <div className="flex-col justify-center bg-white py-8 px-4 border-black border-2 text-left">
+    <div
+      className={`h-screen justify-center items-center bg-gray-900 ${
+        isActive ? "absolute flex top-0 left-1/2 right-1/2" : "hidden"
+      }`}
+    >
+      <div className="flex-col justify-center  bg-white py-8 px-4 border-black border-2 text-left">
         <div className="mb-6" style={{ width: "400px" }}>
           <Text type="title3" text="Tambah Mata Kuliah" />
         </div>

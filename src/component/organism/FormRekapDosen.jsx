@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Card from "../atoms/Card";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
@@ -22,15 +23,33 @@ export const FormRekapDosen = () => {
     setSelectedTahunAjaran(event.target.value);
   };
 
-  const columns = ["No", "Kelas", "MataKuliah", "Total", "Presentase", "Aksi"];
+  const columns = [
+    "No",
+    "Kelas",
+    "Mata Kuliah",
+    "Total Jam Perkuliahan",
+    "Presentase",
+    "Aksi",
+  ];
   const data = [
     {
-      No: 1,
+      No: "1",
       Kelas: "IK3A",
-      MataKuliah: "Jaringan",
-      Total: "13",
+      "Mata Kuliah": "Jaringan",
+      "Total Jam Perkuliahan": "13",
       Presentase: "85%",
-      Aksi: "-",
+      Aksi: (
+        <div className="flex flex-col gap-2 items-center">
+          <div className="text-center">
+            <Link
+              to="/admin/dosen/rekap/:id"
+              className="text-blue-500 hover:text-blue-700 underline"
+            >
+              Detail
+            </Link>
+          </div>
+        </div>
+      ),
     },
   ];
 
@@ -44,6 +63,7 @@ export const FormRekapDosen = () => {
   ];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
+  const pageSizeOptions = [10, 25, 50];
 
   const jurusanOptions = [
     { value: "option1", label: "Option 1" },
@@ -63,73 +83,50 @@ export const FormRekapDosen = () => {
   ];
 
   return (
-    <div className="p-2">
-      <Card size={{ height: "calc(100vh - 72px)", width: "81.5%" }}>
+    <div>
+      <Card size={{ height: "31rem", width: "79%" }}>
         <div className="mb-3">
           <Text type="title3" text="Rekap Presensi Dosen"></Text>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <InputDropdown
-            label="Jurusan"
-            value={selectedJurusan}
-            options={jurusanOptions}
-            onChange={handleJurusanChange}
-          />
-          <InputDropdown
-            label="Nama Dosen"
-            value={selectedNamaDosen}
-            options={namaDosenOptions}
-            onChange={handleNamaDosenChange}
-          />
-          <InputDropdown
-            label="Tahun Ajaran"
-            value={selectedTahunAjaran}
-            options={tahunAjaranOptions}
-            onChange={handleTahunAjaranChange}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "1rem",
-            height: "32px",
-          }}
-        >
-          <Button variant="kuning">Cari</Button>
-        </div>
-        <div>
-          <div className="mt-4 mb-3">
-            <Text type="title3" text="Tabel Rekap Presensi Dosen"></Text>
+        <div className="overflow-y-scroll">
+          <div className="flex flex-col gap-2">
+            <InputDropdown
+              label="Jurusan"
+              value={selectedJurusan}
+              options={jurusanOptions}
+              onChange={handleJurusanChange}
+            />
+            <InputDropdown
+              label="Nama Dosen"
+              value={selectedNamaDosen}
+              options={namaDosenOptions}
+              onChange={handleNamaDosenChange}
+            />
+            <InputDropdown
+              label="Tahun Ajaran"
+              value={selectedTahunAjaran}
+              options={tahunAjaranOptions}
+              onChange={handleTahunAjaranChange}
+            />
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-start",
-              marginTop: "10px",
-              marginBottom: "20px",
-              height: "32px",
-            }}
-          >
-            <Button
-              variant="yes"
-              style={{
-                height: "32px",
-                width: "150px",
-              }}
-            >
-              Export to Excel
-            </Button>
+          <div className="flex justify-end mt-4 mr-2 h-8">
+            <Button variant="kuning">Cari</Button>
           </div>
           <div>
-            <Table
-              columns={columns}
-              data={data}
-              columnAlignments={columnAlignments}
-              headerBackgroundColor={headerBackgroundColor}
-              headerBorderColor={headerBorderColor}
-              style={{ marginTop: "10px" }}
-            />
+            <div className="mt-2 mb-1">
+              <Text type="title3" text="Tabel Rekap Presensi Dosen"></Text>
+            </div>
+            <div className="mt-2 mr-2">
+              <Table
+                columns={columns}
+                data={data}
+                columnAlignments={columnAlignments}
+                headerBackgroundColor={headerBackgroundColor}
+                headerBorderColor={headerBorderColor}
+                pageSizeOptions={pageSizeOptions}
+                style={{ marginTop: "10px" }}
+              />
+            </div>
           </div>
         </div>
       </Card>

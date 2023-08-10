@@ -1,74 +1,72 @@
+import React, { useState, useEffect } from "react";
 import Admin from "./Admin";
+import { Link } from "react-router-dom";
 import Button from "../atoms/Button";
 import Card from "../atoms/Card";
 import Table from "../molecules/Tabel";
 import Text from "../atoms/Text";
 import Search from "../molecules/Search";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import axios from "axios";
 
 export const AdminDosen = () => {
-  const columns = ["No", "Nama", "NIP", "Password", "Edit", "Hapus"];
-  const data = [
-    {
-      No: 1,
-      Nama: "Rifka",
-      NIP: 12345,
-      Password: "R123",
-      Edit: "-",
-      Hapus: "-",
-    },
-    {
-      No: 2,
-      Nama: "Anggun",
-      NIP: 12345,
-      Password: "A123",
-      Edit: "-",
-      Hapus: "-",
-    },
-  ];
-
-  const columnAlignments = [
-    "center",
-    "left",
-    "center",
-    "center",
-    "center",
-    "center",
-  ];
+  const columns = ["No", "Nama", "NIP", "Password", "Aksi"];
+  const columnAlignments = ["center", "left", "center", "center", "center"];
   const headerBackgroundColor = "white";
-  const headerBorderColor = "#2563eb";
+  const headerBorderColor = "#1e3a8a";
+  const pageSizeOptions = [10, 25, 50];
+
+  const [dosenData, setdosenData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("http://localhost:3000/api/dosen");
+        setdosenData(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/dosen/${id}`);
+      const updatedData = dosenData.filter((item) => item.id !== id);
+      setdosenData(updatedData);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
 
   const handleSearch = (searchTerm) => {
     console.log("Search term:", searchTerm);
   };
 
   return (
-    <div className="bg-gray-300 w-screen h-screen">
+    <div className="bg-gray-300 h-screen">
       <Admin />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "start",
-          height: "100vh",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "44px",
-          }}
-        >
-          <Button
-            variant="biru"
-            style={{ width: "200px", marginRight: "10px" }}
-          >
-            Masukkan Dosen Baru
-          </Button>
-          <Button variant="kuning">Rekap Presensi</Button>
+      <div className="flex flex-col justify-start">
+        <div className="flex justify-end mt-12 mr-2">
+          <Link to="/admin/dosen/tambah">
+            <Button
+              variant="biru"
+              style={{ width: "200px", marginRight: "10px" }}
+            >
+              Masukkan Dosen Baru
+            </Button>
+          </Link>
+          <Link to="/admin/dosen/rekap">
+            <Button variant="kuning">Rekap Presensi</Button>
+          </Link>
         </div>
         <div style={{ marginTop: "10px" }}>
-          <Card size={{ height: "calc(100vh - 164px)", width: "81.5%" }}>
+          <Card size={{ height: "28rem", width: "78%" }}>
             <div
               style={{
                 marginLeft: "10px",
@@ -77,24 +75,47 @@ export const AdminDosen = () => {
               <Text type="title" text="TABEL DATA DOSEN"></Text>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginBottom: "20px",
-              }}
-            >
+            <div className="flex justify-end mr-2 mt-4">
               <Search onSearch={handleSearch} />
             </div>
-            <div>
-              <Table
-                columns={columns}
-                data={data}
-                columnAlignments={columnAlignments}
-                headerBackgroundColor={headerBackgroundColor}
-                headerBorderColor={headerBorderColor}
-                style={{ marginTop: "10px" }}
-              />
+            <div className="mt-4">
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <Table
+                  columns={columns}
+                  data={dosenData.map((item, index) => ({
+                    No: index + 1,
+                    Nama: item.nama_dosen,
+                    NIP: item.nip,
+                    Jurusan: item.jurusan_id,
+                    Password: item.password,
+                    Aksi: (
+                      <div className="flex flex-row gap-2 justify-center">
+                        <div className="text-center">
+                          <Link
+                            to={`/admin/dosen/edit/${item.id}`}
+                            className="text-blue-500 hover:text-blue-700 underline"
+                          >
+                            <FaEdit />
+                          </Link>
+                        </div>
+                        <div
+                          className="text-center text-red-500 pointer hover:text-red-700 underline"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          <FaTrash />
+                        </div>
+                      </div>
+                    ),
+                  }))}
+                  columnAlignments={columnAlignments}
+                  headerBackgroundColor={headerBackgroundColor}
+                  headerBorderColor={headerBorderColor}
+                  pageSizeOptions={pageSizeOptions}
+                  style={{ marginTop: "10px" }}
+                />
+              )}
             </div>
           </Card>
         </div>

@@ -3,7 +3,8 @@ import Card from "../atoms/Card";
 import Text from "../atoms/Text";
 import InputDropdown from "../atoms/InputDropdown";
 import Button from "../atoms/Button";
-import Table from "../molecules/Tabel"; //sementara hahaha
+import Table from "../molecules/Tabel";
+import { Link } from "react-router-dom";
 
 export const Jadwal = () => {
   const [selectedJurusan, setSelectedJurusan] = useState("");
@@ -49,31 +50,44 @@ export const Jadwal = () => {
 
   const columns = [
     "No",
-    "NIM",
-    "Nama",
-    "Sakit",
-    "Izin",
-    "Alpa",
-    "Kompen",
+    "Hari",
+    "Waktu",
+    "Kode Mata Kuliah",
+    "Mata Kuliah",
+    "Total Jam",
+    "Dosen",
+    "Ruangan",
     "Aksi",
   ];
   const data = [
     {
       No: 1,
-      NIM: "33420021",
-      Nama: "Rifka Anggun",
-      Sakit: 0,
-      Izin: 0,
-      Alpa: 0,
-      Kompen: 0,
-      Aksi: "-",
+      Hari: "Senin",
+      Waktu: "08:00 - 09:30",
+      "Kode Mata Kuliah": "",
+      "Mata Kuliah": "",
+      "Total Jam": "2",
+      Dosen: "",
+      Ruangan: "",
+      Aksi: (
+        <div className="text-center">
+          <Link
+            to="/admin/editjadwal/:id"
+            className="text-blue-500 hover:text-blue-700 underline"
+          >
+            Edit
+          </Link>
+        </div>
+      ),
     },
   ];
 
   const columnAlignments = [
     "center",
     "center",
-    "left",
+    "center",
+    "center",
+    "center",
     "center",
     "center",
     "center",
@@ -84,92 +98,71 @@ export const Jadwal = () => {
   const pageSizeOptions = [10, 25, 50];
 
   return (
-    <div className="p-2">
-      <Card size={{ height: "calc(100vh - 72px)", width: "81.5%" }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            marginLeft: "10px",
-            marginRight: "10px",
-          }}
-        >
+    <div className="p-0">
+      <Card size={{ height: "28rem", width: "78%" }}>
+        <div className="flex flex-col gap-4">
           <Text type="title3" text="Jadwal Kuliah"></Text>
-          <InputDropdown
-            label="Jurusan"
-            value={selectedJurusan}
-            options={jurusanOptions}
-            onChange={handleJurusanChange}
-          />
-          <InputDropdown
-            label="Program Studi"
-            value={selectedProdi}
-            options={prodiOptions}
-            onChange={handleProdiChange}
-          />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <div style={{ display: "flex", gap: "30px" }}>
-              <InputDropdown
-                label="Kelas"
-                value={selectedKelas}
-                options={kelasOptions}
-                onChange={handleKelasChange}
-              />
-              <InputDropdown
-                label="Tahun Ajaran"
-                value={selectedTahunAjaran}
-                options={tahunajaranOptions}
-                onChange={handleTahunAjaranChange}
-              />
-            </div>
-            <Button
-              variant="kuning"
+          <div className="overflow-y-scroll">
+            <InputDropdown
+              label="Jurusan"
+              value={selectedJurusan}
+              options={jurusanOptions}
+              onChange={handleJurusanChange}
+            />
+            <InputDropdown
+              label="Program Studi"
+              value={selectedProdi}
+              options={prodiOptions}
+              onChange={handleProdiChange}
+            />
+            <div
               style={{
                 display: "flex",
-                justifyContent: "flex-end",
-                marginTop: "1rem",
-                height: "28px",
+                justifyContent: "space-between",
               }}
             >
-              Cari
-            </Button>
+              <div style={{ display: "flex", gap: "30px" }}>
+                <InputDropdown
+                  label="Kelas"
+                  value={selectedKelas}
+                  options={kelasOptions}
+                  onChange={handleKelasChange}
+                />
+                <InputDropdown
+                  label="Tahun Ajaran"
+                  value={selectedTahunAjaran}
+                  options={tahunajaranOptions}
+                  onChange={handleTahunAjaranChange}
+                />
+              </div>
+              <Button
+                variant="kuning"
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginTop: "1rem",
+                  height: "28px",
+                  marginRight: "6px",
+                }}
+              >
+                Cari
+              </Button>
+            </div>
+            <div className="flex justify-end mt-6"></div>
+            <div>
+              <Text type="title3" text=" Tabel Jadwal Kuliah"></Text>
+              <div className="mr-2">
+                <Table
+                  columns={columns}
+                  data={data}
+                  columnAlignments={columnAlignments}
+                  headerBackgroundColor={headerBackgroundColor}
+                  headerBorderColor={headerBorderColor}
+                  pageSizeOptions={pageSizeOptions}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "1rem",
-            height: "32px",
-          }}
-        ></div>
-        <div>
-          <Text type="title3" text=" Tabel Jadwal Kuliah"></Text>
-          <Button
-            variant="biru"
-            style={{
-              display: "flex",
-              marginTop: "1rem",
-              height: "28px",
-            }}
-          >
-            Edit
-          </Button>
-          <Table
-            columns={columns}
-            data={data}
-            columnAlignments={columnAlignments}
-            headerBackgroundColor={headerBackgroundColor}
-            headerBorderColor={headerBorderColor}
-            pageSizeOptions={pageSizeOptions}
-            style={{ marginTop: "10px" }}
-          />
         </div>
       </Card>
     </div>

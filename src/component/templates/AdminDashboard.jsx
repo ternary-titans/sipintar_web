@@ -1,5 +1,6 @@
 import React from "react";
 import Admin from "../templates/Admin";
+import { Link } from "react-router-dom";
 import CardManage from "../molecules/CardManage";
 import { BsFillPersonFill } from "react-icons/bs";
 import { SiGoogleclassroom } from "react-icons/si";
@@ -26,75 +27,55 @@ export const AdminDashboard = () => {
     },
   ];
   return (
-    <div style={{ position: "relative" }}>
+    <div className="bg-gray-300 h-screen">
       <Admin />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: "20px",
-          position: "absolute",
-          top: "20%",
-          left: "20%",
-        }}
-      >
+      <div className="flex justify-between gap-8 absolute mt-12 ml-[17rem]">
+        <Link to="/admin/dashboard/alpa">
+          <CardManage
+            width="470px"
+            height="90px"
+            icon={<BsFillPersonFill />}
+            iconColor="#FF0000"
+            text1="000"
+            text2="Alpa"
+          />
+        </Link>
+
         <CardManage
-          width="300px"
-          height="100px"
-          icon={<BsFillPersonFill />}
-          iconColor="#FFD700"
-          text1="000"
-          text2="Izin"
-        />
-        <CardManage
-          width="300px"
-          height="100px"
-          icon={<BsFillPersonFill />}
-          iconColor="#FF0000"
-          text1="000"
-          text2="Alpa"
-        />
-        <CardManage
-          width="350px"
-          height="100px"
+          width="470px"
+          height="90px"
           icon={<SiGoogleclassroom />}
           iconColor="32CD32"
           text1="000"
           text2="Kelas Aktif"
         />
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          marginTop: "5px",
-          justifyContent: "space-between",
-          gap: "20px",
-          position: "absolute",
-          top: "400%",
-          left: "20%",
-        }}
-      >
-        <CardManage
-          width="485px"
-          height="400px"
-          icon={<BsFillPersonFill />}
-          iconColor="gray"
-          text1="000"
-          text2="Peringatan"
-          columns={["No", "Nama", "NIM", "Jurusan", "Kompen", "Aksi"]}
-          data={TbPeringatan}
-        />{" "}
-        <CardManage
-          width="485px"
-          height="400px"
-          icon={<BsFillPersonFill />}
-          iconColor="black"
-          text1="000"
-          text2="SP"
-          columns={["No", "Nama", "NIM", "Jurusan", "Kompen", "Aksi"]}
-          data={TbSP}
-        />
+      <div className="flex justify-between gap-8 absolute mt-36 ml-[17rem] mb-2">
+        <div className="overflow-y-hidden">
+          <CardManage
+            width="470px"
+            height="390px"
+            icon={<BsFillPersonFill />}
+            iconColor="gray"
+            text1="000"
+            text2="Peringatan"
+            columns={["No", "Nama", "NIM", "Jurusan", "Alpa", "Aksi"]}
+            data={TbPeringatan}
+          />
+        </div>
+
+        <div className="overflow-y-hidden">
+          <CardManage
+            width="470px"
+            height="390px"
+            icon={<BsFillPersonFill />}
+            iconColor="black"
+            text1="000"
+            text2="SP"
+            columns={["No", "Nama", "NIM", "Jurusan", "Alpa", "Aksi"]}
+            data={TbSP}
+          />
+        </div>
       </div>
     </div>
   );

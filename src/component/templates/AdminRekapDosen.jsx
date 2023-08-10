@@ -4,9 +4,9 @@ import Form from "../organism/FormRekapDosen";
 
 export const AdminRekapDosen = () => {
   return (
-    <div className="bg-gray-300 w-screen h-screen">
+    <div className="bg-gray-300 h-screen">
       <Admin />
-      <div style={{ marginTop: "10px" }}>
+      <div className="mt-14">
         <Form />
       </div>
     </div>

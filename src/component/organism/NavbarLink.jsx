@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-const NavbarLink = ({ showDropdown, dropdownItems }) => {
+const NavbarLink = ({ showDropdown, dropdownItems, userType }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggleDropdown = () => {
@@ -12,26 +13,29 @@ const NavbarLink = ({ showDropdown, dropdownItems }) => {
     setIsOpen(false);
   };
 
+  const getBerandaLink = () => {
+    if (userType === "dosen") {
+      return "/dosen";
+    } else if (userType === "mahasiswa") {
+      return "/mahasiswa";
+    } else {
+      return "/";
+    }
+  };
+
   return (
     <nav>
-      <div className="flex justify-start bg-white shadow shadow-gray-400 p-0 w-screen h-[3rem] border-b border-black">
-        <ul
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginTop: "20px",
-          }}
-        >
-          <li style={{ marginRight: "20px", marginLeft: "30px" }}>
-            <a href="/">Beranda</a>
+      <div className="flex justify-start bg-white shadow shadow-gray-400 p-0 h-[3rem] border-b border-black">
+        <ul className="flex items-center mt-6 gap-8">
+          <li className="ml-8">
+            <Link to={getBerandaLink()}>
+              <a href="/Login">Beranda</a>
+            </Link>
           </li>
           <li>
             <div
               onClick={handleToggleDropdown}
-              style={{
-                width: "fit-content",
-                cursor: "pointer",
-              }}
+              className="w-fit cursor-pointer"
             >
               Rekap Presensi
             </div>
@@ -40,11 +44,17 @@ const NavbarLink = ({ showDropdown, dropdownItems }) => {
       </div>
 
       {isOpen && showDropdown && (
-        <ul style={{ marginLeft: "110px", cursor: "pointer" }}>
+        <ul className="absolute right-0 mt-0 ml-[7.5rem] w-[16rem] bg-white border border-gray-300 rounded-md shadow-lg">
           {dropdownItems.map((item, index) => (
-            <li key={index} onClick={() => handleMenuItemClick(item)}>
-              {item}
-            </li>
+            <Link to={item.path}>
+              <li
+                key={index}
+                className="px-4 py-2 hover:bg-gray-100"
+                onClick={() => handleMenuItemClick(item)}
+              >
+                {item.name}
+              </li>
+            </Link>
           ))}
         </ul>
       )}

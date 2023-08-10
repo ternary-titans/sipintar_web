@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
-import Button from "../atoms/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const FormTambahDosen = () => {
+  const navigate = useNavigate();
   const [namaValue, setNamaValue] = useState("");
   const [nipValue, setNIPValue] = useState("");
   const [selectedJurusan, setSelectedJurusan] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
+  const [formValid, setFormValid] = useState(false);
+  const [error, setError] = useState({
+    nama: "",
+    nip: "",
+    jurusan: "",
+    password: "",
+  });
 
   const handleNamaChange = (event) => {
     setNamaValue(event.target.value);
@@ -26,42 +35,128 @@ export const FormTambahDosen = () => {
     setPasswordValue(event.target.value);
   };
 
+  const generateRandomPassword = () => {
+    const length = 8;
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      result += charset[randomIndex];
+    }
+    return result;
+  };
+
+  useEffect(() => {
+    setFormValid(
+      namaValue.trim() !== "" &&
+        nipValue.trim() !== "" &&
+        selectedJurusan !== "" &&
+        passwordValue !== ""
+    );
+  }, [namaValue, nipValue, selectedJurusan, passwordValue]);
+
   const jurusanOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { id: "", label: "Pilih Jurusan" },
+    { id: 1, label: "Teknik Elektro" },
+    { id: 2, label: "Teknik Sipil" },
+    { id: 3, label: "Teknik Mesin" },
+    { id: 4, label: "Akuntansi" },
+    { id: 5, label: "Administrasi Bisnis" },
   ];
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    let newError = {
+      nama: "",
+      nip: "",
+      jurusan: "",
+      password: "",
+    };
+
+    if (namaValue.trim() === "") {
+      newError.nama = "Nama harus diisi.";
+    }
+
+    if (nipValue.trim() === "") {
+      newError.nip = "NIP harus diisi.";
+    }
+
+    if (selectedJurusan === "") {
+      newError.jurusan = "Jurusan harus dipilih.";
+    }
+
+    if (passwordValue === "") {
+      newError.password = "Password harus terdiri dari 8 karakter.";
+    }
+
+    setError(newError);
+
+    if (
+      namaValue.trim() !== "" &&
+      nipValue.trim() !== "" &&
+      selectedJurusan !== "" &&
+      passwordValue !== ""
+    ) {
+      try {
+        const response = await axios.post("http://localhost:3000/api/dosen", {
+          nama_dosen: namaValue,
+          nip: nipValue,
+          jurusan_id: selectedJurusan,
+          password: passwordValue,
+        });
+
+        console.log("Data berhasil disimpan:", response.data);
+
+        setNamaValue("");
+        setNIPValue("");
+        setSelectedJurusan("");
+        setPasswordValue("");
+        setFormValid(false);
+        setError({
+          nama: "",
+          nip: "",
+          jurusan: "",
+          password: "",
+        });
+
+        navigate("/admin/dosen");
+      } catch (error) {
+        console.error("Terjadi kesalahan saat menyimpan data:", error);
+
+        alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+      }
+    }
+  };
 
   return (
     <div className="p-2">
-      <Card size={{ height: "calc(100vh - 72px)", width: "81.5%" }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            marginLeft: "10px",
-            marginRight: "10px",
-          }}
-        >
+      <Card size={{ height: "27rem", width: "79%" }}>
+        <div className="flex flex-col gap-4">
           <Input
             label="Nama"
             type="text"
             value={namaValue}
             onChange={handleNamaChange}
+            error={error.nama}
           />
+
           <Input
             label="NIP"
-            type="varchar"
+            type="text"
             value={nipValue}
             onChange={handleNIPChange}
+            error={error.nip}
           />
 
           <InputDropdown
             label="Jurusan"
+            uniqueKeys="label"
             value={selectedJurusan}
             options={jurusanOptions}
             onChange={handleJurusanChange}
+            error={error.jurusan}
           />
 
           <Input
@@ -69,16 +164,31 @@ export const FormTambahDosen = () => {
             type="password"
             value={passwordValue}
             onChange={handlePasswordChange}
+            error={error.password}
           />
+
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setPasswordValue(generateRandomPassword())}
+          >
+            Generate Random Password
+          </button>
+
+          <button
+            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+              formValid ? "" : "opacity-50 cursor-not-allowed"
+            }`}
+            disabled={!formValid}
+            onClick={handleSubmit}
+          >
+            SIMPAN
+          </button>
+
+          {error.nama && <p className="text-red-500">{error.nama}</p>}
+          {error.nip && <p className="text-red-500">{error.nip}</p>}
+          {error.jurusan && <p className="text-red-500">{error.jurusan}</p>}
+          {error.password && <p className="text-red-500">{error.password}</p>}
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "1rem",
-            height: "32px",
-          }}
-        ></div>
       </Card>
     </div>
   );

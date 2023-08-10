@@ -1,13 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
+import Button from "../atoms/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export const FormEditDosen = () => {
+const FormEditDosen = ({ id }) => {
+  const navigate = useNavigate();
   const [namaValue, setNamaValue] = useState("");
   const [nipValue, setNIPValue] = useState("");
   const [selectedJurusan, setSelectedJurusan] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
+
+  const jurusanOptions = [
+    { id: 0, label: "Pilih Jurusan" },
+    { id: 1, label: "Teknik Elektro" },
+    { id: 2, label: "Teknik Sipil" },
+    { id: 3, label: "Teknik Mesin" },
+    { id: 4, label: "Akuntansi" },
+    { id: 5, label: "Administrasi Bisnis" },
+  ];
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/dosen/${id}`
+        );
+        const data = response.data.data;
+        setNamaValue(data.nama_dosen);
+        setNIPValue(data.nip);
+        setSelectedJurusan(data.jurusan_id);
+        setPasswordValue(data.password);
+      } catch (error) {
+        console.error("Error fetching data from API:", error);
+      }
+    }
+
+    fetchData();
+  }, [id]);
 
   const handleNamaChange = (event) => {
     setNamaValue(event.target.value);
@@ -25,24 +57,32 @@ export const FormEditDosen = () => {
     setPasswordValue(event.target.value);
   };
 
-  const jurusanOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
+  const handleSave = async () => {
+    const dataToUpdate = {
+      nama_dosen: namaValue,
+      nip: nipValue,
+      jurusan_id: selectedJurusan,
+      password: passwordValue,
+    };
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/dosen/${id}`,
+        dataToUpdate
+      );
+
+      navigate("/admin/dosen");
+
+      console.log("Data updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
+  };
 
   return (
     <div className="p-2">
-      <Card size={{ height: "calc(100vh - 72px)", width: "81.5%" }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            marginLeft: "10px",
-            marginRight: "10px",
-          }}
-        >
+      <Card size={{ height: "27rem", width: "78%" }}>
+        <div className="flex flex-col gap-4 ">
           <Input
             label="Nama"
             type="text"
@@ -58,6 +98,7 @@ export const FormEditDosen = () => {
 
           <InputDropdown
             label="Jurusan"
+            uniqueKeys="label"
             value={selectedJurusan}
             options={jurusanOptions}
             onChange={handleJurusanChange}
@@ -69,6 +110,11 @@ export const FormEditDosen = () => {
             value={passwordValue}
             onChange={handlePasswordChange}
           />
+        </div>
+        <div className="flex justify-end mt-12 mr-4">
+          <Button variant="biru" onClick={handleSave}>
+            Simpan
+          </Button>
         </div>
       </Card>
     </div>
