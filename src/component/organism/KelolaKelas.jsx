@@ -38,11 +38,11 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
   useEffect(() => {
     setFormValid(
       kelasValue.trim() !== "" &&
-        selectedJurusan !== "" &&
+        // selectedJurusan !== "" &&
         selectedProdi !== "" &&
         selectedTahunAjaran !== ""
     );
-  }, [kelasValue, selectedJurusan, selectedProdi, selectedTahunAjaran]);
+  }, [kelasValue, selectedProdi, selectedTahunAjaran]);
 
   const jurusanOptions = [
     { id: "", label: "Pilih Jurusan" },
@@ -83,7 +83,7 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
 
     if (
       kelasValue.trim() !== "" &&
-      selectedJurusan !== "" &&
+      // selectedJurusan !== "" &&
       selectedProdi !== "" &&
       selectedTahunAjaran !== ""
     ) {
@@ -98,7 +98,7 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
         alert("Data Kelas berhasil disimpan.");
 
         setkelasValue("");
-        setSelectedJurusan("");
+        // setSelectedJurusan("");
         setSelectedProdi("");
         setSelectedTahunAjaran("");
         setFormValid(false);
@@ -124,6 +124,7 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
         <div className="space-y-2">
           <Input
             label="Kelas"
+            uniqueKeys="nama_kelas"
             type="varchar"
             value={kelasValue}
             onChange={handlekelasChange}

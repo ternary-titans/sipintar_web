@@ -118,7 +118,7 @@ export const AdminKelas = () => {
                     Kelas: item.nama_kelas,
                     "Program Studi": item.prodi,
                     "Tahun Ajaran": item.tahunAjaran,
-                    Jurusan: "",
+                    Jurusan: item.nama_jurusan,
                     Aksi: (
                       <div
                         className=" flex justify-center text-center text-red-500 pointer hover:text-red-700 underline"

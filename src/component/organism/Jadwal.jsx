@@ -86,7 +86,6 @@ export const Jadwal = () => {
     "No",
     "Hari",
     "Waktu",
-    "Kode Mata Kuliah",
     "Mata Kuliah",
     "Total Jam",
     "Dosen",
@@ -103,24 +102,10 @@ export const Jadwal = () => {
     "center",
     "center",
     "center",
-    "center",
   ];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
   const pageSizeOptions = [10, 25, 50];
-
-  const calculateTotalJam = (jamMulai, jamAkhir) => {
-    const startTime = convertStringToMinutes(jamMulai);
-    const endTime = convertStringToMinutes(jamAkhir);
-    const totalMinutes = endTime - startTime;
-    const totalJam = totalMinutes / 45;
-    return totalJam.toFixed(2);
-  };
-
-  const convertStringToMinutes = (timeString) => {
-    const [hours, minutes] = timeString.split(":");
-    return parseInt(hours) * 60 + parseInt(minutes);
-  };
 
   const [jadwalData, setJadwalData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -156,7 +141,7 @@ export const Jadwal = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/mahasiswa/${id}`);
+      await axios.delete(`http://localhost:3000/api/jadwal/${id}`);
       const updatedData = jadwalData.filter((item) => item.id !== id);
       setJadwalData(updatedData);
     } catch (error) {
@@ -226,44 +211,31 @@ export const Jadwal = () => {
                 ) : (
                   <Table
                     columns={columns}
-                    data={(filteredJadwalData.length > 0
-                      ? filteredJadwalData
-                      : jadwalData
-                    ).map((item, index) => {
-                      const waktu = `${item.jam_mulai} - ${item.jam_akhir}`;
-                      const totalJam = calculateTotalJam(
-                        item.jam_mulai,
-                        item.jam_akhir
-                      );
+                    data={jadwalData.map((item, index) => ({
+                      No: index + 1,
+                      Hari: item.hari,
+                      Waktu: item.jam_mulai - item.jam_akhir,
+                      "Mata Kuliah": item.nama_mk,
+                      "Total Jam": item.total_jam,
+                      Dosen: item.nama_dosen,
+                      Ruangan: item.label_ruang,
+                      Aksi: (
+                        <div className="flex flex-row justify-center">
+                          <Link to={`/admin/editjadwal/${item.id}`}>
+                            <div className="  text-center text-blue-500 hover:text-blue-700">
+                              <FaEdit />
+                            </div>
+                          </Link>
 
-                      return {
-                        No: index + 1,
-                        Hari: item.hari,
-                        Waktu: waktu,
-                        "Mata Kuliah": item.mata_kuliah_id,
-                        "Total jam": totalJam,
-                        Dosen: item.dosen_id,
-                        Ruangan: item.ruangan,
-                        Aksi: (
-                          <div className="flex flex-row gap-2 justify-center items-center">
-                            <div className="text-center">
-                              <Link
-                                to={`/admin/editjadwal/${item.id}`}
-                                className="text-blue-500 hover:text-blue-700 underline"
-                              >
-                                <FaEdit />
-                              </Link>
-                            </div>
-                            <div
-                              className="text-center text-red-500 pointer hover:text-red-700 underline"
-                              onClick={() => handleDelete(item.id)}
-                            >
-                              <FaTrash />
-                            </div>
+                          <div
+                            className=" text-red-500 pointer hover:text-red-700 underline"
+                            onClick={() => handleDelete(item.id)}
+                          >
+                            <FaTrash />
                           </div>
-                        ),
-                      };
-                    })}
+                        </div>
+                      ),
+                    }))}
                     columnAlignments={columnAlignments}
                     headerBackgroundColor={headerBackgroundColor}
                     headerBorderColor={headerBorderColor}
