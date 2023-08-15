@@ -1,37 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
+import axios from "axios";
 
-const KelolaMK = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
-  const [prodiValue, setMataKuliahValue] = useState("");
-  const [kodeProdiValue, setkodeMKValue] = useState("");
+const KelolaMK = ({ isActive, setIsActive }) => {
+  const [prodiValue, setprodiValue] = useState("");
+  const [kodeProdiValue, setkodeProdiValue] = useState("");
   const [selectedJurusan, setSelectedJurusan] = useState("");
+  const [formValid, setFormValid] = useState(false);
 
-  const handleOKClick = () => {
-    setChoice(true);
-    setLogoutOn(false);
-  };
   const handleCancelClick = () => {
     setIsActive(false);
   };
 
   const handleprodiChange = (event) => {
-    setkodeMKValue(event.target.value);
+    setprodiValue(event.target.value);
   };
   const handlekodeProdiChange = (event) => {
-    setMataKuliahValue(event.target.value);
+    setkodeProdiValue(event.target.value);
   };
   const handleJurusanChange = (event) => {
     setSelectedJurusan(event.target.value);
   };
 
+  useEffect(() => {
+    setFormValid(
+      prodiValue.trim() !== "" &&
+        kodeProdiValue.trim() !== "" &&
+        selectedJurusan !== ""
+    );
+  }, [prodiValue, kodeProdiValue, selectedJurusan]);
+
   const jurusanOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { id: "", label: "Pilih Jurusan" },
+    { id: 1, label: "Teknik Elektro" },
+    { id: 2, label: "Teknik Sipil" },
+    { id: 3, label: "Teknik Mesin" },
+    { id: 4, label: "Akuntansi" },
+    { id: 5, label: "Administrasi Bisnis" },
   ];
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (
+      prodiValue.trim() !== "" &&
+      kodeProdiValue.trim() !== "" &&
+      selectedJurusan !== ""
+    ) {
+      try {
+        const response = await axios.post("http://localhost:3000/api/prodi", {
+          nama_prodi: prodiValue,
+          kode_prodi: kodeProdiValue,
+          jurusan_id: selectedJurusan,
+        });
+
+        console.log("Data berhasil disimpan:", response.data);
+
+        alert("Data Prodi berhasil disimpan.");
+
+        setprodiValue("");
+        setkodeProdiValue("");
+        setSelectedJurusan("");
+        setFormValid(false);
+        setIsActive(false);
+      } catch (error) {
+        console.error("Terjadi kesalahan saat menyimpan data:", error);
+
+        alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+      }
+    }
+  };
 
   return (
     <div
@@ -58,13 +99,14 @@ const KelolaMK = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
           />
           <InputDropdown
             label="Jurusan"
+            uniqueKeys="label"
             value={selectedJurusan}
             options={jurusanOptions}
             onChange={handleJurusanChange}
           />
         </div>
         <div className="flex justify-center space-x-4 mt-6">
-          <Button onClick={handleOKClick} variant="biru">
+          <Button onClick={handleSubmit} disabled={!formValid} variant="biru">
             Simpan
           </Button>
           <Button onClick={handleCancelClick} variant="biru">

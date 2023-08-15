@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
+import axios from "axios";
 
-const KelolaKelas = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
+const KelolaKelas = ({ isActive, setIsActive }) => {
   const [kelasValue, setkelasValue] = useState("");
-  const [selectedProdi, setSelectedProdi] = useState("");
+  const [selectedProdi, setSelectedProdi] = useState();
   const [selectedJurusan, setSelectedJurusan] = useState("");
   const [selectedTahunAjaran, setSelectedTahunAjaran] = useState("");
+  const [formValid, setFormValid] = useState(false);
 
-  const handleOKClick = () => {
-    setChoice(true);
-    setLogoutOn(false);
-  };
+  const [prodiOptions, setProdiOptions] = useState([]);
+  const [tahunAjaranOptions, settahunAjaranOptions] = useState([]);
+
   const handleCancelClick = () => {
     setIsActive(false);
   };
@@ -34,21 +35,81 @@ const KelolaKelas = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
     setSelectedTahunAjaran(event.target.value);
   };
 
-  const prodiOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
+  useEffect(() => {
+    setFormValid(
+      kelasValue.trim() !== "" &&
+        selectedJurusan !== "" &&
+        selectedProdi !== "" &&
+        selectedTahunAjaran !== ""
+    );
+  }, [kelasValue, selectedJurusan, selectedProdi, selectedTahunAjaran]);
+
   const jurusanOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { id: "", label: "Pilih Jurusan" },
+    { id: 1, label: "Teknik Elektro" },
+    { id: 2, label: "Teknik Sipil" },
+    { id: 3, label: "Teknik Mesin" },
+    { id: 4, label: "Akuntansi" },
+    { id: 5, label: "Administrasi Bisnis" },
   ];
-  const tahunAjaranOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
+      .then((response) => {
+        const prodiData = response.data;
+        setProdiOptions(prodiData.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching Prodi data:", error);
+      });
+  }, [selectedJurusan]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/tahunAjaran`)
+      .then((response) => {
+        const tahunAjaranData = response.data;
+        settahunAjaranOptions(tahunAjaranData.data);
+      })
+      .catch((error) => {
+        settahunAjaranOptions([]);
+        console.error("Error fetching Tahun Ajaran data:", error);
+      });
+  }, [selectedTahunAjaran]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (
+      kelasValue.trim() !== "" &&
+      selectedJurusan !== "" &&
+      selectedProdi !== "" &&
+      selectedTahunAjaran !== ""
+    ) {
+      try {
+        const response = await axios.post("http://localhost:3000/api/kelas", {
+          nama_kelas: kelasValue,
+          prodi_id: selectedProdi,
+          tahun_ajaran_id: selectedTahunAjaran,
+        });
+        console.log("Data berhasil disimpan:", response.data);
+
+        alert("Data Kelas berhasil disimpan.");
+
+        setkelasValue("");
+        setSelectedJurusan("");
+        setSelectedProdi("");
+        setSelectedTahunAjaran("");
+        setFormValid(false);
+        setIsActive(false);
+      } catch (error) {
+        console.error("Terjadi kesalahan saat menyimpan data:", error);
+
+        alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+      }
+    }
+  };
 
   return (
     <div
@@ -68,26 +129,30 @@ const KelolaKelas = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
             onChange={handlekelasChange}
           />
           <InputDropdown
-            label="Program Studi"
-            value={selectedProdi}
-            options={prodiOptions}
-            onChange={handleProdiChange}
-          />
-          <InputDropdown
             label="Jurusan"
+            uniqueKeys="label"
             value={selectedJurusan}
             options={jurusanOptions}
             onChange={handleJurusanChange}
           />
           <InputDropdown
+            isDisabled={selectedJurusan === "" ? true : false}
+            label="Program Studi"
+            uniqueKeys="nama_prodi"
+            value={selectedProdi}
+            options={selectedJurusan === "" ? null : prodiOptions}
+            onChange={handleProdiChange}
+          />
+          <InputDropdown
             label="Tahun Ajaran"
+            uniqueKeys="nama"
             value={selectedTahunAjaran}
             options={tahunAjaranOptions}
             onChange={handleTahunAjaranChange}
           />
         </div>
         <div className="flex justify-center space-x-4 mt-6">
-          <Button onClick={handleOKClick} variant="biru">
+          <Button onClick={handleSubmit} variant="biru">
             Simpan
           </Button>
           <Button onClick={handleCancelClick} variant="biru">

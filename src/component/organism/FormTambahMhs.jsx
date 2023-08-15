@@ -237,8 +237,6 @@ const FormTambahMhs = () => {
             error={error.jurusan}
           />
 
-          {}
-
           <InputDropdown
             isDisabled={selectedJurusan === "" ? true : false}
             label="Program Studi"

@@ -1,16 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "../atoms/Card";
 import Text from "../atoms/Text";
 import InputDropdown from "../atoms/InputDropdown";
 import Button from "../atoms/Button";
 import Table from "../molecules/Tabel";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export const Jadwal = () => {
   const [selectedJurusan, setSelectedJurusan] = useState("");
   const [selectedProdi, setSelectedProdi] = useState("");
-  const [selectedKelas, setSelectedKelas] = useState("");
+  const [selectedKls, setSelectedKelas] = useState("");
   const [selectedTahunAjaran, setSelectedTahunAjaran] = useState("");
+
+  const [prodiOptions, setProdiOptions] = useState([]);
+  const [kelasOptions, setKelasOptions] = useState([]);
+  const [tahunAjaranOptions, settahunAjaranOptions] = useState([]);
+
+  const [filteredJadwalData, setFilteredJadwalData] = useState([]);
 
   const handleJurusanChange = (event) => {
     setSelectedJurusan(event.target.value);
@@ -26,27 +34,53 @@ export const Jadwal = () => {
   };
 
   const jurusanOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { id: "", label: "Pilih Jurusan" },
+    { id: 1, label: "Teknik Elektro" },
+    { id: 2, label: "Teknik Sipil" },
+    { id: 3, label: "Teknik Mesin" },
+    { id: 4, label: "Akuntansi" },
+    { id: 5, label: "Administrasi Bisnis" },
   ];
 
-  const prodiOptions = [
-    { value: "option4", label: "Option 4" },
-    { value: "option5", label: "Option 5" },
-    { value: "option6", label: "Option 6" },
-  ];
-  const kelasOptions = [
-    { value: "option7", label: "Option 7" },
-    { value: "option8", label: "Option 8" },
-    { value: "option9", label: "Option 9" },
-  ];
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
+      .then((response) => {
+        const prodiData = response.data;
+        setProdiOptions(prodiData.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching Prodi data:", error);
+      });
+  }, [selectedJurusan]);
 
-  const tahunajaranOptions = [
-    { value: "option10", label: "Option 10aaaaaaaaaaaaaa" },
-    { value: "option11", label: "Option 11aaaaaaaaaaaaaa" },
-    { value: "option12", label: "Option 12aaaaaaaaaaaaaa" },
-  ];
+  useEffect(() => {
+    if (selectedProdi) {
+      axios
+        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`)
+        .then((response) => {
+          const kelasData = response.data;
+          setKelasOptions(kelasData.data);
+        })
+        .catch((error) => {
+          setKelasOptions([]);
+          console.error("Error fetching Kelas data:", error);
+        });
+    }
+  }, [selectedProdi]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/tahunAjaran`)
+      .then((response) => {
+        const tahunAjaranData = response.data;
+        settahunAjaranOptions(tahunAjaranData.data);
+      })
+      .catch((error) => {
+        settahunAjaranOptions([]);
+        console.error("Error fetching Tahun Ajaran data:", error);
+      });
+  }, [selectedTahunAjaran]);
 
   const columns = [
     "No",
@@ -58,28 +92,6 @@ export const Jadwal = () => {
     "Dosen",
     "Ruangan",
     "Aksi",
-  ];
-  const data = [
-    {
-      No: 1,
-      Hari: "Senin",
-      Waktu: "08:00 - 09:30",
-      "Kode Mata Kuliah": "",
-      "Mata Kuliah": "",
-      "Total Jam": "2",
-      Dosen: "",
-      Ruangan: "",
-      Aksi: (
-        <div className="text-center">
-          <Link
-            to="/admin/editjadwal/:id"
-            className="text-blue-500 hover:text-blue-700 underline"
-          >
-            Edit
-          </Link>
-        </div>
-      ),
-    },
   ];
 
   const columnAlignments = [
@@ -97,6 +109,61 @@ export const Jadwal = () => {
   const headerBorderColor = "#2563eb";
   const pageSizeOptions = [10, 25, 50];
 
+  const calculateTotalJam = (jamMulai, jamAkhir) => {
+    const startTime = convertStringToMinutes(jamMulai);
+    const endTime = convertStringToMinutes(jamAkhir);
+    const totalMinutes = endTime - startTime;
+    const totalJam = totalMinutes / 45;
+    return totalJam.toFixed(2);
+  };
+
+  const convertStringToMinutes = (timeString) => {
+    const [hours, minutes] = timeString.split(":");
+    return parseInt(hours) * 60 + parseInt(minutes);
+  };
+
+  const [jadwalData, setJadwalData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/jadwal?kelas=`
+      );
+      setFilteredJadwalData(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching filtered data:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("http://localhost:3000/api/jadwal");
+        setJadwalData(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [jadwalData, setJadwalData]);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/mahasiswa/${id}`);
+      const updatedData = jadwalData.filter((item) => item.id !== id);
+      setJadwalData(updatedData);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
+
   return (
     <div className="p-0">
       <Card size={{ height: "28rem", width: "78%" }}>
@@ -105,33 +172,34 @@ export const Jadwal = () => {
           <div className="overflow-y-scroll">
             <InputDropdown
               label="Jurusan"
+              uniqueKeys="label"
               value={selectedJurusan}
               options={jurusanOptions}
               onChange={handleJurusanChange}
             />
             <InputDropdown
+              isDisabled={selectedJurusan === "" ? true : false}
               label="Program Studi"
+              uniqueKeys="nama_prodi"
               value={selectedProdi}
-              options={prodiOptions}
+              options={selectedJurusan === "" ? null : prodiOptions}
               onChange={handleProdiChange}
             />
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <div style={{ display: "flex", gap: "30px" }}>
+            <div className="flex justify-between mt-2">
+              <div className="flex gap-4">
                 <InputDropdown
+                  isDisabled={selectedJurusan === "" ? true : false}
                   label="Kelas"
-                  value={selectedKelas}
-                  options={kelasOptions}
+                  uniqueKeys="nama_kelas"
+                  value={selectedKls}
+                  options={selectedJurusan === "" ? null : kelasOptions}
                   onChange={handleKelasChange}
                 />
                 <InputDropdown
                   label="Tahun Ajaran"
+                  uniqueKeys="nama"
                   value={selectedTahunAjaran}
-                  options={tahunajaranOptions}
+                  options={tahunAjaranOptions}
                   onChange={handleTahunAjaranChange}
                 />
               </div>
@@ -140,10 +208,11 @@ export const Jadwal = () => {
                 style={{
                   display: "flex",
                   justifyContent: "flex-end",
-                  marginTop: "1rem",
+                  marginTop: "1.2rem",
                   height: "28px",
                   marginRight: "6px",
                 }}
+                onClick={handleSearch}
               >
                 Cari
               </Button>
@@ -152,14 +221,56 @@ export const Jadwal = () => {
             <div>
               <Text type="title3" text=" Tabel Jadwal Kuliah"></Text>
               <div className="mr-2">
-                <Table
-                  columns={columns}
-                  data={data}
-                  columnAlignments={columnAlignments}
-                  headerBackgroundColor={headerBackgroundColor}
-                  headerBorderColor={headerBorderColor}
-                  pageSizeOptions={pageSizeOptions}
-                />
+                {loading ? (
+                  <p>Loading...</p>
+                ) : (
+                  <Table
+                    columns={columns}
+                    data={(filteredJadwalData.length > 0
+                      ? filteredJadwalData
+                      : jadwalData
+                    ).map((item, index) => {
+                      const waktu = `${item.jam_mulai} - ${item.jam_akhir}`;
+                      const totalJam = calculateTotalJam(
+                        item.jam_mulai,
+                        item.jam_akhir
+                      );
+
+                      return {
+                        No: index + 1,
+                        Hari: item.hari,
+                        Waktu: waktu,
+                        "Mata Kuliah": item.mata_kuliah_id,
+                        "Total jam": totalJam,
+                        Dosen: item.dosen_id,
+                        Ruangan: item.ruangan,
+                        Aksi: (
+                          <div className="flex flex-row gap-2 justify-center items-center">
+                            <div className="text-center">
+                              <Link
+                                to={`/admin/editjadwal/${item.id}`}
+                                className="text-blue-500 hover:text-blue-700 underline"
+                              >
+                                <FaEdit />
+                              </Link>
+                            </div>
+                            <div
+                              className="text-center text-red-500 pointer hover:text-red-700 underline"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              <FaTrash />
+                            </div>
+                          </div>
+                        ),
+                      };
+                    })}
+                    columnAlignments={columnAlignments}
+                    headerBackgroundColor={headerBackgroundColor}
+                    headerBorderColor={headerBorderColor}
+                    pageSizeOptions={pageSizeOptions}
+                    style={{ marginTop: "10px" }}
+                  />
+                )}
               </div>
             </div>
           </div>

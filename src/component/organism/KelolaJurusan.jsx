@@ -1,21 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
+import axios from "axios";
 
-const KelolaJurusan = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
+const KelolaJurusan = ({ isActive, setIsActive }) => {
   const [jurusanValue, setjurusanValue] = useState("");
+  const [formValid, setFormValid] = useState(false);
 
-  const handleOKClick = () => {
-    setChoice(true);
-    setLogoutOn(false);
-  };
   const handleCancelClick = () => {
     setIsActive(false);
   };
 
   const handlejurusanChange = (event) => {
     setjurusanValue(event.target.value);
+  };
+
+  useEffect(() => {
+    setFormValid(jurusanValue.trim() !== "");
+  }, [jurusanValue]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (jurusanValue.trim() !== "") {
+      try {
+        const response = await axios.post("http://localhost:3000/api/jurusan", {
+          nama_jurusan: jurusanValue,
+        });
+
+        console.log("Data berhasil disimpan:", response.data);
+
+        alert("Data mahasiswa berhasil disimpan.");
+
+        setjurusanValue("");
+        setFormValid(false);
+      } catch (error) {
+        console.error("Terjadi kesalahan saat menyimpan data:", error);
+
+        alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+      }
+    }
   };
 
   return (
@@ -37,7 +62,7 @@ const KelolaJurusan = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
           />
         </div>
         <div className="flex justify-center space-x-4 mt-6">
-          <Button onClick={handleOKClick} variant="biru">
+          <Button onClick={handleSubmit} disabled={!formValid} variant="biru">
             Simpan
           </Button>
           <Button onClick={handleCancelClick} variant="biru">

@@ -1,6 +1,6 @@
 import React from "react";
 import HeaderMhs from "../organism/HeaderMhs";
-import NavbarLink from "../organism/NavbarLink";
+import NavbarLinkMhs from "../organism/NavbarLinkMhs";
 
 const Mahasiswa = () => {
   const dropdownItems = [
@@ -12,7 +12,7 @@ const Mahasiswa = () => {
   return (
     <div>
       <HeaderMhs userName="Nama Mahasiswa" nim="3.34.20.0.21" />
-      <NavbarLink showDropdown={true} dropdownItems={dropdownItems} />
+      <NavbarLinkMhs showDropdown={true} dropdownItems={dropdownItems} />
     </div>
   );
 };

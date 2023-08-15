@@ -1,37 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Dosen from "./Dosen";
 import CardMk from "../molecules/CardMk";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import TabelData from "../molecules/TabelData";
-const datamk = [
-  {
-    id: 1,
-    nama: "pbo",
-    kelas: "IKA",
-  },
-  {
-    id: 2,
-    nama: "pbi",
-    kelas: "IKA",
-  },
-  {
-    id: 3,
-    nama: "pba",
-    kelas: "IKA",
-  },
-  {
-    id: 4,
-    nama: "pbu",
-    kelas: "IKC",
-  },
-  {
-    id: 5,
-    nama: "pbe",
-    kelas: "IKD",
-  },
-];
 
 export const DosenDashboard = () => {
   const columns = ["Waktu", "Kelas", "Ruangan", "Mata Kuliah"];
@@ -60,20 +33,40 @@ export const DosenDashboard = () => {
   const fontSize = "12px";
   const textAlign = "start";
 
+  const [mkData, setMkData] = useState([]);
+  const dosenId = 1;
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/api/dosen/${dosenId}/mataKuliah`)
+      .then((response) => response.json())
+      .then((data) => {
+        setMkData(data.mkData);
+      })
+      .catch((error) =>
+        console.error("Error fetching mata kuliah data:", error)
+      );
+  }, [dosenId]);
+
   return (
     <div>
       <Dosen />
       <div className="flex">
         <div className="flex-1 mr-2">
           <div className="flex flex-wrap ml-8 mt-5 gap-6 px-1 pb-8">
-            {datamk.map((rifka) => (
-              <Link
-                to={`/dosen/mk/${rifka.id}`}
-                className="w-[calc(30%_-_1rem)]"
-              >
-                <CardMk height={180} text1={rifka.nama} text2={rifka.kelas} />
-              </Link>
-            ))}
+            {mkData &&
+              mkData.map((rifka) => (
+                <Link
+                  to={`/dosen/mk/${rifka.id}`}
+                  className="w-[calc(30%_-_1rem)]"
+                  key={rifka.id}
+                >
+                  <CardMk
+                    height={180}
+                    text1={rifka.nama_mk + "" + rifka.kode_mk}
+                    text2={rifka.kelas}
+                  />
+                </Link>
+              ))}
           </div>
         </div>
         <div className="flex-1 mt-4 mr-8 overflow-y-auto justify-start">

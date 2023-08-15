@@ -18,7 +18,7 @@ const NavbarLink = ({ showDropdown, dropdownItems, userType }) => {
       <div className="flex justify-start bg-white shadow shadow-gray-400 p-0 h-[3rem] border-b border-black">
         <ul className="flex items-center mt-6 gap-8">
           <li className="ml-8">
-            <Link to="/dosen">
+            <Link to="/mahasiswa">
               <a href="/Beranda">Beranda</a>
             </Link>
           </li>

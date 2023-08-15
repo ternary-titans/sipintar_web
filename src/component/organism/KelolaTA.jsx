@@ -1,21 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
+import axios from "axios";
 
-const KelolaTA = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
+const KelolaTA = ({ isActive, setIsActive }) => {
   const [TahunAjaranValue, setTahunAjaranValue] = useState("");
+  const [formValid, setFormValid] = useState(false);
 
-  const handleOKClick = () => {
-    setChoice(true);
-    setLogoutOn(false);
+  const handleTahunAjaranChange = (event) => {
+    setTahunAjaranValue(event.target.value);
   };
+
   const handleCancelClick = () => {
     setIsActive(false);
   };
 
-  const handleTahunAjaranChange = (event) => {
-    setTahunAjaranValue(event.target.value);
+  useEffect(() => {
+    setFormValid(TahunAjaranValue.trim() !== "");
+  }, [TahunAjaranValue]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (TahunAjaranValue.trim() !== "") {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/tahunAjaran",
+          {
+            nama: TahunAjaranValue,
+          }
+        );
+
+        console.log("Data berhasil disimpan:", response.data);
+
+        alert("Tahun Ajaran berhasil disimpan.");
+
+        setTahunAjaranValue("");
+        setFormValid(false);
+      } catch (error) {
+        console.error("Terjadi kesalahan saat menyimpan data:", error);
+
+        alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+      }
+    }
   };
 
   return (
@@ -31,13 +59,13 @@ const KelolaTA = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
         <div className="space-y-2">
           <Input
             label="Tahun Ajaran"
-            type="varchar"
+            type="text"
             value={TahunAjaranValue}
             onChange={handleTahunAjaranChange}
           />
         </div>
         <div className="flex justify-center space-x-4 mt-6">
-          <Button onClick={handleOKClick} variant="biru">
+          <Button onClick={handleSubmit} variant="biru" disabled={!formValid}>
             Simpan
           </Button>
           <Button onClick={handleCancelClick} variant="biru">

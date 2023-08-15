@@ -1,16 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
+import axios from "axios";
 
-const KelolaMK = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
+const KelolaMK = ({ isActive, setIsActive }) => {
   const [kodeMKValue, setkodeMKValue] = useState("");
   const [matakuliahValue, setMataKuliahValue] = useState("");
+  const [formValid, setFormValid] = useState(false);
 
-  const handleOKClick = () => {
-    setChoice(true);
-    setLogoutOn(false);
-  };
   const handleCancelClick = () => {
     setIsActive(false);
   };
@@ -20,6 +18,38 @@ const KelolaMK = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
   };
   const handlematakuliahChange = (event) => {
     setMataKuliahValue(event.target.value);
+  };
+
+  useEffect(() => {
+    setFormValid(kodeMKValue.trim() !== "" && matakuliahValue.trim() !== "");
+  }, [kodeMKValue, matakuliahValue]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (kodeMKValue.trim() !== "" && matakuliahValue.trim() !== "") {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/mataKuliah",
+          {
+            nama_mk: matakuliahValue,
+            kode_mk: kodeMKValue,
+          }
+        );
+
+        console.log("Data berhasil disimpan:", response.data);
+
+        alert("Data Mata Kuliah berhasil disimpan.");
+
+        setMataKuliahValue("");
+        setkodeMKValue("");
+        setFormValid(false);
+      } catch (error) {
+        console.error("Terjadi kesalahan saat menyimpan data:", error);
+
+        alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+      }
+    }
   };
 
   return (
@@ -47,7 +77,7 @@ const KelolaMK = ({ setLogoutOn, setChoice, isActive, setIsActive }) => {
           />
         </div>
         <div className="flex justify-center space-x-4 mt-6">
-          <Button onClick={handleOKClick} variant="biru">
+          <Button onClick={handleSubmit} variant="biru">
             Simpan
           </Button>
           <Button onClick={handleCancelClick} variant="biru">

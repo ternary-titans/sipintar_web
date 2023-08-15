@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BsTrash } from "react-icons/bs";
+import axios from "axios";
 
 const TabelJadwal = () => {
+  const [selectedmataKuliah, setSelectedMataKuliah] = useState("");
+  const [mataKuliahOptions, setMataKuliahOptions] = useState([]);
+
   const [rows, setRows] = useState([
     {
       no: 1,
@@ -46,11 +50,50 @@ const TabelJadwal = () => {
     }
   };
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/mataKuliah")
+      .then((response) => {
+        const mataKuliahData = response.data;
+        setMataKuliahOptions(mataKuliahData);
+      })
+      .catch((error) => {
+        console.error("Error fetching Mata Kuliah data:", error);
+      });
+  }, []);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const newData = rows.map((row) => {
+      return {
+        hari: row.hari,
+        jam_mulai: row.waktuMulai,
+        jam_akhir: row.waktuSelesai,
+        mata_kuliah_id: row.mataKuliah,
+        total_jam: row.totalMK,
+        dosen_id: row.dosen,
+        ruangan: row.ruang,
+        // Add other properties here as needed
+      };
+    });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/jadwal",
+        newData
+      );
+      console.log("Data berhasil disimpan:", response.data);
+    } catch (error) {
+      console.error("Terjadi kesalahan saat menyimpan data:", error);
+      alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+    }
+  };
+
   return (
     <div className="flex">
       <div className="mt-4 w-full">
         <table className="p-2 w-full">
-          {/* Tabel header */}
           <thead>
             <tr>
               <th className="py-2 px-2 text-sm text-white bg-blue-900">No</th>
@@ -116,16 +159,23 @@ const TabelJadwal = () => {
                 <td className="py-2 px-4 text-sm">
                   <select
                     className="border rounded px-2 py-1"
-                    value={row.mataKuliah}
                     onChange={(e) =>
                       handleChange(index, "mataKuliah", e.target.value)
                     }
                   >
                     <option value="">Pilih Mata Kuliah</option>
-                    <option value="Mata Kuliah 1">Mata Kuliah 1</option>
-                    <option value="Mata Kuliah 2">Mata Kuliah 2</option>
+                    {mataKuliahOptions.map((mk) => (
+                      <option
+                        key={mk.id}
+                        value={selectedmataKuliah}
+                        selected={row.mataKuliah === mk.nama_mk}
+                      >
+                        {mk.nama_mk}
+                      </option>
+                    ))}
                   </select>
                 </td>
+
                 <td className="py-2 px-4 text-sm">{row.totalMK}</td>
                 <td className="py-2 px-4 text-sm">
                   <select
@@ -165,12 +215,18 @@ const TabelJadwal = () => {
             ))}
           </tbody>
         </table>
-        <div className="flex justify-center items-center gap-4 mt-4">
+        <div className="flex flex-row justify-center items-center gap-4 mt-4">
           <button
             className="px-4 py-1 bg-green-500 text-sm text-white w-26 h-8 rounded"
             onClick={addRow}
           >
             Tambah Baris
+          </button>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+            onClick={handleSubmit}
+          >
+            Simpan
           </button>
         </div>
       </div>

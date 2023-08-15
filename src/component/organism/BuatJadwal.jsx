@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "../atoms/Card";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
 import TabelJadwal from "../organism/TabelJadwal";
+import axios from "axios";
 
 export const BuatJadwal = () => {
   const [selectedJurusan, setSelectedJurusan] = useState("");
   const [selectedProdi, setSelectedProdi] = useState("");
-  const [selectedKelas, setSelectedKelas] = useState("");
+  const [selectedKls, setSelectedKelas] = useState("");
   const [selectedTahunAjaran, setSelectedTahunAjaran] = useState("");
+
+  const [prodiOptions, setProdiOptions] = useState([]);
+  const [kelasOptions, setKelasOptions] = useState([]);
+  const [tahunAjaranOptions, settahunAjaranOptions] = useState([]);
 
   const handleJurusanChange = (event) => {
     setSelectedJurusan(event.target.value);
@@ -24,30 +29,53 @@ export const BuatJadwal = () => {
   };
 
   const jurusanOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
-  const prodiOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
-  const kelasOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
-  const tahunajaranOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { id: "", label: "Pilih Jurusan" },
+    { id: 1, label: "Teknik Elektro" },
+    { id: 2, label: "Teknik Sipil" },
+    { id: 3, label: "Teknik Mesin" },
+    { id: 4, label: "Akuntansi" },
+    { id: 5, label: "Administrasi Bisnis" },
   ];
 
-  const handleSave = () => {
-    // Logika untuk menyimpan data jadwal ke database
-    console.log("Data jadwal disimpan:");
-  };
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
+      .then((response) => {
+        const prodiData = response.data;
+        setProdiOptions(prodiData.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching Prodi data:", error);
+      });
+  }, [selectedJurusan]);
+
+  useEffect(() => {
+    if (selectedProdi) {
+      axios
+        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`)
+        .then((response) => {
+          const kelasData = response.data;
+          setKelasOptions(kelasData.data);
+        })
+        .catch((error) => {
+          setKelasOptions([]);
+          console.error("Error fetching Kelas data:", error);
+        });
+    }
+  }, [selectedProdi]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/tahunAjaran`)
+      .then((response) => {
+        const tahunAjaranData = response.data;
+        settahunAjaranOptions(tahunAjaranData.data);
+      })
+      .catch((error) => {
+        settahunAjaranOptions([]);
+        console.error("Error fetching Tahun Ajaran data:", error);
+      });
+  }, [selectedTahunAjaran]);
 
   return (
     <div className="">
@@ -61,28 +89,35 @@ export const BuatJadwal = () => {
               <div>
                 <InputDropdown
                   label="Jurusan"
+                  uniqueKeys="label"
                   value={selectedJurusan}
                   options={jurusanOptions}
                   onChange={handleJurusanChange}
                 />
+
                 <InputDropdown
+                  isDisabled={selectedJurusan === "" ? true : false}
                   label="Program Studi"
+                  uniqueKeys="nama_prodi"
                   value={selectedProdi}
-                  options={prodiOptions}
+                  options={selectedJurusan === "" ? null : prodiOptions}
                   onChange={handleProdiChange}
                 />
               </div>
               <div>
                 <InputDropdown
+                  isDisabled={selectedJurusan === "" ? true : false}
                   label="Kelas"
-                  value={selectedKelas}
-                  options={kelasOptions}
+                  uniqueKeys="nama_kelas"
+                  value={selectedKls}
+                  options={selectedJurusan === "" ? null : kelasOptions}
                   onChange={handleKelasChange}
                 />
                 <InputDropdown
                   label="Tahun Ajaran"
+                  uniqueKeys="nama"
                   value={selectedTahunAjaran}
-                  options={tahunajaranOptions}
+                  options={tahunAjaranOptions}
                   onChange={handleTahunAjaranChange}
                 />
               </div>
@@ -90,14 +125,6 @@ export const BuatJadwal = () => {
             <div className="mt-4">
               <TabelJadwal />
             </div>
-          </div>
-          <div className="mt-2 mb-8">
-            <button
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-              onClick={handleSave}
-            >
-              Simpan
-            </button>
           </div>
         </div>
       </Card>

@@ -14,25 +14,28 @@ export const AdminDosen = () => {
   const columnAlignments = ["center", "left", "center", "center", "center"];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#1e3a8a";
-  const pageSizeOptions = [10, 25, 50];
+  const pageSizeOptions = [5, 10];
 
   const [dosenData, setdosenData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get("http://localhost:3000/api/dosen");
-        setdosenData(response.data.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    }
-
     fetchData();
   }, []);
+
+  async function fetchData(query = "") {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/dosen?nama=${query}`
+      );
+      setdosenData(response.data.data);
+      console.log(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  }
 
   const handleDelete = async (id) => {
     try {
@@ -44,8 +47,8 @@ export const AdminDosen = () => {
     }
   };
 
-  const handleSearch = (searchTerm) => {
-    console.log("Search term:", searchTerm);
+  const handleSearch = async (searchTerm) => {
+    fetchData(searchTerm);
   };
 
   return (
@@ -67,24 +70,18 @@ export const AdminDosen = () => {
         </div>
         <div style={{ marginTop: "10px" }}>
           <Card size={{ height: "28rem", width: "78%" }}>
-            <div
-              style={{
-                marginLeft: "10px",
-              }}
-            >
+            <div className="flex flex-row justify-between">
               <Text type="title" text="TABEL DATA DOSEN"></Text>
-            </div>
-
-            <div className="flex justify-end mr-2 mt-4">
               <Search onSearch={handleSearch} />
             </div>
+
             <div className="mt-4">
               {loading ? (
                 <p>Loading...</p>
               ) : (
                 <Table
                   columns={columns}
-                  data={dosenData.map((item, index) => ({
+                  data={dosenData?.map((item, index) => ({
                     No: index + 1,
                     Nama: item.nama_dosen,
                     NIP: item.nip,

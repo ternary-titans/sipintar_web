@@ -6,7 +6,8 @@ import Table from "../molecules/Tabel";
 import Text from "../atoms/Text";
 import Search from "../molecules/Search";
 import axios from "axios";
-import Admin from "./Admin"; // Import komponen Admin
+import Admin from "./Admin";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export const AdminMahasiswa = () => {
   const columns = [
@@ -16,7 +17,7 @@ export const AdminMahasiswa = () => {
     "Kelas",
     "Prodi",
     "Jurusan",
-    "Password",
+    // "Password",
     "Aksi",
   ];
 
@@ -39,19 +40,20 @@ export const AdminMahasiswa = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get("http://localhost:3000/api/mahasiswa");
-        setMahasiswaData(response.data.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    }
-
     fetchData();
   }, []);
+  async function fetchData(query = "") {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/mahasiswa?nama=${query}`
+      );
+      setMahasiswaData(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  }
 
   const handleDelete = async (id) => {
     try {
@@ -63,8 +65,8 @@ export const AdminMahasiswa = () => {
     }
   };
 
-  const handleSearch = (searchTerm) => {
-    console.log("Search term:", searchTerm);
+  const handleSearch = async (searchTerm) => {
+    fetchData(searchTerm);
   };
 
   return (
@@ -86,11 +88,8 @@ export const AdminMahasiswa = () => {
         </div>
         <div style={{ marginTop: "10px" }}>
           <Card size={{ width: "78%" }}>
-            <div style={{ marginLeft: "10px" }}>
+            <div className="flex flex-row justify-between">
               <Text type="title" text="TABEL DATA MAHASISWA"></Text>
-            </div>
-
-            <div className="flex justify-end mb-8">
               <Search onSearch={handleSearch} />
             </div>
             {loading ? (
@@ -102,25 +101,25 @@ export const AdminMahasiswa = () => {
                   No: index + 1,
                   Nama: item.nama_mahasiswa,
                   NIM: item.nim,
-                  Kelas: item.nama_kelas,
+                  Kelas: item.kelas,
                   Prodi: item.prodi,
                   Jurusan: item.jurusan,
-                  Password: item.password,
+                  // Password: item.password,
                   Aksi: (
-                    <div className="flex flex-col gap-2 items-center">
+                    <div className="flex flex-row gap-2 justify-center items-center">
                       <div className="text-center">
                         <Link
                           to={`/admin/mahasiswa/edit/${item.id}`}
                           className="text-blue-500 hover:text-blue-700 underline"
                         >
-                          Edit
+                          <FaEdit />
                         </Link>
                       </div>
                       <div
                         className="text-center text-red-500 pointer hover:text-red-700 underline"
                         onClick={() => handleDelete(item.id)}
                       >
-                        Hapus
+                        <FaTrash />
                       </div>
                     </div>
                   ),
