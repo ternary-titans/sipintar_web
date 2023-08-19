@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Dosen from "./Dosen";
 import CardUser from "../atoms/CardUser.jsx";
 import Text from "../atoms/Text";
@@ -6,8 +6,9 @@ import TableData from "../molecules/TabelData";
 import Table from "../molecules/Tabel";
 import Button from "../atoms/Button";
 import { BsTrash } from "react-icons/bs";
+import axios from "axios";
 
-export const DosenLihatRekap = () => {
+export const DosenLihatRekap = ({ id }) => {
   const content = "Konten CardUser yang panjang";
   const contentHeight = content.length * 20;
 
@@ -41,21 +42,6 @@ export const DosenLihatRekap = () => {
   const textAlign = "start";
 
   const columns2 = ["No", "Nama", "NIM", "Presensi", "Validasi"];
-  const data2 = [
-    {
-      No: 1,
-      Nama: "Rifka Anggun",
-      NIM: "3.34.20.0.21",
-      Presensi: "08:05",
-      Validasi: (
-        <div className="flex items-center justify-center">
-          <button onClick="" className="text-red-500">
-            <BsTrash className="" />
-          </button>
-        </div>
-      ),
-    },
-  ];
 
   const columnAlignments = [
     "center",
@@ -68,6 +54,35 @@ export const DosenLihatRekap = () => {
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
   const pageSizeOptions = [5, 10, 15];
+
+  const [listRekapData, setListRekapData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/listPresensi/1`
+        );
+        setListRekapData(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [listRekapData, setListRekapData]);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/listPresensi/${id}`);
+      const updatedData = listRekapData.filter((item) => item.id !== id);
+      setListRekapData(updatedData);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
 
   return (
     <div>
@@ -102,15 +117,34 @@ export const DosenLihatRekap = () => {
             }}
           />
           <div>
-            <Table
-              columns={columns2}
-              data={data2}
-              columnAlignments={columnAlignments}
-              headerBackgroundColor={headerBackgroundColor}
-              headerBorderColor={headerBorderColor}
-              pageSizeOptions={pageSizeOptions}
-              style={{ marginTop: "10px" }}
-            />
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <Table
+                columns={columns2}
+                data={listRekapData.map((item, index) => ({
+                  No: index + 1,
+                  Nama: item.nama_mahasiswa,
+                  NIM: item.nim,
+                  Presensi: item.waktu_presensi,
+                  Validasi: (
+                    <div className="flex items-center justify-center">
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="text-red-500"
+                      >
+                        <BsTrash className="" />
+                      </button>
+                    </div>
+                  ),
+                }))}
+                columnAlignments={columnAlignments}
+                headerBackgroundColor={headerBackgroundColor}
+                headerBorderColor={headerBorderColor}
+                pageSizeOptions={pageSizeOptions}
+                style={{ marginTop: "10px" }}
+              />
+            )}
           </div>
           <div className="mt-4">
             <Button variant="biru">Simpan</Button>

@@ -28,20 +28,20 @@ export const MahasiswaMatkul = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, [id, fetchData]);
-  async function fetchData() {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/mahasiswa/1/listPertemuan/${id}`
-      );
-      setMahasiswaMKData(response.data.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/mahasiswa/1/listPertemuan/${id}`
+        );
+        setMahasiswaMKData(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
     }
-  }
+    fetchData();
+  }, [id]);
 
   return (
     <div>
@@ -55,10 +55,10 @@ export const MahasiswaMatkul = () => {
         >
           <div className="flex flex-row justify-between">
             <div>
-              <Text type="title3" text="Jadwal Pertemuan Mata Kuliah A" />
+              <Text type="title3" text="Jadwal Pertemuan Mata Kuliah" />
             </div>
             <div>
-              <Link to="/mahasiswa/aktivasi">
+              <Link to="/mahasiswa/aktivasi/:id">
                 <button className="aktivasi-button">AKTIVASI</button>
               </Link>
             </div>

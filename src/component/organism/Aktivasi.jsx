@@ -5,7 +5,7 @@ import TanggalInput from "../atoms/TanggalInput";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
-export const Aktivasi = () => {
+export const Aktivasi = ({ id }) => {
   const navigate = useNavigate();
   const [realisasiTanggal, setRealisasiTanggal] = useState("");
   const [jamPertama, setJamPertama] = useState("");

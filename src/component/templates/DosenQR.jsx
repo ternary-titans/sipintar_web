@@ -3,19 +3,13 @@ import Dosen from "./Dosen";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import TableData from "../molecules/TabelData";
+import { BsTrash } from "react-icons/bs";
 import axios from "axios";
 
 export const DosenQR = () => {
-  const columns = ["No", "Nama", "NIM"];
-  const data = [
-    {
-      No: "1",
-      Nama: "Rifka Anggun",
-      NIM: "3.34.20.0.21",
-    },
-  ];
+  const columns = ["No", "Nama", "NIM", "Presensi", "Validasi"];
 
-  const columnWidths = ["30px", "150px", "20px"];
+  const columnWidths = ["30px", "150px", "100px", "100px", "100px"];
   const fontSize = "12px";
   const textAlign = "start";
 
@@ -40,6 +34,35 @@ export const DosenQR = () => {
       console.error("Error fetching QR Code data:", error);
     }
   }
+
+  const [listRekapData, setListRekapData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/listPresensi/1`
+        );
+        setListRekapData(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [listRekapData, setListRekapData]);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/listPresensi/${id}`);
+      const updatedData = listRekapData.filter((item) => item.id !== id);
+      setListRekapData(updatedData);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
 
   return (
     <div>
@@ -67,14 +90,33 @@ export const DosenQR = () => {
             </div>
             <hr className="w-full h-0.5 bg-black" />
             <div>
-              <TableData
-                colomsData={columns}
-                dataData={data}
-                layout="horizontal"
-                columnWidths={columnWidths}
-                fontSize={fontSize}
-                textAlign={textAlign}
-              />
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <TableData
+                  colomsData={columns}
+                  dataData={listRekapData.map((item, index) => ({
+                    No: index + 1,
+                    Nama: item.nama_mahasiswa,
+                    NIM: item.nim,
+                    Presensi: item.waktu_presensi,
+                    Validasi: (
+                      <div className="flex items-center justify-center">
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="text-red-500"
+                        >
+                          <BsTrash className="" />
+                        </button>
+                      </div>
+                    ),
+                  }))}
+                  layout="horizontal"
+                  columnWidths={columnWidths}
+                  fontSize={fontSize}
+                  textAlign={textAlign}
+                />
+              )}
             </div>
           </CardUser>
         </div>

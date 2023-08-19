@@ -79,7 +79,7 @@ export const DosenMatkul = () => {
                   "Realisasi Jam": `${item.jam_mulai} - ${item.jam_akhir}`,
                   Aksi: (
                     <>
-                      <Link to="/dosen/mk/QR/:id">
+                      <Link to={`/dosen/mk/QR/${id}`}>
                         <button className="qr-button mb-1">Lihat QR</button>
                       </Link>
                       <br></br>

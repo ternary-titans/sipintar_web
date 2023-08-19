@@ -102,7 +102,10 @@ function App() {
           <Route path="/dosen/rekapbln" element={<DosenRkpnBln />} />
           //Mahasiswa
           <Route path="/mahasiswa" element={<Mahasiswa />} />
-          <Route path="/mahasiswa/aktivasi" element={<MahasiswaAktivasi />} />
+          <Route
+            path="/mahasiswa/aktivasi/:id"
+            element={<MahasiswaAktivasi />}
+          />
           <Route path="/mahasiswa/qr/:id" element={<MahasiswaQR />} />
           <Route path="/mahasiswa/rekap" element={<MahasiswaRkp />} />
           <Route path="/mahasiswa/mk/:id" element={<MahasiswaMK />} />

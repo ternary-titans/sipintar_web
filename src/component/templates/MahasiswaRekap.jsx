@@ -44,20 +44,20 @@ export const MahasiswaRekap = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, []);
-  async function fetchData() {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/mahasiswa/1/rekapitulasi`
-      );
-      setRekapMHsData(response.data.data.rekapitulasi);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/mahasiswa/1/rekapitulasi`
+        );
+        setRekapMHsData(response.data.data.rekapitulasi);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
     }
-  }
+    fetchData();
+  }, [rekapMHSData, setRekapMHsData]);
 
   const columns2 = [
     "No",
@@ -66,15 +66,7 @@ export const MahasiswaRekap = () => {
     "Topik",
     "Status",
   ];
-  const data2 = [
-    {
-      No: 1,
-      "Tanggal Realisasi": "10 mei 2023",
-      "Jam Perkuliahan": "09.00 - 10.00",
-      Topik: "Topik 1",
-      Status: "Hadir",
-    },
-  ];
+
   const columns3 = ["Mata Kuliah", "Dosen"];
   const data3 = [
     {
@@ -145,16 +137,27 @@ export const MahasiswaRekap = () => {
                   textAlign={textAlign}
                 />
               </div>
+
               <div>
-                <Table
-                  columns={columns2}
-                  data={data2}
-                  columnAlignments={columnAlignments}
-                  headerBackgroundColor={headerBackgroundColor}
-                  headerBorderColor={headerBorderColor2}
-                  pageSizeOptions={pageSizeOptions}
-                  style={{ marginTop: "10px" }}
-                />
+                {loading ? (
+                  <p>Loading...</p>
+                ) : (
+                  <Table
+                    columns={columns2}
+                    data={rekapMHSData.map((item, index) => ({
+                      No: index + 1,
+                      "Tanggal Realisasi": item.mataKuliah,
+                      "Jam Perkuliahan": item.total_jam,
+                      Topik: item.topik_perkuliahan,
+                      Status: item.status_presentasi,
+                    }))}
+                    columnAlignments={columnAlignments}
+                    headerBackgroundColor={headerBackgroundColor}
+                    headerBorderColor={headerBorderColor2}
+                    pageSizeOptions={pageSizeOptions}
+                    style={{ marginTop: "10px" }}
+                  />
+                )}
               </div>
             </div>
           )}
