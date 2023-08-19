@@ -36,8 +36,8 @@ export const FormRekapDosen = () => {
       No: "1",
       Kelas: "IK3A",
       "Mata Kuliah": "Jaringan",
-      "Total Jam Perkuliahan": "13",
-      Presentase: "85%",
+      "Total Jam Perkuliahan": "2",
+      Presentase: "12.5%",
       Aksi: (
         <div className="flex flex-col gap-2 items-center">
           <div className="text-center">

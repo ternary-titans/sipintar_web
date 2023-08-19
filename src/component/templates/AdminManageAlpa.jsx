@@ -37,7 +37,7 @@ export const AdminManageAlpa = () => {
     },
   ];
   return (
-    <div className="bg-gray-300 w-screen h-screen">
+    <div className="bg-gray-300 h-screen">
       <div className="relative">
         <Admin />
         <div className="flex items-center mt-5 justify-between gap-20 absolute top-[180%] left-[21%]">

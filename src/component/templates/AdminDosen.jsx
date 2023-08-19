@@ -98,7 +98,7 @@ export const AdminDosen = () => {
                           </Link>
                         </div>
                         <div
-                          className="text-center text-red-500 pointer hover:text-red-700 underline"
+                          className="text-center text-red-500 pointer pointer hover:text-red-700 underline"
                           onClick={() => handleDelete(item.id)}
                         >
                           <FaTrash />

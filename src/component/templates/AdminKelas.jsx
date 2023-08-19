@@ -42,7 +42,7 @@ export const AdminKelas = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/jurusan/${id}`);
+      await axios.delete(`http://localhost:3000/api/kelas/${id}`);
       const updatedData = KelasData.filter((item) => item.id !== id);
       setKelasData(updatedData);
     } catch (error) {

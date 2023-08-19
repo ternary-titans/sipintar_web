@@ -214,11 +214,11 @@ export const Jadwal = () => {
                     data={jadwalData.map((item, index) => ({
                       No: index + 1,
                       Hari: item.hari,
-                      Waktu: item.jam_mulai - item.jam_akhir,
+                      Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
                       "Mata Kuliah": item.nama_mk,
                       "Total Jam": item.total_jam,
                       Dosen: item.nama_dosen,
-                      Ruangan: item.label_ruang,
+                      Ruangan: item.ruangan,
                       Aksi: (
                         <div className="flex flex-row justify-center">
                           <Link to={`/admin/editjadwal/${item.id}`}>

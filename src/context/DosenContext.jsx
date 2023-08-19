@@ -4,7 +4,8 @@ const DosenContext = createContext();
 
 export const DosenProvider = ({ children }) => {
   const [dosenData, setDosenData] = useState({
-    userName: "Amran Yobioktabera", //
+    id: 1,
+    userName: "Amran Yobioktabera",
   });
 
   return (

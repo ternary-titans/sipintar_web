@@ -41,10 +41,10 @@ export const AdminMahasiswaRekapDetail = () => {
       No: 1,
       "Mata Kuliah": "PBO",
       "Total Jam Pertemuan": "32 jam",
-      Hadir: "30 jam",
-      Sakit: "1",
-      Izin: "1",
-      Alpa: "1",
+      Hadir: "32 jam",
+      Sakit: "0",
+      Izin: "0",
+      Alpa: "0",
       Aksi: (
         <div className="text-center">
           <Link
@@ -75,9 +75,9 @@ export const AdminMahasiswaRekapDetail = () => {
   const columns2 = ["Sakit", "Izin", "Alpa"];
   const data2 = [
     {
-      Sakit: [":", "36", " jam"],
-      Izin: [":", "84", " jam"],
-      Alpa: [":", "84", " jam"],
+      Sakit: [":", "0", " jam"],
+      Izin: [":", "0", " jam"],
+      Alpa: [":", "0", " jam"],
     },
   ];
   const columnWidths = ["100px"];

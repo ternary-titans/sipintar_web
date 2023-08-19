@@ -15,7 +15,7 @@ const TanggalInput = ({ onTanggalChange }) => {
     <div className="mb-3 flex items-center gap-3">
       <DatePicker
         selected={tanggal}
-        className="w-full bg-[#d1d5db] p-0.5 text-black placeholder-gray-400"
+        className="w-full bg-[#d1d5db] text-right p-0.5 text-black placeholder-gray-400"
         onChange={handleTanggalChange}
         dateFormat="dd/MM/yyyy"
         placeholderText="Pilih Tanggal"

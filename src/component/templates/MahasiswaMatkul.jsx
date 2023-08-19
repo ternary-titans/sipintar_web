@@ -1,26 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 export const MahasiswaMatkul = () => {
-  const columns = ["No", "Hari", "Waktu", "Dosen", "Ruangan", "Aksi"];
-  const data = [
-    {
-      No: "1",
-      Hari: "Senin",
-      Waktu: "08:00 - 09:00",
-      Dosen: "Pak Amran",
-      Ruangan: "MST II/06",
-      Aksi: (
-        <Link to="/mahasiswa/qr">
-          <button className="qr-button ml-2 mb-1">Lihat QR</button>
-        </Link>
-      ),
-    },
-  ];
+  const { id } = useParams();
+  const columns = ["No", "Hari", "Waktu", "Topik", "Dosen", "Ruangan", "Aksi"];
 
   const columnAlignments = [
     "center",
@@ -35,6 +24,25 @@ export const MahasiswaMatkul = () => {
   const headerBorderColor = "#2563eb";
   const pageSizeOptions = [5, 10];
 
+  const [mahasiswaMKData, setMahasiswaMKData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, [id, fetchData]);
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/mahasiswa/1/listPertemuan/${id}`
+      );
+      setMahasiswaMKData(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
       <Mahasiswa />
@@ -47,7 +55,7 @@ export const MahasiswaMatkul = () => {
         >
           <div className="flex flex-row justify-between">
             <div>
-              <Text type="title3" text="Jadwal Pertemuan Mara Kuliah A" />
+              <Text type="title3" text="Jadwal Pertemuan Mata Kuliah A" />
             </div>
             <div>
               <Link to="/mahasiswa/aktivasi">
@@ -57,21 +65,37 @@ export const MahasiswaMatkul = () => {
           </div>
 
           <div>
-            <Table
-              columns={columns}
-              data={data}
-              columnAlignments={columnAlignments}
-              headerBackgroundColor={headerBackgroundColor}
-              headerBorderColor={headerBorderColor}
-              pageSizeOptions={pageSizeOptions}
-              style={{ marginTop: "10px" }}
-            />
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <Table
+                columns={columns}
+                data={mahasiswaMKData.map((item, index) => ({
+                  No: index + 1,
+                  Hari: `${item.hari}, ${item.waktu_realisasi}`,
+                  Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
+                  Topik: item.topik_perkuliahan,
+                  Dosen: item.dosen,
+                  Ruangan: item.ruangan,
+                  Aksi: (
+                    <Link to="/mahasiswa/qr/:id">
+                      <button className="qr-button ml-2 mb-1">Lihat QR</button>
+                    </Link>
+                  ),
+                }))}
+                columnAlignments={columnAlignments}
+                headerBackgroundColor={headerBackgroundColor}
+                headerBorderColor={headerBorderColor}
+                pageSizeOptions={pageSizeOptions}
+                style={{ marginTop: "10px" }}
+              />
+            )}
           </div>
         </CardUser>
       </div>
       <style>
         {`
-        .aktivasi-button {
+          .aktivasi-button {
             background-color: #172554;
             color: #facc15;;
             border-radius: 4px;

@@ -1,39 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Mahasiswa from "./Mahasiswa";
 import { Link } from "react-router-dom";
 import CardManage from "../molecules/CardManage";
 import CardMk from "../molecules/CardMk";
 import Text from "../atoms/Text";
 import { BsFillPersonFill } from "react-icons/bs";
-const data = [
-  {
-    id: 1,
-    nama: "pbo",
-    kelas: "IKA",
-  },
-  {
-    id: 2,
-    nama: "pbi",
-    kelas: "IKA",
-  },
-  {
-    id: 3,
-    nama: "pba",
-    kelas: "IKA",
-  },
-  {
-    id: 4,
-    nama: "pbu",
-    kelas: "IKC",
-  },
-  {
-    id: 5,
-    nama: "pbe",
-    kelas: "IKD",
-  },
-];
 
 export const MahasiswaDashboard = () => {
+  const [mkData, setMkData] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/mahasiswa/1/mataKuliah")
+      .then((response) => response.json())
+      .then((data) => setMkData(data.data))
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Mahasiswa />
@@ -74,12 +56,17 @@ export const MahasiswaDashboard = () => {
             />
           </div>
           <div className="flex flex-wrap mt-36 gap-5 px-8 pb-8">
-            {data.map((rifka) => (
+            {mkData.map((rifka) => (
               <Link
-                to={`/mahasiswa/mk/${rifka.id}`}
+                to={`/mahasiswa/mk/${rifka.kelas_mk_id}`}
                 className="w-[calc(25%_-_1rem)]"
+                key={rifka.kelas_mk_id}
               >
-                <CardMk height={180} text1={rifka.nama} text2={rifka.kelas} />
+                <CardMk
+                  height={180}
+                  text1={rifka.nama_mk}
+                  text2={rifka.kelas}
+                />
               </Link>
             ))}
           </div>

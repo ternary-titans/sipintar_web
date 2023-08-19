@@ -8,44 +8,32 @@ import TabelData from "../molecules/TabelData";
 
 export const DosenDashboard = () => {
   const columns = ["Waktu", "Kelas", "Ruangan", "Mata Kuliah"];
-  const data = [
-    {
-      Waktu: "07.00 - 08.00",
-      Kelas: "IK3A",
-      Ruangan: "SBII/07",
-      "Mata Kuliah": "Pemrograman Basis Data",
-    },
-    {
-      Waktu: "07.00 - 08.00",
-      Kelas: "IK3A",
-      Ruangan: "SBII/07",
-      "Mata Kuliah": "Pemrograman Basis Data",
-    },
-    {
-      Waktu: "07.00 - 08.00",
-      Kelas: "IK3A",
-      Ruangan: "SBII/07",
-      "Mata Kuliah": "Pemrograman Basis Data Jaringan",
-    },
-  ];
-
   const columnWidths = ["100px", "50px", "100px", "200px", "20px"];
   const fontSize = "12px";
   const textAlign = "start";
 
   const [mkData, setMkData] = useState([]);
-  const dosenId = 1;
+  const [jadwalData, setJadwalData] = useState([]);
+  const [hari, setHari] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/dosen/${dosenId}/mataKuliah`)
+    fetch("http://localhost:3000/api/dosen/1/mataKuliah")
+      .then((response) => response.json())
+      .then((data) => setMkData(data.data))
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/dosen/1/jadwal?hari=senin")
       .then((response) => response.json())
       .then((data) => {
-        setMkData(data.mkData);
+        setJadwalData(data.data);
+        if (data.data.length > 0) {
+          setHari(data.data[0].hari);
+        }
       })
-      .catch((error) =>
-        console.error("Error fetching mata kuliah data:", error)
-      );
-  }, [dosenId]);
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   return (
     <div>
@@ -56,13 +44,13 @@ export const DosenDashboard = () => {
             {mkData &&
               mkData.map((rifka) => (
                 <Link
-                  to={`/dosen/mk/${rifka.id}`}
+                  to={`/dosen/mk/${rifka.kelas_mk_id}`}
                   className="w-[calc(30%_-_1rem)]"
-                  key={rifka.id}
+                  key={rifka.kelas_mk_id}
                 >
                   <CardMk
                     height={180}
-                    text1={rifka.nama_mk + "" + rifka.kode_mk}
+                    text1={rifka.nama_mk}
                     text2={rifka.kelas}
                   />
                 </Link>
@@ -81,13 +69,18 @@ export const DosenDashboard = () => {
                 <div className="text-center">
                   <Text type="title2" text="Jadwal Mengajar Harian" />
                   <br />
-                  <Text type="title2" text="Senin, 10 Mei 2023" />
+                  <Text type="title2" text={`${hari}`} />
                 </div>
                 <hr className="w-full h-0.5 bg-black mb-2" />
                 <div>
                   <TabelData
                     colomsData={columns}
-                    dataData={data}
+                    dataData={jadwalData.map((item) => ({
+                      Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
+                      Kelas: item.kelas,
+                      Ruangan: item.ruangan,
+                      "Mata Kuliah": item.nama_mk,
+                    }))}
                     layout="horizontal"
                     columnWidths={columnWidths}
                     fontSize={fontSize}

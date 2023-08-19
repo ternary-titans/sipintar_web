@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
 import TableData from "../molecules/TabelData";
+import axios from "axios";
 
 export const MahasiswaRekap = () => {
   const content = "Konten CardUser yang panjang";
@@ -22,26 +23,6 @@ export const MahasiswaRekap = () => {
     "Presentase",
     "Aksi",
   ];
-  const data = [
-    {
-      No: 1,
-      "Mata Kuliah": "Bais Data",
-      "Total Jam Pertemuan": "32 jam",
-      Hadir: "16 jam",
-      Sakit: "1 jam",
-      Izin: "1 jam",
-      Alpa: "0",
-      Presentase: "50%",
-      Aksi: (
-        <button
-          style={{ textDecoration: "underline", color: "blue" }}
-          onClick={() => setShowTable2(true)}
-        >
-          Detail
-        </button>
-      ),
-    },
-  ];
 
   const columnAlignments = [
     "center",
@@ -58,6 +39,25 @@ export const MahasiswaRekap = () => {
   const headerBorderColor = "#2563eb";
   const headerBorderColor2 = "#facc15";
   const pageSizeOptions = [5, 10, 25];
+
+  const [rekapMHSData, setRekapMHsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/mahasiswa/1/rekapitulasi`
+      );
+      setRekapMHsData(response.data.data.rekapitulasi);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  }
 
   const columns2 = [
     "No",
@@ -78,8 +78,8 @@ export const MahasiswaRekap = () => {
   const columns3 = ["Mata Kuliah", "Dosen"];
   const data3 = [
     {
-      "Mata Kuliah": "Basis Data",
-      Dosen: "Amran Yobioktabera S.Kom., M.Kom.",
+      "Mata Kuliah": "Jaringan",
+      Dosen: "Bu Wikta",
     },
   ];
   const columnWidths = ["30px", "250px"];
@@ -100,15 +100,36 @@ export const MahasiswaRekap = () => {
             <Text type="title3" text="Rekapitulasi Presensi Mahasiswa" />
           </div>
           <div>
-            <Table
-              columns={columns}
-              data={data}
-              columnAlignments={columnAlignments}
-              headerBackgroundColor={headerBackgroundColor}
-              headerBorderColor={headerBorderColor}
-              pageSizeOptions={pageSizeOptions}
-              style={{ marginTop: "10px" }}
-            />
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <Table
+                columns={columns}
+                data={rekapMHSData.map((item, index) => ({
+                  No: index + 1,
+                  "Mata Kuliah": item.mataKuliah,
+                  "Total Jam Pertemuan": item.total_jam,
+                  Hadir: item.total_hadir,
+                  Sakit: item.total_sakit,
+                  Izin: item.total_izin,
+                  Alpa: item.total_alpha,
+                  Presentase: "50%",
+                  Aksi: (
+                    <button
+                      style={{ textDecoration: "underline", color: "blue" }}
+                      onClick={() => setShowTable2(true)}
+                    >
+                      Detail
+                    </button>
+                  ),
+                }))}
+                columnAlignments={columnAlignments}
+                headerBackgroundColor={headerBackgroundColor}
+                headerBorderColor={headerBorderColor}
+                pageSizeOptions={pageSizeOptions}
+                style={{ marginTop: "10px" }}
+              />
+            )}
           </div>
           <hr className="w-full h-0.5 bg-gray-400 my-6 mt-8" />
           {showTable2 && (

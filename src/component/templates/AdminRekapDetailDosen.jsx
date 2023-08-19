@@ -20,12 +20,12 @@ export const AdminRekapDetailDosen = () => {
     {
       No: 1,
       "Hari,Tanggal Realisasi": "Senin, 4 Januari 2023",
-      "Jam Realisasi": "08:00 - 09:00",
+      "Jam Realisasi": "08:00 - 09:30",
       "Mata Kuliah": "Basis Data",
       Topik: "Topik 1",
       Hadir: "22",
       Sakit: "1",
-      Izin: "5",
+      Izin: "1",
       Alpa: "1",
     },
   ];
