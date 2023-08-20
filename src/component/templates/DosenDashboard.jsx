@@ -24,7 +24,8 @@ export const DosenDashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/dosen/1/jadwal?hari=senin")
+    getNamaHari();
+    fetch(`http://localhost:3000/api/dosen/1/jadwal?hari=${hari}`)
       .then((response) => response.json())
       .then((data) => {
         setJadwalData(data.data);
@@ -33,7 +34,41 @@ export const DosenDashboard = () => {
         }
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  }, [hari]);
+
+  const getNamaHari = () => {
+    const hariIni = new Date();
+    const kodeHari = hariIni.getDay();
+
+    let namaHari;
+    switch (kodeHari) {
+      case 0:
+        namaHari = "Minggu";
+        break;
+      case 1:
+        namaHari = "Senin";
+        break;
+      case 2:
+        namaHari = "Selasa";
+        break;
+      case 3:
+        namaHari = "Rabu";
+        break;
+      case 4:
+        namaHari = "Kamis";
+        break;
+      case 5:
+        namaHari = "Jumat";
+        break;
+      case 6:
+        namaHari = "Sabtu";
+        break;
+      default:
+        namaHari = "Tidak diketahui";
+    }
+
+    setHari(namaHari);
+  };
 
   return (
     <div>

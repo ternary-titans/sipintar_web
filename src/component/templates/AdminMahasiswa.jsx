@@ -10,16 +10,7 @@ import Admin from "./Admin";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 export const AdminMahasiswa = () => {
-  const columns = [
-    "No",
-    "Nama",
-    "NIM",
-    "Kelas",
-    "Prodi",
-    "Jurusan",
-    // "Password",
-    "Aksi",
-  ];
+  const columns = ["No", "Nama", "NIM", "Kelas", "Prodi", "Jurusan", "Aksi"];
 
   const columnAlignments = [
     "center",
@@ -42,6 +33,7 @@ export const AdminMahasiswa = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
   async function fetchData(query = "") {
     try {
       const response = await axios.get(

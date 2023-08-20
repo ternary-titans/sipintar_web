@@ -13,8 +13,6 @@ export const MahasiswaQR = () => {
   const fontSize = "12px";
   const textAlign = "start";
 
-  const [loading, setLoading] = useState(true);
-
   const [qrCodeData, setQrCodeData] = useState([]);
   const [dataPresensi, setDataPresensi] = useState([]);
 
@@ -24,7 +22,6 @@ export const MahasiswaQR = () => {
 
   useEffect(() => {
     if (qrCodeData.id) {
-      // Menambahkan pengecekan qrCodeData.id sebelum memanggil fetchPresensi
       fetchPresensi(qrCodeData.id);
     }
   }, [qrCodeData]);
@@ -49,6 +46,16 @@ export const MahasiswaQR = () => {
     } catch (error) {
       console.error("Error fetching List Presensi:", error);
     }
+  }
+
+  function formatJamMenitDetik(datetimeString) {
+    const dateTime = new Date(datetimeString);
+
+    const jam = String(dateTime.getHours()).padStart(2, "0");
+    const menit = String(dateTime.getMinutes()).padStart(2, "0");
+    const detik = String(dateTime.getSeconds()).padStart(2, "0");
+
+    return `${jam}:${menit}:${detik}`;
   }
 
   return (
@@ -77,20 +84,29 @@ export const MahasiswaQR = () => {
             </div>
             <hr className="w-full h-0.5 bg-black" />
             <div>
-              {!loading && dataPresensi.length > 0 ? (
-                <TableData
-                  columns={columns}
-                  data={dataPresensi.map((item, index) => ({
-                    No: index + 1,
-                    Nama: item.nama_mahasiswa,
-                    NIM: item.nim,
-                    "Waktu Presensi": item.waktu_presensi,
-                  }))}
-                  layout="horizontal"
-                  columnWidths={columnWidths}
-                  fontSize={fontSize}
-                  textAlign={textAlign}
-                />
+              {dataPresensi.length > 0 ? (
+                <table>
+                  <thead>
+                    <tr>
+                      <th className="py-1 px-2">No</th>
+                      <th className="py-1 px-2">Nama</th>
+                      <th className="py-1 px-2">NIM</th>
+                      <th className="py-1 px-2">Waktu Presensi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataPresensi.map((data, index) => (
+                      <tr key={index}>
+                        <td className="py-1 px-2">{index + 1}</td>
+                        <td className="py-1 px-2">{data.nama_mahasiswa}</td>
+                        <td className="py-1 px-2">{data.nim}</td>
+                        <td className="py-1 px-2">
+                          {formatJamMenitDetik(data.waktu_presensi)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               ) : (
                 <p>No data available.</p>
               )}

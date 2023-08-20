@@ -1,64 +1,64 @@
 import React, { useEffect, useState } from "react";
-import Dosen from "./Dosen";
-import CardUser from "../atoms/CardUser";
-import Text from "../atoms/Text";
-import TableData from "../molecules/TabelData";
-import { BsTrash } from "react-icons/bs";
+import { useParams } from "react-router-dom";
 import axios from "axios";
+import Dosen from "./Dosen";
+import Text from "../atoms/Text";
+import CardUser from "../atoms/CardUser";
+import { FaTrash } from "react-icons/fa";
 
 export const DosenQR = () => {
-  const columns = ["No", "Nama", "NIM", "Presensi", "Validasi"];
+  const { id } = useParams();
 
-  const columnWidths = ["30px", "150px", "100px", "100px", "100px"];
-  const fontSize = "12px";
-  const textAlign = "start";
-
-  const [qrCodeData, setQrCodeData] = useState("");
+  const [qrCodeData, setQrCodeData] = useState([]);
+  const [dataPresensi, setDataPresensi] = useState([]);
 
   useEffect(() => {
-    fetchQRCodeData();
-  }, []);
+    fetchQRCodeData(id);
+  }, [id]);
 
-  async function fetchQRCodeData() {
+  useEffect(() => {
+    if (qrCodeData.id) {
+      fetchPresensi(qrCodeData.id);
+    }
+  }, [qrCodeData]);
+
+  async function fetchQRCodeData(id) {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/mahasiswa/1/listPertemuan/1`
+        `http://localhost:3000/api/aktivasiPerkuliahan/${id}`
       );
-      // setQrCodeData(response.data.data);
-      const qrCodeArray = response.data.data;
-      if (qrCodeArray.length > 0) {
-        const qrCodeData = qrCodeArray[0].qr_code;
-        setQrCodeData(qrCodeData);
-      }
+      setQrCodeData(response.data.data);
     } catch (error) {
       console.error("Error fetching QR Code data:", error);
     }
   }
 
-  const [listRekapData, setListRekapData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/api/listPresensi/1`
-        );
-        setListRekapData(response.data.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
+  async function fetchPresensi(qrId) {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/listPresensi/${qrId}`
+      );
+      setDataPresensi(response.data.data);
+    } catch (error) {
+      console.error("Error fetching List Presensi:", error);
     }
-    fetchData();
-  }, [listRekapData, setListRekapData]);
+  }
+
+  function formatJamMenitDetik(datetimeString) {
+    const dateTime = new Date(datetimeString);
+
+    const jam = String(dateTime.getHours()).padStart(2, "0");
+    const menit = String(dateTime.getMinutes()).padStart(2, "0");
+    const detik = String(dateTime.getSeconds()).padStart(2, "0");
+
+    return `${jam}:${menit}:${detik}`;
+  }
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/listPresensi/${id}`);
-      const updatedData = listRekapData.filter((item) => item.id !== id);
-      setListRekapData(updatedData);
+      await axios.delete(`http://localhost:3000/api/presensi/${id}`);
+      const updatedData = dataPresensi.filter((item) => item.id !== id);
+      setDataPresensi(updatedData);
     } catch (error) {
       console.error("Error deleting data:", error);
     }
@@ -75,7 +75,7 @@ export const DosenQR = () => {
             borderColor="#1e40af"
             borderWidth={2}
           >
-            <img src={qrCodeData} alt="" />
+            <img src={qrCodeData?.qr_code} alt="qr code presensi" />
           </CardUser>
         </div>
         <div className="m-8">
@@ -90,33 +90,37 @@ export const DosenQR = () => {
             </div>
             <hr className="w-full h-0.5 bg-black" />
             <div>
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                <TableData
-                  colomsData={columns}
-                  dataData={listRekapData.map((item, index) => ({
-                    No: index + 1,
-                    Nama: item.nama_mahasiswa,
-                    NIM: item.nim,
-                    Presensi: item.waktu_presensi,
-                    Validasi: (
-                      <div className="flex items-center justify-center">
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          className="text-red-500"
+              <table>
+                <thead>
+                  <tr>
+                    <th className="py-1 px-2">No</th>
+                    <th className="py-1 px-2">Nama</th>
+                    <th className="py-1 px-2">NIM</th>
+                    <th className="py-1 px-2">Waktu Presensi</th>
+                    <th className="py-1 px-2">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataPresensi.map((data, index) => (
+                    <tr key={index}>
+                      <td className="py-1 px-2">{index + 1}</td>
+                      <td className="py-1 px-2">{data.nama_mahasiswa}</td>
+                      <td className="py-1 px-2">{data.nim}</td>
+                      <td className="py-1 px-2">
+                        {formatJamMenitDetik(data.waktu_presensi)}
+                      </td>
+                      <td className="py-1 px-2">
+                        <div
+                          className="text-center text-red-500 pointer hover:text-red-700 underline"
+                          onClick={() => handleDelete(data.id)}
                         >
-                          <BsTrash className="" />
-                        </button>
-                      </div>
-                    ),
-                  }))}
-                  layout="horizontal"
-                  columnWidths={columnWidths}
-                  fontSize={fontSize}
-                  textAlign={textAlign}
-                />
-              )}
+                          <FaTrash />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </CardUser>
         </div>

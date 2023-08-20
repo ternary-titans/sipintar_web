@@ -3,7 +3,6 @@ import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
-import TableData from "../molecules/TabelData";
 import axios from "axios";
 
 export const MahasiswaRekap = () => {

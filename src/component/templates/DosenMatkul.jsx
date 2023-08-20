@@ -51,6 +51,32 @@ export const DosenMatkul = () => {
     }
   }
 
+  function formatDate(dateString) {
+    const dateObject = new Date(dateString);
+
+    const months = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    const day = dateObject.getDate();
+    const month = dateObject.getMonth();
+    const year = dateObject.getFullYear();
+
+    const formattedDate = `${day} ${months[month]} ${year}`;
+    return formattedDate;
+  }
+
   return (
     <div>
       <Dosen />
@@ -75,16 +101,14 @@ export const DosenMatkul = () => {
                   Kelas: item.kelas,
                   Topik: item.topik_perkuliahan,
                   "Mata Kuliah": item.mataKuliah,
-                  "Realisasi Tanggal": `${item.hari}, ${item.waktu_realisasi}`,
+                  "Realisasi Tanggal": `${item.hari}, ${formatDate(
+                    item.waktu_realisasi
+                  )}`,
                   "Realisasi Jam": `${item.jam_mulai} - ${item.jam_akhir}`,
                   Aksi: (
                     <>
-                      <Link to={`/dosen/mk/QR/${id}`}>
+                      <Link to={`/dosen/mk/QR/${item.id}`}>
                         <button className="qr-button mb-1">Lihat QR</button>
-                      </Link>
-                      <br></br>
-                      <Link to={`/dosen/mk/lihat/${id}`}>
-                        <button className="rekap-button">Lihat Rekap</button>
                       </Link>
                     </>
                   ),
