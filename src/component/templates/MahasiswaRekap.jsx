@@ -3,6 +3,7 @@ import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
+import TableData from "../molecules/TabelData";
 import axios from "axios";
 
 export const MahasiswaRekap = () => {
@@ -141,6 +142,16 @@ export const MahasiswaRekap = () => {
           {showDetail !== -1 && (
             <div style={{ marginTop: "20px" }}>
               <Text type="title3" text="Detail Rekapitulasi Presensi " />
+              <div style={{ marginTop: "10px" }}>
+                <div className="flex gap-5">
+                  <h2>Mata Kuliah :</h2>
+                  <span>{rekapMHSData[showDetail].mataKuliah}</span>
+                </div>
+                <div className="flex gap-5">
+                  <h2>Dosen :</h2>
+                  <span>{rekapMHSData[showDetail].dosen}</span>
+                </div>
+              </div>
               <div>
                 {loading ? (
                   <p>Loading...</p>
