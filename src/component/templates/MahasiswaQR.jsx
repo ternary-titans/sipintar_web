@@ -6,14 +6,7 @@ import TableData from "../molecules/TabelData";
 import axios from "axios";
 
 export const MahasiswaQR = () => {
-  const columns = ["No", "Nama", "NIM"];
-  const data = [
-    {
-      No: "1",
-      Nama: "Rifka Anggun",
-      NIM: "3.34.20.0.21",
-    },
-  ];
+  const columns = ["No", "Nama", "NIM", "Waktu Presensi"];
 
   const columnWidths = ["30px", "150px", "20px"];
   const fontSize = "12px";
@@ -38,6 +31,27 @@ export const MahasiswaQR = () => {
       }
     } catch (error) {
       console.error("Error fetching QR Code data:", error);
+    }
+  }
+
+  const [presensiData, setPresensiData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/listPresensi/1`
+      );
+      console.log("API response:", response.data);
+      setPresensiData(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
     }
   }
 
@@ -67,14 +81,23 @@ export const MahasiswaQR = () => {
             </div>
             <hr className="w-full h-0.5 bg-black" />
             <div>
-              <TableData
-                colomsData={columns}
-                dataData={data}
-                layout="horizontal"
-                columnWidths={columnWidths}
-                fontSize={fontSize}
-                textAlign={textAlign}
-              />
+              {!loading && presensiData.length > 0 ? (
+                <TableData
+                  columns={columns}
+                  data={presensiData.map((item, index) => ({
+                    No: index + 1,
+                    Nama: item.nama_mahasiswa,
+                    NIM: item.nim,
+                    "Waktu Presensi": item.waktu_presensi,
+                  }))}
+                  layout="horizontal"
+                  columnWidths={columnWidths}
+                  fontSize={fontSize}
+                  textAlign={textAlign}
+                />
+              ) : (
+                <p>No data available.</p>
+              )}
             </div>
           </CardUser>
         </div>

@@ -58,7 +58,7 @@ export const MahasiswaMatkul = () => {
               <Text type="title3" text="Jadwal Pertemuan Mata Kuliah" />
             </div>
             <div>
-              <Link to="/mahasiswa/aktivasi/:id">
+              <Link to={`/mahasiswa/aktivasi`}>
                 <button className="aktivasi-button">AKTIVASI</button>
               </Link>
             </div>
@@ -78,7 +78,7 @@ export const MahasiswaMatkul = () => {
                   Dosen: item.dosen,
                   Ruangan: item.ruangan,
                   Aksi: (
-                    <Link to="/mahasiswa/qr/:id">
+                    <Link to={`/mahasiswa/qr/${id}`}>
                       <button className="qr-button ml-2 mb-1">Lihat QR</button>
                     </Link>
                   ),

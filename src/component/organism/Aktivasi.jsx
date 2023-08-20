@@ -64,13 +64,9 @@ export const Aktivasi = ({ id }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const kelasMkDosen = localStorage.getItem("kelas_mk_dosen_id");
 
-    if (
-      realisasiTanggal !== "" &&
-      jamPertama !== "" &&
-      jamKedua !== "" &&
-      topik !== ""
-    ) {
+    if (realisasiTanggal !== "" && jamPertama !== "" && jamKedua !== "") {
       try {
         const response = await axios.post(
           `http://localhost:3000/api/aktivasiPerkuliahan`,
@@ -82,7 +78,7 @@ export const Aktivasi = ({ id }) => {
             ruangan: "SB-1/1",
             topik_perkuliahan: topik,
             total_jam: totaljamValue,
-            kelas_mk_dosen_id: 2,
+            kelas_mk_dosen_id: kelasMkDosen,
           }
         );
 
@@ -94,7 +90,6 @@ export const Aktivasi = ({ id }) => {
         setJamPertama("");
         setJamKedua("");
         setTopik("");
-        setTotalJamValue("");
 
         navigate(-1);
       } catch (error) {
