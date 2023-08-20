@@ -5,7 +5,6 @@ import CardManage from "../molecules/CardManage";
 import CardMk from "../molecules/CardMk";
 import Text from "../atoms/Text";
 import { useNavigate } from "react-router-dom";
-import { BsFillPersonFill } from "react-icons/bs";
 
 export const MahasiswaDashboard = () => {
   const navigate = useNavigate();
