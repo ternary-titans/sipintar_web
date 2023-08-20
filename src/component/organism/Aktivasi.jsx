@@ -67,12 +67,7 @@ export const Aktivasi = ({ id }) => {
 
     const kelasMkDosen = localStorage.getItem("kelas_mk_dosen_id");
 
-    if (
-      realisasiTanggal !== "" &&
-      jamPertama !== "" &&
-      jamKedua !== "" &&
-      topik !== ""
-    ) {
+    if (realisasiTanggal !== "" && jamPertama !== "" && jamKedua !== "") {
       try {
         const response = await axios.post(
           `http://localhost:3000/api/aktivasiPerkuliahan`,
@@ -96,7 +91,6 @@ export const Aktivasi = ({ id }) => {
         setJamPertama("");
         setJamKedua("");
         setTopik("");
-        setTotalJamValue("");
 
         navigate(-1);
       } catch (error) {

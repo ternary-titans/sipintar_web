@@ -8,10 +8,12 @@ import { useParams } from "react-router-dom";
 
 export const MahasiswaQR = () => {
   const { id } = useParams();
-  const columns = ["id", "nama_mahasiswa", "nim"];
+  const columns = ["id", "nama_mahasiswa", "nim", "waktu_presensi"];
   const columnWidths = ["30px", "150px", "20px"];
   const fontSize = "12px";
   const textAlign = "start";
+
+  const [loading, setLoading] = useState(true);
 
   const [qrCodeData, setQrCodeData] = useState([]);
   const [dataPresensi, setDataPresensi] = useState([]);
@@ -75,14 +77,23 @@ export const MahasiswaQR = () => {
             </div>
             <hr className="w-full h-0.5 bg-black" />
             <div>
-              <TableData
-                colomsData={columns}
-                dataData={dataPresensi}
-                layout="horizontal"
-                columnWidths={columnWidths}
-                fontSize={fontSize}
-                textAlign={textAlign}
-              />
+              {!loading && dataPresensi.length > 0 ? (
+                <TableData
+                  columns={columns}
+                  data={dataPresensi.map((item, index) => ({
+                    No: index + 1,
+                    Nama: item.nama_mahasiswa,
+                    NIM: item.nim,
+                    "Waktu Presensi": item.waktu_presensi,
+                  }))}
+                  layout="horizontal"
+                  columnWidths={columnWidths}
+                  fontSize={fontSize}
+                  textAlign={textAlign}
+                />
+              ) : (
+                <p>No data available.</p>
+              )}
             </div>
           </CardUser>
         </div>
