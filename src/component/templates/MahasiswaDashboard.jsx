@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { BsFillPersonFill } from "react-icons/bs";
 import Mahasiswa from "./Mahasiswa";
 import CardManage from "../molecules/CardManage";
 import CardMk from "../molecules/CardMk";
 import Text from "../atoms/Text";
-import { BsFillPersonFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { BsFillPersonFill } from "react-icons/bs";
 
 export const MahasiswaDashboard = () => {
   const navigate = useNavigate();

@@ -64,6 +64,7 @@ export const Aktivasi = ({ id }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     const kelasMkDosen = localStorage.getItem("kelas_mk_dosen_id");
 
     if (realisasiTanggal !== "" && jamPertama !== "" && jamKedua !== "") {
