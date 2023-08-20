@@ -4,40 +4,48 @@ import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import TableData from "../molecules/TabelData";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 export const MahasiswaQR = () => {
-  const columns = ["No", "Nama", "NIM"];
-  const data = [
-    {
-      No: "1",
-      Nama: "Rifka Anggun",
-      NIM: "3.34.20.0.21",
-    },
-  ];
-
+  const { id } = useParams();
+  const columns = ["id", "nama_mahasiswa", "nim"];
   const columnWidths = ["30px", "150px", "20px"];
   const fontSize = "12px";
   const textAlign = "start";
 
-  const [qrCodeData, setQrCodeData] = useState("");
+  const [qrCodeData, setQrCodeData] = useState([]);
+  const [dataPresensi, setDataPresensi] = useState([]);
 
   useEffect(() => {
-    fetchQRCodeData();
-  }, []);
+    fetchQRCodeData(id);
+  }, [id]);
 
-  async function fetchQRCodeData() {
+  useEffect(() => {
+    if (qrCodeData.id) {
+      // Menambahkan pengecekan qrCodeData.id sebelum memanggil fetchPresensi
+      fetchPresensi(qrCodeData.id);
+    }
+  }, [qrCodeData]);
+
+  async function fetchQRCodeData(id) {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/mahasiswa/1/listPertemuan/1`
+        `http://localhost:3000/api/aktivasiPerkuliahan/${id}`
       );
-      // setQrCodeData(response.data.data);
-      const qrCodeArray = response.data.data;
-      if (qrCodeArray.length > 0) {
-        const qrCodeData = qrCodeArray[0].qr_code;
-        setQrCodeData(qrCodeData);
-      }
+      setQrCodeData(response.data.data);
     } catch (error) {
       console.error("Error fetching QR Code data:", error);
+    }
+  }
+
+  async function fetchPresensi(qrId) {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/listPresensi/${qrId}`
+      );
+      setDataPresensi(response.data.data);
+    } catch (error) {
+      console.error("Error fetching List Presensi:", error);
     }
   }
 
@@ -52,7 +60,7 @@ export const MahasiswaQR = () => {
             borderColor="#1e40af"
             borderWidth={2}
           >
-            <img src={qrCodeData} alt="" />
+            <img src={qrCodeData?.qr_code} alt="qr code presensi" />
           </CardUser>
         </div>
         <div className="m-8">
@@ -69,7 +77,7 @@ export const MahasiswaQR = () => {
             <div>
               <TableData
                 colomsData={columns}
-                dataData={data}
+                dataData={dataPresensi}
                 layout="horizontal"
                 columnWidths={columnWidths}
                 fontSize={fontSize}
