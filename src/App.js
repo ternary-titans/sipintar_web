@@ -50,6 +50,7 @@ function App() {
     <DosenProvider>
       <MahasiswaProvider>
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           //Admin-A
           <Route path="/admin/dashboard" element={<DashboardAdmin />} />

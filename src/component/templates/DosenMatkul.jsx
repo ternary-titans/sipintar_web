@@ -45,12 +45,12 @@ export const DosenMatkul = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      const id = localStorage.getItem("userData")
+      const dosenId = localStorage.getItem("userData")
         ? JSON.parse(localStorage.getItem("userData")).id
         : null;
 
       const response = await axios.get(
-        `http://localhost:3000/api/dosen/${id}/listPertemuan/${id}`,
+        `http://localhost:3000/api/dosen/${dosenId}/listPertemuan/${id}`,
         {
           headers: {
             Authorization: token,

@@ -32,7 +32,8 @@ export const MahasiswaMatkul = () => {
       ? JSON.parse(localStorage.getItem("userData")).token
       : null;
 
-    const mahasiswaId = localStorage.getItem("userData")
+    const mahasiswaId = localStorage.getItem("userData");
+    const idMhs = localStorage.getItem("userData")
       ? JSON.parse(localStorage.getItem("userData")).id
       : null;
 

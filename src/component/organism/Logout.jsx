@@ -1,8 +1,11 @@
 import Button from "../atoms/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../../context/AuthProvider";
 
 const Logout = ({ setLogoutOn, setChoice }) => {
+  const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleOKClick = async () => {
@@ -26,6 +29,7 @@ const Logout = ({ setLogoutOn, setChoice }) => {
       if (response.status === 200) {
         localStorage.removeItem("userData");
         localStorage.removeItem("kelas_mk_dosen_id");
+        setAuth({});
         navigate("/login");
       }
     } catch (error) {
