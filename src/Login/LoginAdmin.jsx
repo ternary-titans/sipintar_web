@@ -38,15 +38,15 @@ const Login = () => {
       );
 
       const token = response?.data.data.token;
-      const { id, role, username } = jwt_decode(token);
+      const { user_id, username, role, id, nama } = jwt_decode(token);
 
-      setAuth({ id, role, username, token });
+      setAuth({ id, username, nama, role, user_id, token });
       setUser("");
       setPwd("");
 
       localStorage.setItem(
         "userData",
-        JSON.stringify({ id, role, username, token })
+        JSON.stringify({ id, username, nama, role, user_id, token })
       );
 
       if (role === "Mahasiswa") navigate("/mahasiswa");
