@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
-import TableData from "../molecules/TabelData";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
