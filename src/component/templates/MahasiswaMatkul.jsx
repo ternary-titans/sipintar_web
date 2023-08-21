@@ -32,14 +32,14 @@ export const MahasiswaMatkul = () => {
       ? JSON.parse(localStorage.getItem("userData")).token
       : null;
 
-    const id = localStorage.getItem("userData")
+    const mahasiswaId = localStorage.getItem("userData")
       ? JSON.parse(localStorage.getItem("userData")).id
       : null;
 
     async function fetchData() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/${id}/listPertemuan/${id}`,
+          `http://localhost:3000/api/mahasiswa/${mahasiswaId}/listPertemuan/${id}`,
           {
             headers: {
               Authorization: token,
