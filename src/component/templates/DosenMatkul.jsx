@@ -37,11 +37,25 @@ export const DosenMatkul = () => {
 
   useEffect(() => {
     fetchData();
-  }, [id, fetchData]);
+  }, [id]);
+
   async function fetchData() {
     try {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      const id = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).id
+        : null;
+
       const response = await axios.get(
-        `http://localhost:3000/api/dosen/1/listPertemuan/${id}`
+        `http://localhost:3000/api/dosen/${id}/listPertemuan/${id}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
       setDosenMKData(response.data.data);
       setLoading(false);

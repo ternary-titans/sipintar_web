@@ -20,9 +20,18 @@ export const AdminTahunAjaran = () => {
 
   useEffect(() => {
     async function fetchData() {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/tahunAjaran"
+          "http://localhost:3000/api/tahunAjaran",
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
         setTahunAjaranData(response.data.data);
         setLoading(false);
@@ -37,7 +46,15 @@ export const AdminTahunAjaran = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/tahunAjaran/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`http://localhost:3000/api/tahunAjaran/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updatedData = TahunAjaranData.filter((item) => item.id !== id);
       setTahunAjaranData(updatedData);
     } catch (error) {

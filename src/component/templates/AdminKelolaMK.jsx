@@ -20,8 +20,17 @@ export const AdminKelolaMK = () => {
   useEffect(() => {
     async function fetchData() {
       try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
         const response = await axios.get(
-          "http://localhost:3000/api/mataKuliah"
+          "http://localhost:3000/api/mataKuliah",
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
         setMatakuliahData(response.data.data);
         setLoading(false);
@@ -36,7 +45,15 @@ export const AdminKelolaMK = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/mataKuliah/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`http://localhost:3000/api/mataKuliah/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updatedData = MatakuliahData.filter((item) => item.id !== id);
       setMatakuliahData(updatedData);
     } catch (error) {

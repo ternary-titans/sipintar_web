@@ -41,8 +41,6 @@ import MahasiswaQR from "./component/templates/MahasiswaQR";
 import MahasiswaRkp from "./component/templates/MahasiswaRekap";
 import MahasiswaMK from "./component/templates/MahasiswaMatkul";
 
-import Layout from "../src/Login/Layout";
-import RequireAuth from "./Login/RequireAuth";
 import Missing from "./Login/Missing";
 import { DosenProvider } from "./context/DosenContext";
 import { MahasiswaProvider } from "./context/MahasiswaContext";
@@ -52,7 +50,7 @@ function App() {
     <DosenProvider>
       <MahasiswaProvider>
         <Routes>
-          <Route path="/Login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           //Admin-A
           <Route path="/admin/dashboard" element={<DashboardAdmin />} />
           <Route path="/admin/dashboard/alpa" element={<AdminAlpa />} />

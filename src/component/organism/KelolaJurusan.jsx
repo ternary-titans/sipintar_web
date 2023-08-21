@@ -25,9 +25,21 @@ const KelolaJurusan = ({ isActive, setIsActive }) => {
 
     if (jurusanValue.trim() !== "") {
       try {
-        const response = await axios.post("http://localhost:3000/api/jurusan", {
-          nama_jurusan: jurusanValue,
-        });
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.post(
+          "http://localhost:3000/api/jurusan",
+          {
+            headers: {
+              Authorization: token,
+            },
+          },
+          {
+            nama_jurusan: jurusanValue,
+          }
+        );
 
         console.log("Data berhasil disimpan:", response.data);
 

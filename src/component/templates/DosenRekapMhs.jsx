@@ -43,8 +43,21 @@ export const DosenRekapMhs = () => {
   useEffect(() => {
     async function fetchData() {
       try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const id = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).id
+          : null;
+
         const response = await axios.get(
-          `http://localhost:3000/api/dosen/1/rekapitulasiMahasiswa`
+          `http://localhost:3000/api/dosen/${id}/rekapitulasiMahasiswa`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
         setRekapDosenMhsData(response.data.data.data);
         setLoading(false);

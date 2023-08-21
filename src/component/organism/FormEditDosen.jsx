@@ -25,8 +25,17 @@ const FormEditDosen = ({ id }) => {
   useEffect(() => {
     async function fetchData() {
       try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
         const response = await axios.get(
-          `http://localhost:3000/api/dosen/${id}`
+          `http://localhost:3000/api/dosen/${id}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
         const data = response.data.data;
         setNamaValue(data.nama_dosen);
@@ -66,8 +75,17 @@ const FormEditDosen = ({ id }) => {
     };
 
     try {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       const response = await axios.put(
         `http://localhost:3000/api/dosen/${id}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
         dataToUpdate
       );
 

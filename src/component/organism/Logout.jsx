@@ -1,14 +1,41 @@
 import Button from "../atoms/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Logout = ({ setLogoutVisible, setChoice }) => {
-  const handleOKClick = () => {
-    setChoice(true);
-    setLogoutVisible(false);
+const Logout = ({ setLogoutOn, setChoice }) => {
+  const navigate = useNavigate();
+
+  const handleOKClick = async () => {
+    try {
+      setChoice(true);
+      setLogoutOn(false);
+
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      const response = await axios.delete(
+        `http://localhost:3000/api/users/logout`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        localStorage.removeItem("userData");
+        localStorage.removeItem("kelas_mk_dosen_id");
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Error", error);
+    }
   };
 
   const handleCancelClick = () => {
     setChoice(false);
-    setLogoutVisible(false);
+    setLogoutOn(false);
   };
 
   return (

@@ -36,8 +36,17 @@ export const AdminMahasiswa = () => {
 
   async function fetchData(query = "") {
     try {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       const response = await axios.get(
-        `http://localhost:3000/api/mahasiswa?nama=${query}`
+        `http://localhost:3000/api/mahasiswa?nama=${query}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
       setMahasiswaData(response.data.data);
       setLoading(false);
@@ -49,7 +58,15 @@ export const AdminMahasiswa = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/mahasiswa/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`http://localhost:3000/api/mahasiswa/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updatedData = mahasiswaData.filter((item) => item.id !== id);
       setMahasiswaData(updatedData);
     } catch (error) {

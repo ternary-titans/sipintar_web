@@ -28,10 +28,23 @@ export const MahasiswaMatkul = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
+    const id = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).id
+      : null;
+
     async function fetchData() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/1/listPertemuan/${id}`
+          `http://localhost:3000/api/mahasiswa/${id}/listPertemuan/${id}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
         setMahasiswaMKData(response.data.data);
         setLoading(false);

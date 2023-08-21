@@ -65,6 +65,10 @@ export const Aktivasi = ({ id }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
     const kelasMkDosen = localStorage.getItem("kelas_mk_dosen_id");
 
     if (realisasiTanggal !== "" && jamPertama !== "" && jamKedua !== "") {
@@ -80,6 +84,11 @@ export const Aktivasi = ({ id }) => {
             topik_perkuliahan: topik,
             total_jam: totaljamValue,
             kelas_mk_dosen_id: kelasMkDosen,
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
           }
         );
 

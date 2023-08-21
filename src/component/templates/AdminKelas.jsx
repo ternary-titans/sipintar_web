@@ -28,7 +28,15 @@ export const AdminKelas = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:3000/api/kelas");
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get("http://localhost:3000/api/kelas", {
+          headers: {
+            Authorization: token,
+          },
+        });
         setKelasData(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -42,7 +50,15 @@ export const AdminKelas = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/kelas/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`http://localhost:3000/api/kelas/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updatedData = KelasData.filter((item) => item.id !== id);
       setKelasData(updatedData);
     } catch (error) {
@@ -53,9 +69,20 @@ export const AdminKelas = () => {
   const handleUbahTA = async (newTahunAjaran) => {
     try {
       setLoading(true);
-      await axios.put(`http://localhost:3000/api/tahunAjaran`, {
-        tahunAjaran: newTahunAjaran,
-      });
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+      await axios.put(
+        `http://localhost:3000/api/tahunAjaran`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
+        {
+          tahunAjaran: newTahunAjaran,
+        }
+      );
 
       const updatedKelasData = KelasData.map((item) =>
         item.id === tahunAjaranData.id
@@ -118,7 +145,7 @@ export const AdminKelas = () => {
                     Kelas: item.nama_kelas,
                     "Program Studi": item.prodi,
                     "Tahun Ajaran": item.tahunAjaran,
-                    Jurusan: item.nama_jurusan,
+                    Jurusan: item.jurusan,
                     Aksi: (
                       <div
                         className=" flex justify-center text-center text-red-500 pointer hover:text-red-700 underline"

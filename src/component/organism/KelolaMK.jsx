@@ -29,8 +29,17 @@ const KelolaMK = ({ isActive, setIsActive }) => {
 
     if (kodeMKValue.trim() !== "" && matakuliahValue.trim() !== "") {
       try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
         const response = await axios.post(
           "http://localhost:3000/api/mataKuliah",
+          {
+            headers: {
+              Authorization: token,
+            },
+          },
           {
             nama_mk: matakuliahValue,
             kode_mk: kodeMKValue,

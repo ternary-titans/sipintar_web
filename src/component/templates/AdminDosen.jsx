@@ -10,8 +10,8 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import axios from "axios";
 
 export const AdminDosen = () => {
-  const columns = ["No", "Nama", "NIP", "Password", "Aksi"];
-  const columnAlignments = ["center", "left", "center", "center", "center"];
+  const columns = ["No", "Nama", "NIP", "Aksi"];
+  const columnAlignments = ["center", "left", "center", "center"];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#1e3a8a";
   const pageSizeOptions = [5, 10];
@@ -25,8 +25,17 @@ export const AdminDosen = () => {
 
   async function fetchData(query = "") {
     try {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       const response = await axios.get(
-        `http://localhost:3000/api/dosen?nama=${query}`
+        `http://localhost:3000/api/dosen?nama=${query}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
       setdosenData(response.data.data);
       console.log(response.data.data);
@@ -39,7 +48,15 @@ export const AdminDosen = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/dosen/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`http://localhost:3000/api/dosen/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updatedData = dosenData.filter((item) => item.id !== id);
       setdosenData(updatedData);
     } catch (error) {
@@ -86,7 +103,6 @@ export const AdminDosen = () => {
                     Nama: item.nama_dosen,
                     NIP: item.nip,
                     Jurusan: item.jurusan_id,
-                    Password: item.password,
                     Aksi: (
                       <div className="flex flex-row gap-2 justify-center">
                         <div className="text-center">
