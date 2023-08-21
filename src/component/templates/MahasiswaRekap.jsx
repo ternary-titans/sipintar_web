@@ -51,10 +51,23 @@ export const MahasiswaRekap = () => {
   ];
 
   useEffect(() => {
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
+    const id = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).id
+      : null;
+
     async function fetchData() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/1/rekapitulasi`
+          `http://localhost:3000/api/mahasiswa/${id}/rekapitulasi`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
         setRekapMHsData(response.data.data.rekapitulasi);
         setLoading(false);

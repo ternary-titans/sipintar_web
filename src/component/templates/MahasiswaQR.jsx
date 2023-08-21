@@ -2,16 +2,11 @@ import React, { useState, useEffect } from "react";
 import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
-import TableData from "../molecules/TabelData";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
 export const MahasiswaQR = () => {
   const { id } = useParams();
-  const columns = ["id", "nama_mahasiswa", "nim", "waktu_presensi"];
-  const columnWidths = ["30px", "150px", "20px"];
-  const fontSize = "12px";
-  const textAlign = "start";
 
   const [qrCodeData, setQrCodeData] = useState([]);
   const [dataPresensi, setDataPresensi] = useState([]);
@@ -27,9 +22,18 @@ export const MahasiswaQR = () => {
   }, [qrCodeData]);
 
   async function fetchQRCodeData(id) {
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/aktivasiPerkuliahan/${id}`
+        `http://localhost:3000/api/aktivasiPerkuliahan/${id}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
       setQrCodeData(response.data.data);
     } catch (error) {
@@ -38,9 +42,18 @@ export const MahasiswaQR = () => {
   }
 
   async function fetchPresensi(qrId) {
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/listPresensi/${qrId}`
+        `http://localhost:3000/api/listPresensi/${qrId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
       setDataPresensi(response.data.data);
     } catch (error) {

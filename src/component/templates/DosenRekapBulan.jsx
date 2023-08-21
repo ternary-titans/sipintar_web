@@ -49,27 +49,34 @@ export const DosenRekapBulan = () => {
   const pageSizeOptions = [10, 25, 50];
 
   const [rekapDosenBlnData, setRekapDosenBlnData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData(selectedBulan) {
+    async function fetchData() {
       try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const id = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).id
+          : null;
+
         const response = await axios.get(
-          `http://localhost:3000/api/dosen/1/rekapitulasiMengajar?bulan=${selectedBulan}`
+          `http://localhost:3000/api/dosen/${id}/rekapitulasiMengajar`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
+
         setRekapDosenBlnData(response.data.data.data);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false);
       }
     }
 
-    if (selectedBulan) {
-      setRekapDosenBlnData([]);
-      setLoading(true);
-      fetchData(selectedBulan);
-    }
+    fetchData();
   }, [selectedBulan]);
 
   function formatDate(dateString) {
@@ -98,6 +105,31 @@ export const DosenRekapBulan = () => {
     return formattedDate;
   }
 
+  const getTotalJamMengajar = (data) => {
+    const totalJamSum = data?.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue.total_jam;
+    }, 0);
+
+    return totalJamSum;
+  };
+
+  const getKelebihanJamMengajar = (data) => {
+    const result = data - 36;
+    if (result <= 0) {
+      return 0;
+    }
+    return result;
+  };
+
+  const getHonorKelebihanJamMengajar = (data) => {
+    const result = (data - 36) * 30000;
+
+    if (result <= 0) {
+      return 0;
+    }
+    return result;
+  };
+
   return (
     <div>
       <Dosen />
@@ -115,42 +147,48 @@ export const DosenRekapBulan = () => {
               />
             </div>
             <div style={{ marginTop: "30px" }}>
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                <Table
-                  columns={columns}
-                  data={rekapDosenBlnData?.map((item, index) => ({
-                    No: index + 1,
-                    "Mata Kuliah": item.data.mataKuliah,
-                    Kelas: item.data.kelas,
-                    "Waktu Realisasi": formatDate(item.waktu_realisasi),
-                    "Total Jam Mengajar": item.data.total_jam,
-                  }))}
-                  columnAlignments={columnAlignments}
-                  headerBackgroundColor={headerBackgroundColor}
-                  headerBorderColor={headerBorderColor}
-                  pageSizeOptions={pageSizeOptions}
-                  style={{ marginTop: "10px" }}
-                />
-              )}
+              <Table
+                columns={columns}
+                data={rekapDosenBlnData?.map((item, index) => ({
+                  No: index + 1,
+                  "Mata Kuliah": item.mataKuliah,
+                  Kelas: item.kelas,
+                  "Waktu Realisasi": formatDate(item.waktu_realisasi),
+                  "Total Jam Mengajar": item.total_jam,
+                }))}
+                columnAlignments={columnAlignments}
+                headerBackgroundColor={headerBackgroundColor}
+                headerBorderColor={headerBorderColor}
+                pageSizeOptions={pageSizeOptions}
+                style={{ marginTop: "10px" }}
+              />
             </div>
             <div style={{ marginTop: "10px" }}>
               <div className="flex gap-5">
                 <h2>Total Jam Mengajar :</h2>
-                <span></span>
+                <span>{getTotalJamMengajar(rekapDosenBlnData)} Jam</span>
               </div>
               <div className="flex gap-5">
                 <h2>Kewajiban Jam Mengajar :</h2>
-                {/* <span>{rekapMHSData[showDetail].dosen}</span> */}
+                <span>36 Jam</span>
               </div>
               <div className="flex gap-5">
                 <h2>Kelebihan Jam Mengajar :</h2>
-                <span></span>
+                <span>
+                  {getKelebihanJamMengajar(
+                    getTotalJamMengajar(rekapDosenBlnData)
+                  )}{" "}
+                  Jam
+                </span>
               </div>
               <div className="flex gap-5">
                 <h2>Honor Kelebihan Jam Mengajar :</h2>
-                <span></span>
+                <span>
+                  {getHonorKelebihanJamMengajar(
+                    getTotalJamMengajar(rekapDosenBlnData)
+                  )}{" "}
+                  Jam
+                </span>
               </div>
             </div>
           </div>

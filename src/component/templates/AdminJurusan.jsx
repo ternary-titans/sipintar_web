@@ -20,7 +20,15 @@ export const AdminJurusan = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:3000/api/jurusan");
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get("http://localhost:3000/api/jurusan", {
+          headers: {
+            Authorization: token,
+          },
+        });
         setJurusanData(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -34,7 +42,15 @@ export const AdminJurusan = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/jurusan/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`http://localhost:3000/api/jurusan/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updatedData = JurusanData.filter((item) => item.id !== id);
       setJurusanData(updatedData);
     } catch (error) {

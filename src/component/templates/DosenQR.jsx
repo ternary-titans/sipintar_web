@@ -24,8 +24,17 @@ export const DosenQR = () => {
 
   async function fetchQRCodeData(id) {
     try {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       const response = await axios.get(
-        `http://localhost:3000/api/aktivasiPerkuliahan/${id}`
+        `http://localhost:3000/api/aktivasiPerkuliahan/${id}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
       setQrCodeData(response.data.data);
     } catch (error) {
@@ -35,8 +44,17 @@ export const DosenQR = () => {
 
   async function fetchPresensi(qrId) {
     try {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       const response = await axios.get(
-        `http://localhost:3000/api/listPresensi/${qrId}`
+        `http://localhost:3000/api/listPresensi/${qrId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
       setDataPresensi(response.data.data);
     } catch (error) {
@@ -56,7 +74,15 @@ export const DosenQR = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/presensi/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`http://localhost:3000/api/presensi/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updatedData = dataPresensi.filter((item) => item.id !== id);
       setDataPresensi(updatedData);
     } catch (error) {

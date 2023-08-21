@@ -27,7 +27,15 @@ export const AdminKelolaProdi = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:3000/api/prodi");
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get("http://localhost:3000/api/prodi", {
+          headers: {
+            Authorization: token,
+          },
+        });
         setProdiData(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -41,7 +49,15 @@ export const AdminKelolaProdi = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/prodi/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`http://localhost:3000/api/prodi/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updatedData = ProdiData.filter((item) => item.id !== id);
       setProdiData(updatedData);
     } catch (error) {

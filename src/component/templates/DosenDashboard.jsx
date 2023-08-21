@@ -17,15 +17,39 @@ export const DosenDashboard = () => {
   const [hari, setHari] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/dosen/1/mataKuliah")
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
+    const id = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).id
+      : null;
+
+    fetch(`http://localhost:3000/api/dosen/${id}/mataKuliah`, {
+      headers: {
+        Authorization: token,
+      },
+    })
       .then((response) => response.json())
       .then((data) => setMkData(data.data))
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
+    const id = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).id
+      : null;
+
     getNamaHari();
-    fetch(`http://localhost:3000/api/dosen/1/jadwal?hari=${hari}`)
+    fetch(`http://localhost:3000/api/dosen/${id}/jadwal?hari=${hari}`, {
+      headers: {
+        Authorization: token,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setJadwalData(data.data);
@@ -77,7 +101,7 @@ export const DosenDashboard = () => {
         <div className="flex-1 mr-2">
           <div className="flex flex-wrap ml-8 mt-5 gap-6 px-1 pb-8">
             {mkData &&
-              mkData.map((rifka) => (
+              mkData?.map((rifka) => (
                 <Link
                   to={`/dosen/mk/${rifka.kelas_mk_id}`}
                   className="w-[calc(30%_-_1rem)]"
@@ -108,19 +132,21 @@ export const DosenDashboard = () => {
                 </div>
                 <hr className="w-full h-0.5 bg-black mb-2" />
                 <div>
-                  <TabelData
-                    colomsData={columns}
-                    dataData={jadwalData.map((item) => ({
-                      Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
-                      Kelas: item.kelas,
-                      Ruangan: item.ruangan,
-                      "Mata Kuliah": item.nama_mk,
-                    }))}
-                    layout="horizontal"
-                    columnWidths={columnWidths}
-                    fontSize={fontSize}
-                    textAlign={textAlign}
-                  />
+                  {jadwalData && (
+                    <TabelData
+                      colomsData={columns}
+                      dataData={jadwalData?.map((item) => ({
+                        Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
+                        Kelas: item.kelas,
+                        Ruangan: item.ruangan,
+                        "Mata Kuliah": item.nama_mk,
+                      }))}
+                      layout="horizontal"
+                      columnWidths={columnWidths}
+                      fontSize={fontSize}
+                      textAlign={textAlign}
+                    />
+                  )}
                   <hr className="w-full h-0.5 bg-gray-400" />
                 </div>
               </div>

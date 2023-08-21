@@ -29,8 +29,17 @@ const FormEditMhs = ({ id }) => {
   useEffect(() => {
     async function fetchData() {
       try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
         const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/${id}`
+          `http://localhost:3000/api/mahasiswa/${id}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
         const data = response.data.data;
         setNamaValue(data.nama_mahasiswa);
@@ -51,8 +60,17 @@ const FormEditMhs = ({ id }) => {
     if (selectedJurusan === 0 || selectedJurusan === undefined) {
       setProdiOptions([]);
     }
+
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
     axios
-      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
+      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => {
         const prodiData = response.data;
         setProdiOptions(prodiData.data);
@@ -67,8 +85,16 @@ const FormEditMhs = ({ id }) => {
 
   useEffect(() => {
     if (selectedProdi) {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       axios
-        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`)
+        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`, {
+          headers: {
+            Authorization: token,
+          },
+        })
         .then((response) => {
           if (response.status === 200) {
             const kelasData = response.data;
@@ -115,8 +141,17 @@ const FormEditMhs = ({ id }) => {
     };
 
     try {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       const response = await axios.put(
         `http://localhost:3000/api/mahasiswa/${id}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
         dataToUpdate
       );
 

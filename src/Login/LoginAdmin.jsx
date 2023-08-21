@@ -1,19 +1,17 @@
-import { useRef, useState, useEffect } from "react";
 import axios from "../api/axios";
-import logo from "../assest/polines.png";
-import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import logo from "../assest/polines.png";
+import { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 const Login = () => {
   const { setAuth } = useAuth();
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
 
   const userRef = useRef();
   const errRef = useRef();
-  // Add this line to use the navigate hook
 
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
@@ -31,18 +29,29 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/login-api", {
-        email: user,
-        password: pwd,
-      });
-      console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
-      const roles = response?.data?.role;
-      setAuth({ email: user, password: pwd, roles });
+      const response = await axios.post(
+        "http://localhost:3000/api/users/login",
+        {
+          username: user,
+          password: pwd,
+        }
+      );
+
+      const token = response?.data.data.token;
+      const { id, role, username } = jwt_decode(token);
+
+      setAuth({ id, role, username, token });
       setUser("");
       setPwd("");
 
-      navigate(from, { replace: true });
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({ id, role, username, token })
+      );
+
+      if (role === "Mahasiswa") navigate("/mahasiswa");
+      if (role === "Dosen") navigate("/dosen");
+      if (role === "Admin") navigate("/admin/dashboard");
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
@@ -88,6 +97,7 @@ const Login = () => {
                 autoComplete="off"
                 onChange={(e) => setUser(e.target.value)}
                 value={user}
+                placeholder="username"
                 required
               />
             </div>
@@ -98,6 +108,7 @@ const Login = () => {
                 id="password"
                 onChange={(e) => setPwd(e.target.value)}
                 value={pwd}
+                placeholder="password"
                 required
               />
             </div>

@@ -24,9 +24,18 @@ const KelolaTA = ({ isActive, setIsActive }) => {
     event.preventDefault();
 
     if (TahunAjaranValue.trim() !== "") {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
       try {
         const response = await axios.post(
           "http://localhost:3000/api/tahunAjaran",
+          {
+            headers: {
+              Authorization: token,
+            },
+          },
           {
             nama: TahunAjaranValue,
           }

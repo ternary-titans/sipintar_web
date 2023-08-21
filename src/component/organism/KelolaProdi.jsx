@@ -51,11 +51,23 @@ const KelolaMK = ({ isActive, setIsActive }) => {
       selectedJurusan !== ""
     ) {
       try {
-        const response = await axios.post("http://localhost:3000/api/prodi", {
-          nama_prodi: prodiValue,
-          kode_prodi: kodeProdiValue,
-          jurusan_id: selectedJurusan,
-        });
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.post(
+          "http://localhost:3000/api/prodi",
+          {
+            headers: {
+              Authorization: token,
+            },
+          },
+          {
+            nama_prodi: prodiValue,
+            kode_prodi: kodeProdiValue,
+            jurusan_id: selectedJurusan,
+          }
+        );
 
         console.log("Data berhasil disimpan:", response.data);
 
