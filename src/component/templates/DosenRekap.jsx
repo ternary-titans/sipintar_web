@@ -3,7 +3,7 @@ import Dosen from "./Dosen";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
-import axios from "../../api/axios";
+import axios from "axios";
 
 export const DosenRekap = () => {
   const [showDetail, setShowDetail] = useState(-1);

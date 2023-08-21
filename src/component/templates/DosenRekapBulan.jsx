@@ -1,54 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dosen from "./Dosen";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Input2 from "../atoms/InputDropdown";
 import Table from "../molecules/Tabel";
-import TabelData from "../molecules/TabelData";
+import axios from "axios";
 
 export const DosenRekapBulan = () => {
-  const [selectedTahunAjaran, setSelectedTahunAjaran] = useState("");
   const [selectedBulan, setSelectedBulan] = useState("");
 
-  const handleTahunAjaranChange = (event) => {
-    setSelectedTahunAjaran(event.target.value);
-  };
   const handleBulanChange = (event) => {
     setSelectedBulan(event.target.value);
   };
 
-  const TahunAjaranOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
-
   const BulanOptions = [
-    { value: "option1", label: "Januari" },
-    { value: "option2", label: "Februari" },
-    { value: "option3", label: "Maret" },
-    { value: "option4", label: "April" },
-    { value: "option5", label: "Mei" },
-    { value: "option6", label: "Juni" },
-    { value: "option7", label: "Juli" },
-    { value: "option8", label: "Agustus" },
-    { value: "option9", label: "September" },
-    { value: "option10", label: "Oktober" },
-    { value: "option11", label: "November" },
-    { value: "option12", label: "Desember" },
+    { id: "", label: "Pilih Bulan" },
+    { id: 1, label: "Januari" },
+    { id: 2, label: "Februari" },
+    { id: 3, label: "Maret" },
+    { id: 4, label: "April" },
+    { id: 5, label: "Mei" },
+    { id: 6, label: "Juni" },
+    { id: 7, label: "Juli" },
+    { id: 8, label: "Agustus" },
+    { id: 9, label: "September" },
+    { id: 10, label: "Oktober" },
+    { id: 11, label: "November" },
+    { id: 12, label: "Desember" },
   ];
 
-  const columns = ["No", "Kelas", "Mata Kuliah", "Tanggal", "Jam Mengajar"];
-  const data = [
-    {
-      No: 1,
-      Kelas: "IK-3A",
-      "Mata Kuliah": "Big Data",
-      Tanggal: "21 Juni 2023",
-      "Jam Mengajar": "6",
-    },
+  const columns = [
+    "No",
+    "Mata Kuliah",
+    "Kelas",
+    "Waktu Realisasi",
+    "Total Jam Mengajar",
   ];
-
   const columnAlignments = [
     "center",
     "center",
@@ -61,21 +48,55 @@ export const DosenRekapBulan = () => {
   const headerBorderColor = "#2563eb";
   const pageSizeOptions = [10, 25, 50];
 
-  const columns2 = [
-    "Total Jam Mengajar",
-    "Kewajiban Jam Mengajar",
-    "Kelebihan Jam Mengajar",
-  ];
-  const data2 = [
-    {
-      "Total Jam Mengajar": [":", "120", " jam"],
-      "Kewajiban Jam Mengajar": [":", "36", " jam"],
-      "Kelebihan Jam Mengajar": [":", "84", " jam"],
-    },
-  ];
-  const columnWidths = ["30px", "200px", "200px"];
-  const fontSize = "14px";
-  const textAlign = "start";
+  const [rekapDosenBlnData, setRekapDosenBlnData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData(selectedBulan) {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/dosen/1/rekapitulasiMengajar?bulan=${selectedBulan}`
+        );
+        setRekapDosenBlnData(response.data.data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    }
+
+    if (selectedBulan) {
+      setRekapDosenBlnData([]);
+      setLoading(true);
+      fetchData(selectedBulan);
+    }
+  }, [selectedBulan]);
+
+  function formatDate(dateString) {
+    const dateObject = new Date(dateString);
+
+    const months = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    const day = dateObject.getDate();
+    const month = dateObject.getMonth();
+    const year = dateObject.getFullYear();
+
+    const formattedDate = `${day} ${months[month]} ${year}`;
+    return formattedDate;
+  }
 
   return (
     <div>
@@ -86,38 +107,51 @@ export const DosenRekapBulan = () => {
             <Text type="title3" text="Rekapitulasi Mengajar Dosen" />
             <div className="flex gap-8 mt-5 w-80">
               <Input2
-                label="Tahun Ajaran"
-                value={selectedTahunAjaran}
-                options={TahunAjaranOptions}
-                onChange={handleTahunAjaranChange}
-              />
-              <Input2
                 label="Bulan"
+                uniqueKeys="label"
                 value={selectedBulan}
                 options={BulanOptions}
                 onChange={handleBulanChange}
               />
             </div>
             <div style={{ marginTop: "30px" }}>
-              <Table
-                columns={columns}
-                data={data}
-                columnAlignments={columnAlignments}
-                headerBackgroundColor={headerBackgroundColor}
-                headerBorderColor={headerBorderColor}
-                pageSizeOptions={pageSizeOptions}
-                style={{ marginTop: "10px" }}
-              />
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <Table
+                  columns={columns}
+                  data={rekapDosenBlnData?.map((item, index) => ({
+                    No: index + 1,
+                    "Mata Kuliah": item.data.mataKuliah,
+                    Kelas: item.data.kelas,
+                    "Waktu Realisasi": formatDate(item.waktu_realisasi),
+                    "Total Jam Mengajar": item.data.total_jam,
+                  }))}
+                  columnAlignments={columnAlignments}
+                  headerBackgroundColor={headerBackgroundColor}
+                  headerBorderColor={headerBorderColor}
+                  pageSizeOptions={pageSizeOptions}
+                  style={{ marginTop: "10px" }}
+                />
+              )}
             </div>
-            <div className="flex flex-col">
-              <TabelData
-                colomsData={columns2}
-                dataData={data2}
-                layout="vertical"
-                columnWidths={columnWidths}
-                fontSize={fontSize}
-                textAlign={textAlign}
-              />
+            <div style={{ marginTop: "10px" }}>
+              <div className="flex gap-5">
+                <h2>Total Jam Mengajar :</h2>
+                <span></span>
+              </div>
+              <div className="flex gap-5">
+                <h2>Kewajiban Jam Mengajar :</h2>
+                {/* <span>{rekapMHSData[showDetail].dosen}</span> */}
+              </div>
+              <div className="flex gap-5">
+                <h2>Kelebihan Jam Mengajar :</h2>
+                <span></span>
+              </div>
+              <div className="flex gap-5">
+                <h2>Honor Kelebihan Jam Mengajar :</h2>
+                <span></span>
+              </div>
             </div>
           </div>
         </CardUser>
