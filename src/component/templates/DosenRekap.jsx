@@ -9,12 +9,11 @@ export const DosenRekap = () => {
   const [showDetail, setShowDetail] = useState(-1);
   const columns = [
     "No",
-    // "Kelas",
+    "Kelas",
     "Mata Kuliah",
     "Total Jam Pertemuan",
     "Total Jam Kehadiran",
     "Total Ketidakhadiran",
-    // "Presentase",
     "Aksi",
   ];
   const columnAlignments = [
@@ -102,8 +101,9 @@ export const DosenRekap = () => {
               ) : (
                 <Table
                   columns={columns}
-                  data={rekapDosenData.map((item, index) => ({
+                  data={rekapDosenData?.map((item, index) => ({
                     No: index + 1,
+                    Kelas: item.kelas,
                     "Mata Kuliah": item.mataKuliah,
                     "Total Jam Pertemuan": item.total_jam,
                     "Total Jam Kehadiran": item.total_hadir,
@@ -127,45 +127,47 @@ export const DosenRekap = () => {
               )}
             </div>
             <hr className="w-full h-0.5 bg-gray-300 mt-20 mb-2" />
-            <Text
-              type="title3"
-              text="Rekapitulasi Presensi Dosen > {Kelas} > {MatKul}"
-            />
-            <div style={{ marginTop: "30px" }}>
-              {showDetail !== -1 && (
-                <div style={{ marginTop: "20px" }}>
-                  <Text type="title3" text="Detail Rekapitulasi Presensi " />
-                  <div>
-                    {loading ? (
-                      <p>Loading...</p>
-                    ) : (
-                      <Table
-                        columns={columns2}
-                        data={rekapDosenData[showDetail].jadwalPertemuan.map(
-                          (item, index) => ({
-                            No: index + 1,
-                            "Tanggal Realisasi": formatDate(
-                              item.waktu_realisasi
-                            ),
-                            "Jam Perkuliahan": `${item.jam_mulai} - ${item.jam_akhir}`,
-                            Topik: item.topik_perkuliahan,
-                            Hadir: "",
-                            Sakit: "",
-                            Izin: "",
-                            Alpa: "",
-                          })
-                        )}
-                        columnAlignments={columnAlignments}
-                        headerBackgroundColor={headerBackgroundColor}
-                        headerBorderColor={headerBorderColor2}
-                        pageSizeOptions={pageSizeOptions}
-                        style={{ marginTop: "10px" }}
-                      />
-                    )}
+            {showDetail !== -1 && (
+              <>
+                <Text
+                  type="title3"
+                  text={`Rekapitulasi Presensi Dosen > ${rekapDosenData[showDetail].kelas} > ${rekapDosenData[showDetail].mataKuliah}`}
+                />
+                <div style={{ marginTop: "30px" }}>
+                  <div style={{ marginTop: "20px" }}>
+                    <Text type="title3" text="Detail Rekapitulasi Presensi" />
+                    <div>
+                      {loading ? (
+                        <p>Loading...</p>
+                      ) : (
+                        <Table
+                          columns={columns2}
+                          data={rekapDosenData[showDetail].jadwalPertemuan.map(
+                            (item, index) => ({
+                              No: index + 1,
+                              "Tanggal Realisasi": formatDate(
+                                item.waktu_realisasi
+                              ),
+                              "Jam Perkuliahan": `${item.jam_mulai} - ${item.jam_akhir}`,
+                              Topik: item.topik_perkuliahan,
+                              Hadir: item.detail.total_hadir + " Mahasiswa",
+                              Sakit: item.detail.total_sakit + " Mahasiswa",
+                              Izin: item.detail.total_izin + " Mahasiswa",
+                              Alpa: item.detail.total_alpha + " Mahasiswa",
+                            })
+                          )}
+                          columnAlignments={columnAlignments}
+                          headerBackgroundColor={headerBackgroundColor}
+                          headerBorderColor={headerBorderColor2}
+                          pageSizeOptions={pageSizeOptions}
+                          style={{ marginTop: "10px" }}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
         </CardUser>
       </div>
