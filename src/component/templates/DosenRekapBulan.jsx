@@ -50,6 +50,20 @@ export const DosenRekapBulan = () => {
 
   const [rekapDosenBlnData, setRekapDosenBlnData] = useState([]);
 
+  const filterDataByMonth = (data, selectedMonth) => {
+    if (!selectedMonth) {
+      return data;
+    }
+
+    const filteredData = data.filter((item) => {
+      const itemMonth = new Date(item.waktu_realisasi).getMonth() + 1;
+      const selectedMonthInt = parseInt(selectedMonth, 10); // Convert string to integer
+      return itemMonth === selectedMonthInt;
+    });
+
+    return filteredData;
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -70,7 +84,11 @@ export const DosenRekapBulan = () => {
           }
         );
 
-        setRekapDosenBlnData(response.data.data.data);
+        const filteredData = filterDataByMonth(
+          response.data.data.data,
+          selectedBulan
+        );
+        setRekapDosenBlnData(filteredData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -184,10 +202,10 @@ export const DosenRekapBulan = () => {
               <div className="flex gap-5">
                 <h2>Honor Kelebihan Jam Mengajar :</h2>
                 <span>
+                  Rp{" "}
                   {getHonorKelebihanJamMengajar(
                     getTotalJamMengajar(rekapDosenBlnData)
                   )}{" "}
-                  Jam
                 </span>
               </div>
             </div>

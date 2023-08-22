@@ -105,6 +105,14 @@ export const MahasiswaRekap = () => {
     return formattedDate;
   }
 
+  function calculatePercentage(hadir, totalJam) {
+    if (totalJam === 0) {
+      return "0%";
+    }
+    const percentage = (hadir / totalJam) * 100;
+    return `${percentage.toFixed(2)}%`;
+  }
+
   return (
     <div>
       <Mahasiswa />
@@ -132,7 +140,10 @@ export const MahasiswaRekap = () => {
                   Sakit: item.total_sakit,
                   Izin: item.total_izin,
                   Alpa: item.total_alpha,
-                  Presentase: "50%",
+                  Presentase: calculatePercentage(
+                    item.total_hadir,
+                    item.total_jam
+                  ),
                   Aksi: (
                     <button
                       style={{ textDecoration: "underline", color: "blue" }}

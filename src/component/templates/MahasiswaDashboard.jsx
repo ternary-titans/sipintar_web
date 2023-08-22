@@ -73,7 +73,10 @@ export const MahasiswaDashboard = () => {
               text2="Alpa"
             />
           </div>
-          <div className="flex flex-wrap mt-36 gap-5 px-8 pb-8">
+          <div className="ml-8 mt-40">
+            <Text type="title" text="DAFTAR MATA KULIAH"></Text>
+          </div>
+          <div className="flex flex-wrap mt-4 gap-5 px-8 pb-8">
             {mkData.map((rifka) => (
               <button
                 onClick={() => handleClick(rifka.kelas_mk_id)}
