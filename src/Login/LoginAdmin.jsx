@@ -86,7 +86,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <div className="text-xl font-semibold mb-6 text-center text-white">
-              Login
+              LOGIN
             </div>
             <div className="mb-4">
               <input
