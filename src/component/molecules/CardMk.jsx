@@ -1,16 +1,11 @@
 import React from "react";
 
-const getRandomColor = () => {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+const getBackgroundColor = (id) => {
+  return id % 2 === 0 ? "blue" : "yellow";
 };
 
-const CardMk = ({ height, text1, text2 }) => {
-  const randomColor = getRandomColor();
+const CardMk = ({ height, text1, text2, id }) => {
+  const backgroundColor = getBackgroundColor(id);
 
   return (
     <div
@@ -22,7 +17,7 @@ const CardMk = ({ height, text1, text2 }) => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-end",
-        backgroundColor: randomColor,
+        backgroundColor: backgroundColor,
         border: "1px solid #ccc",
         boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
       }}

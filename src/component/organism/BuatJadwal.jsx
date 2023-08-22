@@ -3,7 +3,7 @@ import Card from "../atoms/Card";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
 import TabelJadwal from "../organism/TabelJadwal";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const BuatJadwal = () => {
   const [selectedJurusan, setSelectedJurusan] = useState("");
@@ -39,7 +39,7 @@ export const BuatJadwal = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
+      .get(`/prodi?jurusan_id=${selectedJurusan}`)
       .then((response) => {
         const prodiData = response.data;
         setProdiOptions(prodiData.data);
@@ -52,7 +52,7 @@ export const BuatJadwal = () => {
   useEffect(() => {
     if (selectedProdi) {
       axios
-        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`)
+        .get(`/kelas?prodi_id=${selectedProdi}`)
         .then((response) => {
           const kelasData = response.data;
           setKelasOptions(kelasData.data);
@@ -66,7 +66,7 @@ export const BuatJadwal = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/tahunAjaran`)
+      .get(`/tahunAjaran`)
       .then((response) => {
         const tahunAjaranData = response.data;
         settahunAjaranOptions(tahunAjaranData.data);

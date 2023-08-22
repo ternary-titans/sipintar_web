@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const UbahTA = ({ isActive, setIsActive, handleUbahTA }) => {
   const [selectedtahunAjaran, setSelectedtahunAjaran] = useState("");
@@ -24,7 +24,7 @@ const UbahTA = ({ isActive, setIsActive, handleUbahTA }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/tahunAjaran`)
+      .get(`/tahunAjaran`)
       .then((response) => {
         const tahunAjaranData = response.data;
         settahunAjaranOptions(tahunAjaranData.data);

@@ -3,7 +3,7 @@ import Dosen from "./Dosen";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const DosenRekap = () => {
   const [showDetail, setShowDetail] = useState(-1);
@@ -57,14 +57,11 @@ export const DosenRekap = () => {
         : null;
 
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/dosen/${id}/rekapitulasiPresensi`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get(`/dosen/${id}/rekapitulasiPresensi`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setRekapDosenData(response.data.data.rekapitulasi);
         setLoading(false);
       } catch (error) {

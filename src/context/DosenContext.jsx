@@ -1,12 +1,24 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const DosenContext = createContext();
 
 export const DosenProvider = ({ children }) => {
   const [dosenData, setDosenData] = useState({
-    id: 1,
-    userName: "Amran Yobioktabera",
+    userName: "Amran Yobioktabera S.Kom., M.Kom.",
   });
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/users/current")
+      .then((response) => response.json())
+      .then((data) => {
+        setDosenData({
+          userName: data.data.nama, // Set the username using the "nama" field from the API response
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching current user data:", error);
+      });
+  }, []);
 
   return (
     <DosenContext.Provider value={{ dosenData, setDosenData }}>

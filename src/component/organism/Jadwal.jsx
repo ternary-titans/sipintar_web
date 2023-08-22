@@ -5,7 +5,7 @@ import InputDropdown from "../atoms/InputDropdown";
 import Button from "../atoms/Button";
 import Table from "../molecules/Tabel";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios from "../../api/axios";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 export const Jadwal = () => {
@@ -44,7 +44,7 @@ export const Jadwal = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
+      .get(`/prodi?jurusan_id=${selectedJurusan}`)
       .then((response) => {
         const prodiData = response.data;
         setProdiOptions(prodiData.data);
@@ -57,7 +57,7 @@ export const Jadwal = () => {
   useEffect(() => {
     if (selectedProdi) {
       axios
-        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`)
+        .get(`/kelas?prodi_id=${selectedProdi}`)
         .then((response) => {
           const kelasData = response.data;
           setKelasOptions(kelasData.data);
@@ -71,7 +71,7 @@ export const Jadwal = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/tahunAjaran`)
+      .get(`/tahunAjaran`)
       .then((response) => {
         const tahunAjaranData = response.data;
         settahunAjaranOptions(tahunAjaranData.data);
@@ -113,9 +113,7 @@ export const Jadwal = () => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/jadwal?kelas=`
-      );
+      const response = await axios.get(`/jadwal?kelas=`);
       setFilteredJadwalData(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -127,7 +125,7 @@ export const Jadwal = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:3000/api/jadwal");
+        const response = await axios.get("/jadwal");
         setJadwalData(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -141,7 +139,7 @@ export const Jadwal = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/jadwal/${id}`);
+      await axios.delete(`/jadwal/${id}`);
       const updatedData = jadwalData.filter((item) => item.id !== id);
       setJadwalData(updatedData);
     } catch (error) {

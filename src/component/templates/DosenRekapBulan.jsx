@@ -4,7 +4,7 @@ import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Input2 from "../atoms/InputDropdown";
 import Table from "../molecules/Tabel";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const DosenRekapBulan = () => {
   const [selectedBulan, setSelectedBulan] = useState("");
@@ -75,14 +75,11 @@ export const DosenRekapBulan = () => {
           ? JSON.parse(localStorage.getItem("userData")).id
           : null;
 
-        const response = await axios.get(
-          `http://localhost:3000/api/dosen/${id}/rekapitulasiMengajar`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get(`/dosen/${id}/rekapitulasiMengajar`, {
+          headers: {
+            Authorization: token,
+          },
+        });
 
         const filteredData = filterDataByMonth(
           response.data.data.data,

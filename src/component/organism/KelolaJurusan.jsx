@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const KelolaJurusan = ({ isActive, setIsActive }) => {
   const [jurusanValue, setjurusanValue] = useState("");
@@ -30,7 +30,7 @@ const KelolaJurusan = ({ isActive, setIsActive }) => {
           : null;
 
         const response = await axios.post(
-          "http://localhost:3000/api/jurusan",
+          "/jurusan",
           {
             headers: {
               Authorization: token,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 export const FormTambahDosen = () => {
@@ -100,7 +100,7 @@ export const FormTambahDosen = () => {
       passwordValue !== ""
     ) {
       try {
-        const response = await axios.post("http://localhost:3000/api/dosen", {
+        const response = await axios.post("/dosen", {
           nama_dosen: namaValue,
           nip: nipValue,
           jurusan_id: selectedJurusan,

@@ -5,7 +5,7 @@ import Card from "../atoms/Card";
 import Table from "../molecules/Tabel";
 import Text from "../atoms/Text";
 import Search from "../molecules/Search";
-import axios from "axios";
+import axios from "../../api/axios";
 import Admin from "./Admin";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
@@ -40,14 +40,11 @@ export const AdminMahasiswa = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      const response = await axios.get(
-        `http://localhost:3000/api/mahasiswa?nama=${query}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.get(`/mahasiswa?nama=${query}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setMahasiswaData(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -62,7 +59,7 @@ export const AdminMahasiswa = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      await axios.delete(`http://localhost:3000/api/mahasiswa/${id}`, {
+      await axios.delete(`/mahasiswa/${id}`, {
         headers: {
           Authorization: token,
         },

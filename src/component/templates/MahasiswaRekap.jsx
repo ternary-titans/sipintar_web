@@ -3,7 +3,7 @@ import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const MahasiswaRekap = () => {
   const content = "Konten CardUser yang panjang";
@@ -61,14 +61,11 @@ export const MahasiswaRekap = () => {
 
     async function fetchData() {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/${id}/rekapitulasi`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get(`/mahasiswa/${id}/rekapitulasi`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setRekapMHsData(response.data.data.rekapitulasi);
         setLoading(false);
       } catch (error) {

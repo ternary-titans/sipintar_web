@@ -3,7 +3,7 @@ import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Button from "../atoms/Button";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 const FormEditDosen = ({ id }) => {
@@ -29,14 +29,11 @@ const FormEditDosen = ({ id }) => {
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
 
-        const response = await axios.get(
-          `http://localhost:3000/api/dosen/${id}`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get(`/dosen/${id}`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         const data = response.data.data;
         setNamaValue(data.nama_dosen);
         setNIPValue(data.nip);
@@ -80,7 +77,7 @@ const FormEditDosen = ({ id }) => {
         : null;
 
       const response = await axios.put(
-        `http://localhost:3000/api/dosen/${id}`,
+        `/dosen/${id}`,
         {
           headers: {
             Authorization: token,

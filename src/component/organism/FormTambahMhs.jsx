@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../../api/axios";
 import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
@@ -97,7 +97,7 @@ const FormTambahMhs = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
+      .get(`/prodi?jurusan_id=${selectedJurusan}`)
       .then((response) => {
         const prodiData = response.data;
         setProdiOptions(prodiData.data);
@@ -110,7 +110,7 @@ const FormTambahMhs = () => {
   useEffect(() => {
     if (selectedProdi) {
       axios
-        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`)
+        .get(`/kelas?prodi_id=${selectedProdi}`)
         .then((response) => {
           const kelasData = response.data;
           setKelasOptions(kelasData.data);
@@ -169,15 +169,12 @@ const FormTambahMhs = () => {
       passwordValue !== ""
     ) {
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/mahasiswa",
-          {
-            nama_mahasiswa: namaValue,
-            nim: nimValue,
-            kelas_id: selectedKls,
-            password: passwordValue,
-          }
-        );
+        const response = await axios.post("/mahasiswa", {
+          nama_mahasiswa: namaValue,
+          nim: nimValue,
+          kelas_id: selectedKls,
+          password: passwordValue,
+        });
 
         console.log("Data berhasil disimpan:", response.data);
 

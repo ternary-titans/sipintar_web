@@ -3,7 +3,7 @@ import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const KelolaMK = ({ isActive, setIsActive }) => {
   const [prodiValue, setprodiValue] = useState("");
@@ -56,7 +56,7 @@ const KelolaMK = ({ isActive, setIsActive }) => {
           : null;
 
         const response = await axios.post(
-          "http://localhost:3000/api/prodi",
+          "/prodi",
           {
             headers: {
               Authorization: token,

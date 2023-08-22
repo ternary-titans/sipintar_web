@@ -3,7 +3,7 @@ import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const KelolaKelas = ({ isActive, setIsActive }) => {
   const [kelasValue, setkelasValue] = useState("");
@@ -55,7 +55,7 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
+      .get(`/prodi?jurusan_id=${selectedJurusan}`)
       .then((response) => {
         const prodiData = response.data;
         setProdiOptions(prodiData.data);
@@ -67,7 +67,7 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/tahunAjaran`)
+      .get(`/tahunAjaran`)
       .then((response) => {
         const tahunAjaranData = response.data;
         settahunAjaranOptions(tahunAjaranData.data);
@@ -88,7 +88,7 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
       selectedTahunAjaran !== ""
     ) {
       try {
-        const response = await axios.post("http://localhost:3000/api/kelas", {
+        const response = await axios.post("/kelas", {
           nama_kelas: kelasValue,
           prodi_id: selectedProdi,
           tahun_ajaran_id: selectedTahunAjaran,

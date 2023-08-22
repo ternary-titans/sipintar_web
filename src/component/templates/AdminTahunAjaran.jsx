@@ -5,7 +5,7 @@ import Text from "../atoms/Text";
 import Button from "../atoms/Button";
 import Table from "../molecules/Tabel.jsx";
 import KelolaTA from "../organism/KelolaTA";
-import axios from "axios";
+import axios from "../../api/axios";
 import { FaTrash } from "react-icons/fa";
 
 export const AdminTahunAjaran = () => {
@@ -25,14 +25,11 @@ export const AdminTahunAjaran = () => {
         : null;
 
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/tahunAjaran",
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get("/tahunAjaran", {
+          headers: {
+            Authorization: token,
+          },
+        });
         setTahunAjaranData(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -50,7 +47,7 @@ export const AdminTahunAjaran = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      await axios.delete(`http://localhost:3000/api/tahunAjaran/${id}`, {
+      await axios.delete(`/tahunAjaran/${id}`, {
         headers: {
           Authorization: token,
         },

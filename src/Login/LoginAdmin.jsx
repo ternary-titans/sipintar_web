@@ -72,7 +72,7 @@ const Login = () => {
         <img src={logo} alt="" className="w-20"></img>
         <div className="text-center font-extrabold text-5xl">PINTAR</div>
         <div className="text-3xl font-light mt-2 text-center">
-          Polines Information and Attender 124
+          Polines Information and Attender
         </div>
       </div>
       <div className="max-w-md mx-auto bg-indigo-900 p-6 rounded-lg mt-9 shadow-lg shadow-gray-600">

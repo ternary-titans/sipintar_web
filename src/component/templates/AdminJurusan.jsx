@@ -6,7 +6,7 @@ import Button from "../atoms/Button";
 import Table from "../molecules/Tabel.jsx";
 import KelolaJurusan from "../organism/KelolaJurusan";
 import { FaTrash } from "react-icons/fa";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const AdminJurusan = () => {
   const [isActive, setIsActive] = useState(false);
@@ -24,7 +24,7 @@ export const AdminJurusan = () => {
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
 
-        const response = await axios.get("http://localhost:3000/api/jurusan", {
+        const response = await axios.get("/jurusan", {
           headers: {
             Authorization: token,
           },
@@ -46,7 +46,7 @@ export const AdminJurusan = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      await axios.delete(`http://localhost:3000/api/jurusan/${id}`, {
+      await axios.delete(`/jurusan/${id}`, {
         headers: {
           Authorization: token,
         },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BsTrash } from "react-icons/bs";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const TabelJadwal = () => {
   const [selectedmataKuliah, setSelectedMataKuliah] = useState("");
@@ -52,7 +52,7 @@ const TabelJadwal = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/mataKuliah")
+      .get("/mataKuliah")
       .then((response) => {
         const mataKuliahData = response.data;
         setMataKuliahOptions(mataKuliahData);
@@ -79,10 +79,7 @@ const TabelJadwal = () => {
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/jadwal",
-        newData
-      );
+      const response = await axios.post("/jadwal", newData);
       console.log("Data berhasil disimpan:", response.data);
     } catch (error) {
       console.error("Terjadi kesalahan saat menyimpan data:", error);

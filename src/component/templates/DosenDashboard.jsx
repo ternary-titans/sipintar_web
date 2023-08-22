@@ -45,7 +45,7 @@ export const DosenDashboard = () => {
       : null;
 
     getNamaHari();
-    fetch(`http://localhost:3000/api/dosen/${id}/jadwal?hari=${hari}`, {
+    fetch(`http://localhost:3000/api/dosen/${id}/jadwal?hari=Senin`, {
       headers: {
         Authorization: token,
       },
@@ -58,7 +58,7 @@ export const DosenDashboard = () => {
         }
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, [hari]);
+  }, []);
 
   const getNamaHari = () => {
     const hariIni = new Date();
@@ -128,7 +128,7 @@ export const DosenDashboard = () => {
                 <div className="text-center">
                   <Text type="title2" text="Jadwal Mengajar Harian" />
                   <br />
-                  <Text type="title2" text={`${hari}`} />
+                  <Text type="title2" text="Selasa" />
                 </div>
                 <hr className="w-full h-0.5 bg-black mb-2" />
                 <div>

@@ -1,5 +1,5 @@
 import Button from "../atoms/Button";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../../context/AuthProvider";
@@ -17,14 +17,11 @@ const Logout = ({ setLogoutOn, setChoice }) => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      const response = await axios.delete(
-        `http://localhost:3000/api/users/logout`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.delete(`/users/logout`, {
+        headers: {
+          Authorization: token,
+        },
+      });
 
       if (response.status === 200) {
         localStorage.removeItem("userData");

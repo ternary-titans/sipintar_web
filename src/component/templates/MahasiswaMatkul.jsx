@@ -4,7 +4,7 @@ import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useParams } from "react-router-dom";
 
 export const MahasiswaMatkul = () => {
@@ -39,7 +39,7 @@ export const MahasiswaMatkul = () => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/${mahasiswaId}/listPertemuan/${id}`,
+          `/mahasiswa/${mahasiswaId}/listPertemuan/${id}`,
           {
             headers: {
               Authorization: token,

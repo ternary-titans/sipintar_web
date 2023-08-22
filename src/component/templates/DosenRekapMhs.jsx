@@ -51,14 +51,11 @@ export const DosenRekapMhs = () => {
           ? JSON.parse(localStorage.getItem("userData")).id
           : null;
 
-        const response = await axios.get(
-          `http://localhost:3000/api/dosen/${id}/rekapitulasiMahasiswa`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get(`/dosen/${id}/rekapitulasiMahasiswa`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setRekapDosenMhsData(response.data.data.data);
         setLoading(false);
       } catch (error) {

@@ -4,7 +4,7 @@ import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useParams } from "react-router-dom";
 
 export const DosenMatkul = () => {
@@ -50,7 +50,7 @@ export const DosenMatkul = () => {
         : null;
 
       const response = await axios.get(
-        `http://localhost:3000/api/dosen/${dosenId}/listPertemuan/${id}`,
+        `/dosen/${dosenId}/listPertemuan/${id}`,
         {
           headers: {
             Authorization: token,
