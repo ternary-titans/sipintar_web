@@ -49,17 +49,27 @@ const TabelJadwal = () => {
       setRows(updatedRows);
     }
   };
-
   useEffect(() => {
-    axios
-      .get("/mataKuliah")
-      .then((response) => {
-        const mataKuliahData = response.data;
-        setMataKuliahOptions(mataKuliahData);
-      })
-      .catch((error) => {
-        console.error("Error fetching Mata Kuliah data:", error);
-      });
+    async function fetchData() {
+      try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(`/mataKuliah`, {
+          // Use the correct endpoint
+          headers: {
+            Authorization: token,
+          },
+        });
+        const mataKuliahData = response.data.data; // Extract the "data" array from the response
+        setSelectedMataKuliah(mataKuliahData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
   }, []);
 
   const handleSubmit = async (event) => {
@@ -130,6 +140,9 @@ const TabelJadwal = () => {
                     <option value="">Pilih Hari</option>
                     <option value="Senin">Senin</option>
                     <option value="Selasa">Selasa</option>
+                    <option value="Rabu">Rabu</option>
+                    <option value="Kamis">Kamis</option>
+                    <option value="Jumat">Jumat</option>
                   </select>
                 </td>
                 <td className="py-2 px-4 text-sm flex items-center">
