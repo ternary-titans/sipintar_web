@@ -27,7 +27,7 @@ const Header = ({ webName }) => {
       <div className="flex items-center">
         <img src={logo} alt="Logo" className="ml-8 mr-4 w-10 h-10" />
         <div style={{ fontSize: "30px", color: "white", fontWeight: "bold" }}>
-          {nama}
+          {webName}
         </div>
       </div>
       <div
