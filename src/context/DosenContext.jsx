@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import axios from "../api/axios";
 
 const DosenContext = createContext();
 
@@ -8,7 +9,8 @@ export const DosenProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/users/current")
+    axios
+      .get("/users/current")
       .then((response) => response.json())
       .then((data) => {
         setDosenData({

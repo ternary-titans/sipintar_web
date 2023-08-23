@@ -4,6 +4,7 @@ import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Button from "../atoms/Button";
+import axios from "../../api/axios";
 
 export const FormRekapEditMhs = ({ id }) => {
   const [mkValue, setMKValue] = useState("");
@@ -13,7 +14,8 @@ export const FormRekapEditMhs = ({ id }) => {
   const [isDataChanged, setIsDataChanged] = useState(false);
 
   useEffect(() => {
-    fetch(`URL_API/mahasiswa/${id}`)
+    axios
+      .get(`/mahasiswa/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // Mengatur state dengan data yang diambil dari database berdasarkan ID
@@ -60,17 +62,10 @@ export const FormRekapEditMhs = ({ id }) => {
         selectedStatus,
       };
 
-      // Ganti URL_API dengan URL sesuai dengan API Anda
-      fetch(`URL_API/mahasiswa/${id}`, {
-        method: "PUT", // Gunakan method PUT untuk edit data
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToUpdate),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Data updated successfully:", data);
+      axios
+        .put(`/mahasiswa/${id}`, dataToUpdate, {})
+        .then((response) => {
+          console.log("Data updated successfully:", response.data);
         })
         .catch((error) => {
           console.error("Error updating data:", error);

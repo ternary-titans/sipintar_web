@@ -135,10 +135,7 @@ const FormEditMhs = ({ id }) => {
     };
 
     try {
-      const response = await axios.put(
-        `http://localhost:3000/api/jadwal/${id}`,
-        dataToUpdate
-      );
+      const response = await axios.put(`/jadwal/${id}`, dataToUpdate);
 
       navigate("/admin/jadwal");
 

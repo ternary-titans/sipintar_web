@@ -29,13 +29,10 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/users/login",
-        {
-          username: user,
-          password: pwd,
-        }
-      );
+      const response = await axios.post("users/login", {
+        username: user,
+        password: pwd,
+      });
 
       const token = response?.data.data.token;
       const { user_id, username, role, id, nama } = jwt_decode(token);

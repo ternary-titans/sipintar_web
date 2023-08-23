@@ -5,6 +5,7 @@ import CardManage from "../molecules/CardManage";
 import CardMk from "../molecules/CardMk";
 import Text from "../atoms/Text";
 import { useNavigate } from "react-router-dom";
+import axios from "../../api/axios";
 
 export const MahasiswaDashboard = () => {
   const navigate = useNavigate();
@@ -19,11 +20,12 @@ export const MahasiswaDashboard = () => {
       ? JSON.parse(localStorage.getItem("userData")).id
       : null;
 
-    fetch(`http://localhost:3000/api/mahasiswa/${id}/mataKuliah`, {
-      headers: {
-        Authorization: token,
-      },
-    })
+    axios
+      .get(`/mahasiswa/${id}/mataKuliah`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => response.json())
       .then((data) => setMkData(data.data))
       .catch((error) => console.error("Error fetching data:", error));

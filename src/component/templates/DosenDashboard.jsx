@@ -5,6 +5,7 @@ import CardMk from "../molecules/CardMk";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import TabelData from "../molecules/TabelData";
+import axios from "axios";
 
 export const DosenDashboard = () => {
   const columns = ["Waktu", "Kelas", "Ruangan", "Mata Kuliah"];
@@ -25,11 +26,12 @@ export const DosenDashboard = () => {
       ? JSON.parse(localStorage.getItem("userData")).id
       : null;
 
-    fetch(`http://localhost:3000/api/dosen/${id}/mataKuliah`, {
-      headers: {
-        Authorization: token,
-      },
-    })
+    axios
+      .get(`/dosen/${id}/mataKuliah`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => response.json())
       .then((data) => setMkData(data.data))
       .catch((error) => console.error("Error fetching data:", error));
@@ -45,11 +47,12 @@ export const DosenDashboard = () => {
       : null;
 
     getNamaHari();
-    fetch(`http://localhost:3000/api/dosen/${id}/jadwal?hari=Senin`, {
-      headers: {
-        Authorization: token,
-      },
-    })
+    axios
+      .get(`api/dosen/${id}/jadwal?hari=Senin`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => response.json())
       .then((data) => {
         setJadwalData(data.data);
@@ -58,7 +61,7 @@ export const DosenDashboard = () => {
         }
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  }, [hari]);
 
   const getNamaHari = () => {
     const hariIni = new Date();
