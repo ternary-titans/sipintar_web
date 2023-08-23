@@ -26,8 +26,9 @@ export const MahasiswaDashboard = () => {
           Authorization: token,
         },
       })
-      .then((response) => response.json())
-      .then((data) => setMkData(data.data))
+      .then((response) => {
+        setMkData(response.data.data);
+      })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
