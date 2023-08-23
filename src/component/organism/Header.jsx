@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import logo from "./../../assest/polines.png";
-import { useDosenContext } from "../../context/DosenContext";
 import Logout from "./Logout";
 
 const Header = ({ webName }) => {
-  const { dosenData } = useDosenContext();
   const [isOpen, setIsOpen] = useState(false);
   const [isLogoutVisible, setLogoutVisible] = useState(false);
+  const nama = localStorage.getItem("userData")
+    ? JSON.parse(localStorage.getItem("userData")).nama
+    : null;
 
   const handleProfileClick = () => {
     setIsOpen(!isOpen);
@@ -26,16 +27,14 @@ const Header = ({ webName }) => {
       <div className="flex items-center">
         <img src={logo} alt="Logo" className="ml-8 mr-4 w-10 h-10" />
         <div style={{ fontSize: "30px", color: "white", fontWeight: "bold" }}>
-          {webName}
+          {nama}
         </div>
       </div>
       <div
         className="flex items-center cursor-pointer "
         onClick={handleProfileClick}
       >
-        <div className="ml-10 text-base font-bold text-white">
-          {dosenData.userName}
-        </div>
+        <div className="ml-10 text-base font-bold text-white">{nama}</div>
         <div style={{ marginLeft: "10px", marginRight: "20px" }}>
           <IoPersonCircleSharp style={{ fontSize: "50px", color: "white" }} />
         </div>
