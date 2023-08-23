@@ -32,9 +32,18 @@ export const DosenDashboard = () => {
           Authorization: token,
         },
       })
-      .then((response) => response.json())
-      .then((data) => setMkData(data.data))
-      .catch((error) => console.error("Error fetching data:", error));
+      .then((response) => {
+        console.log("Response Data:", response.data);
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Data:", data);
+        setMkData(data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        console.log("Error response:", error.response);
+      });
   }, []);
 
   useEffect(() => {
@@ -48,7 +57,7 @@ export const DosenDashboard = () => {
 
     getNamaHari();
     axios
-      .get(`api/dosen/${id}/jadwal?hari=Senin`, {
+      .get(`/dosen/${id}/jadwal?hari=${hari}`, {
         headers: {
           Authorization: token,
         },
@@ -131,7 +140,7 @@ export const DosenDashboard = () => {
                 <div className="text-center">
                   <Text type="title2" text="Jadwal Mengajar Harian" />
                   <br />
-                  <Text type="title2" text="Selasa" />
+                  <Text type="title2" text={`${hari}`} />
                 </div>
                 <hr className="w-full h-0.5 bg-black mb-2" />
                 <div>

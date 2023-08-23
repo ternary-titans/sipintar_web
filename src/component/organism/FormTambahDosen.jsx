@@ -100,12 +100,24 @@ export const FormTambahDosen = () => {
       passwordValue !== ""
     ) {
       try {
-        const response = await axios.post("/dosen", {
-          nama_dosen: namaValue,
-          nip: nipValue,
-          jurusan_id: selectedJurusan,
-          password: passwordValue,
-        });
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.post(
+          "/dosen",
+          {
+            nama_dosen: namaValue,
+            nip: nipValue,
+            jurusan_id: selectedJurusan,
+            password: passwordValue,
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
 
         console.log("Data berhasil disimpan:", response.data);
 
@@ -124,6 +136,7 @@ export const FormTambahDosen = () => {
         navigate("/admin/dosen");
       } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error);
+        console.log("Error response:", error.response);
 
         alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
       }

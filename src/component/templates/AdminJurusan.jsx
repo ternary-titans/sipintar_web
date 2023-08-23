@@ -38,7 +38,7 @@ export const AdminJurusan = () => {
     }
 
     fetchData();
-  }, []); // Empty dependency array
+  }, []);
 
   const handleDelete = async (id) => {
     try {
