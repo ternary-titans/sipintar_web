@@ -5,7 +5,7 @@ import CardMk from "../molecules/CardMk";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import TabelData from "../molecules/TabelData";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const DosenDashboard = () => {
   const columns = ["Waktu", "Kelas", "Ruangan", "Mata Kuliah"];
@@ -33,17 +33,36 @@ export const DosenDashboard = () => {
         },
       })
       .then((response) => {
-        console.log("Response Data:", response.data);
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Data:", data);
-        setMkData(data.data);
+        setMkData(response.data.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
         console.log("Error response:", error.response);
       });
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
+    const id = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).id
+      : null;
+
+    axios
+      .get(`/dosen/${id}/jadwal?hari=${hari}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        setJadwalData(response.data.data); // Use response.data.data
+        if (response.data.data.length > 0) {
+          setHari(response.data.data[0].hari); // Use response.data.data
+        }
+      })
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   useEffect(() => {
