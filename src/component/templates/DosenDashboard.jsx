@@ -50,45 +50,20 @@ export const DosenDashboard = () => {
       ? JSON.parse(localStorage.getItem("userData")).id
       : null;
 
-    axios
-      .get(`/dosen/${id}/jadwal?hari=${hari}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        setJadwalData(response.data.data); // Use response.data.data
-        if (response.data.data.length > 0) {
-          setHari(response.data.data[0].hari); // Use response.data.data
-        }
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem("userData")
-      ? JSON.parse(localStorage.getItem("userData")).token
-      : null;
-
-    const id = localStorage.getItem("userData")
-      ? JSON.parse(localStorage.getItem("userData")).id
-      : null;
-
     getNamaHari();
-    axios
-      .get(`/dosen/${id}/jadwal?hari=${hari}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        setJadwalData(data.data);
-        if (data.data.length > 0) {
-          setHari(data.data[0].hari);
-        }
-      })
-      .catch((error) => console.error("Error fetching data:", error));
+
+    if (hari !== "") {
+      axios
+        .get(`/dosen/${id}/jadwal?hari=${hari}`, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          setJadwalData(response.data.data);
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+    }
   }, [hari]);
 
   const getNamaHari = () => {

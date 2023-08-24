@@ -47,68 +47,61 @@ import { MahasiswaProvider } from "./context/MahasiswaContext";
 
 function App() {
   return (
-    <DosenProvider>
-      <MahasiswaProvider>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          //Admin-A
-          <Route path="/admin/dashboard" element={<DashboardAdmin />} />
-          <Route path="/admin/dashboard/alpa" element={<AdminAlpa />} />
-          //A-Dosen
-          <Route path="/admin/dosen" element={<AdminDosen />} />
-          <Route path="/admin/dosen/tambah" element={<AdminDosenTambah />} />
-          <Route path="/admin/dosen/edit/:id" element={<AdminDosenEdit />} />
-          <Route path="/admin/dosen/rekap" element={<AdminDosenRekp />} />
-          <Route
-            path="/admin/dosen/rekap/:id"
-            element={<AdminDosenRekpDetail />}
-          />
-          //A-Mahasiswa
-          <Route path="/admin/mahasiswa" element={<AdminMhs />} />
-          <Route path="/admin/mahasiswa/tambah" element={<AdminMhsTambah />} />
-          <Route path="/admin/mahasiswa/edit/:id" element={<AdminMhsEdit />} />
-          <Route path="/admin/mahasiswa/rekap" element={<AdminMhsRekp />} />
-          <Route
-            path="/admin/mahasiswa/rekap/detail/:id"
-            element={<AdminMhsRekpDetail />}
-          />
-          <Route
-            path="/admin/mahasiswa/rekap/detailmk/:id"
-            element={<AdminMhsRekpDetailMK />}
-          />
-          <Route
-            path="/admin/mahasiswa/rekap/edit/:id"
-            element={<AdminMhsRkpEdit />}
-          />
-          //A-Jadwal Kuliah
-          <Route path="/admin/jadwal" element={<AdminJadwal />} />
-          <Route path="/admin/buatjadwal" element={<AdminBuatJadwal />} />
-          <Route path="/admin/editjadwal/:id" element={<AdminEditJadwal />} />
-          //A-Kelola
-          <Route path="/admin/matkul" element={<AdminMK />} />
-          <Route path="/admin/kelas" element={<AdminKelas />} />
-          <Route path="/admin/prodi" element={<AdminProdi />} />
-          <Route path="/admin/jurusan" element={<AdminJurusan />} />
-          <Route path="/admin/tahunajaran" element={<AdminTA />} />
-          //Dosen
-          <Route path="/dosen" element={<Dosen />} />
-          <Route path="/dosen/mk/:id" element={<DosenMK />} />
-          <Route path="/dosen/mk/lihat/:id" element={<DosenLihatRkp />} />
-          <Route path="/dosen/mk/QR/:id" element={<DosenQR />} />
-          <Route path="/dosen/rekap" element={<DosenRkp />} />
-          <Route path="/dosen/rekapmhs" element={<DosenRkpMhs />} />
-          <Route path="/dosen/rekapbln" element={<DosenRkpnBln />} />
-          //Mahasiswa
-          <Route path="/mahasiswa" element={<Mahasiswa />} />
-          <Route path="/mahasiswa/aktivasi" element={<MahasiswaAktivasi />} />
-          <Route path="/mahasiswa/qr/:id" element={<MahasiswaQR />} />
-          <Route path="/mahasiswa/rekap" element={<MahasiswaRkp />} />
-          <Route path="/mahasiswa/mk/:id" element={<MahasiswaMK />} />
-          <Route path="*" element={<Missing />} />
-        </Routes>
-      </MahasiswaProvider>
-    </DosenProvider>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
+      {/* //Admin-A */}
+      <Route path="/admin/dashboard" element={<DashboardAdmin />} />
+      <Route path="/admin/dashboard/alpa" element={<AdminAlpa />} />
+      {/* //A-Dosen */}
+      <Route path="/admin/dosen" element={<AdminDosen />} />
+      <Route path="/admin/dosen/tambah" element={<AdminDosenTambah />} />
+      <Route path="/admin/dosen/edit/:id" element={<AdminDosenEdit />} />
+      <Route path="/admin/dosen/rekap" element={<AdminDosenRekp />} />
+      <Route path="/admin/dosen/rekap/:id" element={<AdminDosenRekpDetail />} />
+      {/* //A-Mahasiswa */}
+      <Route path="/admin/mahasiswa" element={<AdminMhs />} />
+      <Route path="/admin/mahasiswa/tambah" element={<AdminMhsTambah />} />
+      <Route path="/admin/mahasiswa/edit/:id" element={<AdminMhsEdit />} />
+      <Route path="/admin/mahasiswa/rekap" element={<AdminMhsRekp />} />
+      <Route
+        path="/admin/mahasiswa/rekap/detail/:id"
+        element={<AdminMhsRekpDetail />}
+      />
+      <Route
+        path="/admin/mahasiswa/rekap/detailmk/:id"
+        element={<AdminMhsRekpDetailMK />}
+      />
+      <Route
+        path="/admin/mahasiswa/rekap/edit/:id"
+        element={<AdminMhsRkpEdit />}
+      />
+      {/* //A-Jadwal Kuliah */}
+      <Route path="/admin/jadwal" element={<AdminJadwal />} />
+      <Route path="/admin/buatjadwal" element={<AdminBuatJadwal />} />
+      <Route path="/admin/editjadwal/:id" element={<AdminEditJadwal />} />
+      {/* //A-Kelola */}
+      <Route path="/admin/matkul" element={<AdminMK />} />
+      <Route path="/admin/kelas" element={<AdminKelas />} />
+      <Route path="/admin/prodi" element={<AdminProdi />} />
+      <Route path="/admin/jurusan" element={<AdminJurusan />} />
+      <Route path="/admin/tahunajaran" element={<AdminTA />} />
+      {/* //Dosen */}
+      <Route path="/dosen" element={<Dosen />} />
+      <Route path="/dosen/mk/:id" element={<DosenMK />} />
+      <Route path="/dosen/mk/lihat/:id" element={<DosenLihatRkp />} />
+      <Route path="/dosen/mk/QR/:id" element={<DosenQR />} />
+      <Route path="/dosen/rekap" element={<DosenRkp />} />
+      <Route path="/dosen/rekapmhs" element={<DosenRkpMhs />} />
+      <Route path="/dosen/rekapbln" element={<DosenRkpnBln />} />
+      {/* //Mahasiswa */}
+      <Route path="/mahasiswa" element={<Mahasiswa />} />
+      <Route path="/mahasiswa/aktivasi" element={<MahasiswaAktivasi />} />
+      <Route path="/mahasiswa/qr/:id" element={<MahasiswaQR />} />
+      <Route path="/mahasiswa/rekap" element={<MahasiswaRkp />} />
+      <Route path="/mahasiswa/mk/:id" element={<MahasiswaMK />} />
+      <Route path="*" element={<Missing />} />
+    </Routes>
   );
 }
 

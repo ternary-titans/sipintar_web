@@ -85,7 +85,7 @@ export const MahasiswaMatkul = () => {
                 columns={columns}
                 data={mahasiswaMKData.map((item, index) => ({
                   No: index + 1,
-                  Hari: `${item.hari}, ${item.waktu_realisasi}`,
+                  Hari: `${item.hari}`,
                   Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
                   Topik: item.topik_perkuliahan,
                   Dosen: item.dosen,

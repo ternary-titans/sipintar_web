@@ -50,20 +50,6 @@ export const DosenRekapBulan = () => {
 
   const [rekapDosenBlnData, setRekapDosenBlnData] = useState([]);
 
-  const filterDataByMonth = (data, selectedMonth) => {
-    if (!selectedMonth) {
-      return data;
-    }
-
-    const filteredData = data.filter((item) => {
-      const itemMonth = new Date(item.waktu_realisasi).getMonth() + 1;
-      const selectedMonthInt = parseInt(selectedMonth, 10); // Convert string to integer
-      return itemMonth === selectedMonthInt;
-    });
-
-    return filteredData;
-  };
-
   useEffect(() => {
     async function fetchData() {
       try {
@@ -79,19 +65,20 @@ export const DosenRekapBulan = () => {
           headers: {
             Authorization: token,
           },
+          params: {
+            bulan: selectedBulan,
+          },
         });
 
-        const filteredData = filterDataByMonth(
-          response.data.data.data,
-          selectedBulan
-        );
-        setRekapDosenBlnData(filteredData);
+        setRekapDosenBlnData(response.data.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
 
-    fetchData();
+    if (selectedBulan) {
+      fetchData();
+    }
   }, [selectedBulan]);
 
   function formatDate(dateString) {
@@ -164,13 +151,17 @@ export const DosenRekapBulan = () => {
             <div style={{ marginTop: "30px" }}>
               <Table
                 columns={columns}
-                data={rekapDosenBlnData?.map((item, index) => ({
-                  No: index + 1,
-                  "Mata Kuliah": item.mataKuliah,
-                  Kelas: item.kelas,
-                  "Waktu Realisasi": formatDate(item.waktu_realisasi),
-                  "Total Jam Mengajar": item.total_jam,
-                }))}
+                data={
+                  selectedBulan
+                    ? rekapDosenBlnData?.map((item, index) => ({
+                        No: index + 1,
+                        "Mata Kuliah": item.mataKuliah,
+                        Kelas: item.kelas,
+                        "Waktu Realisasi": formatDate(item.waktu_realisasi),
+                        "Total Jam Mengajar": item.total_jam,
+                      }))
+                    : rekapDosenBlnData
+                }
                 columnAlignments={columnAlignments}
                 headerBackgroundColor={headerBackgroundColor}
                 headerBorderColor={headerBorderColor}
