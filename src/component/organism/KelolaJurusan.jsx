@@ -19,25 +19,21 @@ const KelolaJurusan = ({ isActive, setIsActive }) => {
   useEffect(() => {
     setFormValid(jurusanValue.trim() !== "");
   }, [jurusanValue]);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     if (jurusanValue.trim() !== "") {
       try {
         const token = localStorage.getItem("userData")
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
-
         const response = await axios.post(
           "/jurusan",
           {
-            headers: {
-              Authorization: token,
-            },
-          },
-          {
             nama_jurusan: jurusanValue,
+          },
+
+          {
+            headers: { Authorization: token },
           }
         );
 

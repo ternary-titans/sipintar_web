@@ -52,34 +52,60 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
     { id: 4, label: "Akuntansi" },
     { id: 5, label: "Administrasi Bisnis" },
   ];
-
   useEffect(() => {
-    axios
-      .get(`/prodi?jurusan_id=${selectedJurusan}`)
-      .then((response) => {
-        const prodiData = response.data;
-        setProdiOptions(prodiData.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching Prodi data:", error);
-      });
+    async function fetchData() {
+      try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(
+          `/prodi?jurusan_id=${selectedJurusan}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        const prodiOptions = response.data;
+        setProdiOptions(prodiOptions.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
   }, [selectedJurusan]);
 
   useEffect(() => {
-    axios
-      .get(`/tahunAjaran`)
-      .then((response) => {
-        const tahunAjaranData = response.data;
-        settahunAjaranOptions(tahunAjaranData.data);
-      })
-      .catch((error) => {
-        settahunAjaranOptions([]);
-        console.error("Error fetching Tahun Ajaran data:", error);
-      });
-  }, [selectedTahunAjaran]);
+    async function fetchData() {
+      try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(`/tahunAjaran`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const tahunAjaranOptions = response.data;
+        settahunAjaranOptions(tahunAjaranOptions.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    fetchData();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
+    // const kelasMkDosen = localStorage.getItem("kelas_mk_dosen_id");
 
     if (
       kelasValue.trim() !== "" &&
@@ -88,11 +114,19 @@ const KelolaKelas = ({ isActive, setIsActive }) => {
       selectedTahunAjaran !== ""
     ) {
       try {
-        const response = await axios.post("/kelas", {
-          nama_kelas: kelasValue,
-          prodi_id: selectedProdi,
-          tahun_ajaran_id: selectedTahunAjaran,
-        });
+        const response = await axios.post(
+          "/kelas",
+          {
+            nama_kelas: kelasValue,
+            prodi_id: selectedProdi,
+            tahun_ajaran_id: selectedTahunAjaran,
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
         console.log("Data berhasil disimpan:", response.data);
 
         alert("Data Kelas berhasil disimpan.");

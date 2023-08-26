@@ -7,8 +7,10 @@ import Table from "../molecules/Tabel";
 import { Link } from "react-router-dom";
 import axios from "../../api/axios";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import TambahJadwal from "./TambahJadwal";
 
 export const Jadwal = () => {
+  const [isActive, setIsActive] = useState(false);
   const [selectedJurusan, setSelectedJurusan] = useState("");
   const [selectedProdi, setSelectedProdi] = useState("");
   const [selectedKls, setSelectedKelas] = useState("");
@@ -17,8 +19,13 @@ export const Jadwal = () => {
   const [prodiOptions, setProdiOptions] = useState([]);
   const [kelasOptions, setKelasOptions] = useState([]);
   const [tahunAjaranOptions, settahunAjaranOptions] = useState([]);
+  const [jadwalOptions, setJadwalOptions] = useState([]);
 
   const [filteredJadwalData, setFilteredJadwalData] = useState([]);
+
+  const handleOKClick = () => {
+    setIsActive(true);
+  };
 
   const handleJurusanChange = (event) => {
     setSelectedJurusan(event.target.value);
@@ -32,7 +39,6 @@ export const Jadwal = () => {
   const handleTahunAjaranChange = (event) => {
     setSelectedTahunAjaran(event.target.value);
   };
-
   const jurusanOptions = [
     { id: "", label: "Pilih Jurusan" },
     { id: 1, label: "Teknik Elektro" },
@@ -43,44 +49,72 @@ export const Jadwal = () => {
   ];
 
   useEffect(() => {
-    axios
-      .get(`/prodi?jurusan_id=${selectedJurusan}`)
-      .then((response) => {
-        const prodiData = response.data;
-        setProdiOptions(prodiData.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching Prodi data:", error);
-      });
+    async function fetchData() {
+      try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(
+          `/prodi?jurusan_id=${selectedJurusan}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        const prodiOptions = response.data;
+        setProdiOptions(prodiOptions.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
   }, [selectedJurusan]);
 
   useEffect(() => {
-    if (selectedProdi) {
-      axios
-        .get(`/kelas?prodi_id=${selectedProdi}`)
-        .then((response) => {
-          const kelasData = response.data;
-          setKelasOptions(kelasData.data);
-        })
-        .catch((error) => {
-          setKelasOptions([]);
-          console.error("Error fetching Kelas data:", error);
+    async function fetchData() {
+      try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(`/kelas?prodi_id=${selectedProdi}`, {
+          headers: {
+            Authorization: token,
+          },
         });
+        const kelasOptions = response.data;
+        setKelasOptions(kelasOptions.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
+
+    fetchData();
   }, [selectedProdi]);
 
   useEffect(() => {
-    axios
-      .get(`/tahunAjaran`)
-      .then((response) => {
-        const tahunAjaranData = response.data;
-        settahunAjaranOptions(tahunAjaranData.data);
-      })
-      .catch((error) => {
-        settahunAjaranOptions([]);
-        console.error("Error fetching Tahun Ajaran data:", error);
-      });
-  }, [selectedTahunAjaran]);
+    async function fetchData() {
+      try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(`/tahunAjaran`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const tahunAjaranOptions = response.data;
+        settahunAjaranOptions(tahunAjaranOptions.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    fetchData();
+  }, []);
 
   const columns = [
     "No",
@@ -105,7 +139,7 @@ export const Jadwal = () => {
   ];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [10, 25, 50];
+  const pageSizeOptions = [5];
 
   const [jadwalData, setJadwalData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +147,23 @@ export const Jadwal = () => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/jadwal?kelas=`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      const queryParameters = new URLSearchParams();
+      queryParameters.append("nama_kelas", selectedKls);
+      queryParameters.append("tahunAjaran", selectedTahunAjaran);
+
+      const response = await axios.get(
+        `/jadwal?${queryParameters.toString()}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
       setFilteredJadwalData(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -121,21 +171,26 @@ export const Jadwal = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("/jadwal");
-        setJadwalData(response.data.data);
-        setLoading(false);
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(`/jadwal?kelas=nama_kelas`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const jadwalData = response.data;
+        setJadwalData(jadwalData.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false);
       }
     }
-
     fetchData();
-  }, [jadwalData, setJadwalData]);
+  }, []);
 
   const handleDelete = async (id) => {
     try {
@@ -149,27 +204,35 @@ export const Jadwal = () => {
 
   return (
     <div className="p-0">
-      <Card size={{ height: "28rem", width: "78%" }}>
+      <Card size={{ height: "31rem", width: "78%" }}>
         <div className="flex flex-col gap-4">
-          <Text type="title3" text="Jadwal Kuliah"></Text>
-          <div className="overflow-y-scroll">
-            <InputDropdown
-              label="Jurusan"
-              uniqueKeys="label"
-              value={selectedJurusan}
-              options={jurusanOptions}
-              onChange={handleJurusanChange}
-            />
-            <InputDropdown
-              isDisabled={selectedJurusan === "" ? true : false}
-              label="Program Studi"
-              uniqueKeys="nama_prodi"
-              value={selectedProdi}
-              options={selectedJurusan === "" ? null : prodiOptions}
-              onChange={handleProdiChange}
-            />
-            <div className="flex justify-between mt-2">
-              <div className="flex gap-4">
+          <div className="flex flex-row justify-between">
+            <Text type="title3" text="Jadwal Kuliah"></Text>
+            <Button variant="biru" onClick={handleOKClick}>
+              Buat Jadwal
+            </Button>
+          </div>
+
+          <div className="mt-2">
+            <div className="grid grid-cols-3 gap-10 w-[100%]">
+              <div>
+                <InputDropdown
+                  label="Jurusan"
+                  uniqueKeys="label"
+                  value={selectedJurusan}
+                  options={jurusanOptions}
+                  onChange={handleJurusanChange}
+                />
+                <InputDropdown
+                  isDisabled={selectedJurusan === "" ? true : false}
+                  label="Program Studi"
+                  uniqueKeys="nama_prodi"
+                  value={selectedProdi}
+                  options={selectedJurusan === "" ? null : prodiOptions}
+                  onChange={handleProdiChange}
+                />
+              </div>
+              <div>
                 <InputDropdown
                   isDisabled={selectedJurusan === "" ? true : false}
                   label="Kelas"
@@ -178,32 +241,36 @@ export const Jadwal = () => {
                   options={selectedJurusan === "" ? null : kelasOptions}
                   onChange={handleKelasChange}
                 />
-                <InputDropdown
-                  label="Tahun Ajaran"
-                  uniqueKeys="nama"
-                  value={selectedTahunAjaran}
-                  options={tahunAjaranOptions}
-                  onChange={handleTahunAjaranChange}
-                />
+                <div className="flex flex-row justify-between gap-10 w-[100%]">
+                  <InputDropdown
+                    label="Tahun Ajaran"
+                    uniqueKeys="nama"
+                    value={selectedTahunAjaran}
+                    options={tahunAjaranOptions}
+                    onChange={handleTahunAjaranChange}
+                  />
+                  <Button
+                    variant="kuning"
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      marginTop: "1.2rem",
+                      height: "28px",
+                      marginRight: "6px",
+                    }}
+                    onClick={handleSearch}
+                  >
+                    Cari
+                  </Button>
+                </div>
               </div>
-              <Button
-                variant="kuning"
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  marginTop: "1.2rem",
-                  height: "28px",
-                  marginRight: "6px",
-                }}
-                onClick={handleSearch}
-              >
-                Cari
-              </Button>
+              <div></div>
             </div>
+
             <div className="flex justify-end mt-6"></div>
             <div>
               <Text type="title3" text=" Tabel Jadwal Kuliah"></Text>
-              <div className="mr-2">
+              <div className="mr-2 overflow-y-scroll">
                 {loading ? (
                   <p>Loading...</p>
                 ) : (
@@ -215,7 +282,7 @@ export const Jadwal = () => {
                       Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
                       "Mata Kuliah": item.nama_mk,
                       "Total Jam": item.total_jam,
-                      Dosen: item.nama_dosen,
+                      Dosen: item.dosen,
                       Ruangan: item.ruangan,
                       Aksi: (
                         <div className="flex flex-row justify-center">
@@ -246,6 +313,8 @@ export const Jadwal = () => {
           </div>
         </div>
       </Card>
+
+      <TambahJadwal isActive={isActive} setIsActive={setIsActive} />
     </div>
   );
 };

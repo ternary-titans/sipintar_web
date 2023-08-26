@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Text from "../atoms/Text";
 import axios from "../../api/axios";
 import Button from "../atoms/Button";
-import TambahJadwal from "./TambahJadwal";
 
-export const BuatJadwal = () => {
-  const [isActive, setIsActive] = useState(false);
+export const TambahJadwal = ({ isActive, setIsActive }) => {
   const [selectedJurusan, setSelectedJurusan] = useState("");
   const [selectedProdi, setSelectedProdi] = useState("");
   const [selectedKls, setSelectedKelas] = useState("");
@@ -24,11 +21,14 @@ export const BuatJadwal = () => {
 
   const [mataKuliahOptions, setMataKuliahOptions] = useState([]);
   const [dosenOptions, setDosenOptions] = useState([]);
-  const [formValid, setFormValid] = useState(false);
 
   const [prodiOptions, setProdiOptions] = useState([]);
   const [kelasOptions, setKelasOptions] = useState([]);
   const [tahunAjaranOptions, settahunAjaranOptions] = useState([]);
+
+  const handleCancelClick = () => {
+    setIsActive(false);
+  };
 
   const handleJurusanChange = (event) => {
     setSelectedJurusan(event.target.value);
@@ -201,14 +201,24 @@ export const BuatJadwal = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // const token = localStorage.getItem("userData")
+    //   ? JSON.parse(localStorage.getItem("userData")).token
+    //   : null;
+
+    // const kelasMkDosen = localStorage.getItem("kelas_mk_dosen_id");
+
     if (
-      setHariValue.trim() !== "" &&
-      setWaktuMulaiValue.trim() !== "" &&
-      setWaktuAkhirValue.trim() !== "" &&
-      setSelectedMatkul !== "" &&
-      setTotalValue.trim() !== "" &&
-      setSelectedDosen !== "" &&
-      setRuangValue.trim() !== ""
+      selectedJurusan !== "" &&
+      selectedProdi !== "" &&
+      selectedKls !== "" &&
+      selectedTahunAjaran !== "" &&
+      hariValue !== "" &&
+      waktuMulaiValue !== "" &&
+      waktuAkhirValue !== "" &&
+      selectedMatkul !== "" &&
+      totalValue !== "" &&
+      selectedDosen !== "" &&
+      ruangValue !== ""
     ) {
       try {
         const response = await axios.post("/jadwal", {
@@ -219,6 +229,7 @@ export const BuatJadwal = () => {
           total_jam: totalValue,
           dosen_id: selectedDosen,
           ruangan: ruangValue,
+          kelas_id: selectedKls,
         });
         console.log("Data berhasil disimpan:", response.data);
 
@@ -231,6 +242,7 @@ export const BuatJadwal = () => {
         setTotalValue("");
         setSelectedDosen("");
         setRuangValue("");
+        setSelectedKelas("");
         setIsActive(false);
       } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error);
@@ -241,120 +253,124 @@ export const BuatJadwal = () => {
   };
 
   return (
-    <div className="">
-      <Card size={{ height: "31rem", width: "90%" }}>
+    <div
+      className={`h-screen justify-center items-center ${
+        isActive ? "absolute flex top-0 left-1/3 right-1/4" : "hidden"
+      }`}
+    >
+      <div className="flex-col justify-center  bg-white py-4 px-8  border-black border-2 text-left">
         <div className="text-center">
           <Text type="title3" text="FORM BUAT JADWAL" />
         </div>
-        <div className="flex flex-col h-full">
-          <div className="overflow-y-auto">
-            <div className="grid grid-cols-2 gap-20 mt-8 w-[60%]">
-              <div>
-                <InputDropdown
-                  label="Jurusan"
-                  uniqueKeys="label"
-                  value={selectedJurusan}
-                  options={jurusanOptions}
-                  onChange={handleJurusanChange}
-                />
+        <div className="flex flex-col ">
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <InputDropdown
+                label="Jurusan"
+                uniqueKeys="label"
+                value={selectedJurusan}
+                options={jurusanOptions}
+                onChange={handleJurusanChange}
+              />
 
-                <InputDropdown
-                  isDisabled={selectedJurusan === "" ? true : false}
-                  label="Program Studi"
-                  uniqueKeys="nama_prodi"
-                  value={selectedProdi}
-                  options={selectedJurusan === "" ? null : prodiOptions}
-                  onChange={handleProdiChange}
-                />
-              </div>
-              <div>
-                <InputDropdown
-                  isDisabled={selectedJurusan === "" ? true : false}
-                  label="Kelas"
-                  uniqueKeys="nama_kelas"
-                  value={selectedKls}
-                  options={selectedJurusan === "" ? null : kelasOptions}
-                  onChange={handleKelasChange}
-                />
-                <InputDropdown
-                  label="Tahun Ajaran"
-                  uniqueKeys="nama"
-                  value={selectedTahunAjaran}
-                  options={tahunAjaranOptions}
-                  onChange={handleTahunAjaranChange}
-                />
-              </div>
+              <InputDropdown
+                isDisabled={selectedJurusan === "" ? true : false}
+                label="Program Studi"
+                uniqueKeys="nama_prodi"
+                value={selectedProdi}
+                options={selectedJurusan === "" ? null : prodiOptions}
+                onChange={handleProdiChange}
+              />
             </div>
+            <div>
+              <InputDropdown
+                isDisabled={selectedJurusan === "" ? true : false}
+                label="Kelas"
+                uniqueKeys="nama_kelas"
+                value={selectedKls}
+                options={selectedJurusan === "" ? null : kelasOptions}
+                onChange={handleKelasChange}
+              />
+              <InputDropdown
+                label="Tahun Ajaran"
+                uniqueKeys="nama"
+                value={selectedTahunAjaran}
+                options={tahunAjaranOptions}
+                onChange={handleTahunAjaranChange}
+              />
+            </div>
+          </div>
 
-            <div className="mt-2 w-[60%]">
+          <div className="mt-2 w-[100%]">
+            <div>
               <div>
-                <div>
-                  <Input
-                    label="Hari"
-                    type="varchar"
-                    value={hariValue}
-                    onChange={handleHariChange}
-                    placeholder="Senin"
-                    width="20px"
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-10">
-                  <Input
-                    label="Waktu Mulai"
-                    type="time"
-                    value={waktuMulaiValue}
-                    onChange={(e) => handleWaktuMulaiChange(e.target.value)}
-                    placeholder="HH:MM"
-                  />
-                  <Input
-                    label="Waktu Akhir"
-                    type="time"
-                    value={waktuAkhirValue}
-                    onChange={(e) => handleWaktuAkhirChange(e.target.value)}
-                    placeholder="HH:MM"
-                  />
-                  <Input
-                    label="Total Jam"
-                    type="varchar"
-                    value={totalValue}
-                    onChange={handleTotalChange}
-                    disabled
-                  />
-                </div>
-
-                <InputDropdown
-                  label="Mata Kuliah"
-                  uniqueKeys="nama_mk"
-                  value={selectedMatkul}
-                  options={mataKuliahOptions}
-                  onChange={handleMatkulChange}
+                <Input
+                  label="Hari"
+                  type="varchar"
+                  value={hariValue}
+                  onChange={handleHariChange}
+                  placeholder="Senin"
+                  width="20px"
                 />
-                <InputDropdown
-                  label="Dosen"
-                  uniqueKeys="nama_dosen"
-                  value={selectedDosen}
-                  options={dosenOptions}
-                  onChange={handleDosenChange}
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <Input
+                  label="Waktu Mulai"
+                  type="time"
+                  value={waktuMulaiValue}
+                  onChange={(e) => handleWaktuMulaiChange(e.target.value)}
+                  placeholder="HH:MM"
                 />
                 <Input
-                  label="Ruangan"
+                  label="Waktu Akhir"
+                  type="time"
+                  value={waktuAkhirValue}
+                  onChange={(e) => handleWaktuAkhirChange(e.target.value)}
+                  placeholder="HH:MM"
+                />
+                <Input
+                  label="Total Jam"
                   type="varchar"
-                  value={ruangValue}
-                  onChange={handleRuangChange}
+                  value={totalValue}
+                  onChange={handleTotalChange}
+                  disabled
                 />
               </div>
-              <div className="mt-2">
-                <Button variant="biru" onClick={handleSubmit}>
-                  Tambah
-                </Button>
-              </div>
+
+              <InputDropdown
+                label="Mata Kuliah"
+                uniqueKeys="nama_mk"
+                value={selectedMatkul}
+                options={mataKuliahOptions}
+                onChange={handleMatkulChange}
+              />
+              <InputDropdown
+                label="Dosen"
+                uniqueKeys="nama_dosen"
+                value={selectedDosen}
+                options={dosenOptions}
+                onChange={handleDosenChange}
+              />
+              <Input
+                label="Ruangan"
+                type="varchar"
+                value={ruangValue}
+                onChange={handleRuangChange}
+              />
+            </div>
+            <div className="flex justify-center space-x-4 mt-6">
+              <Button variant="biru" onClick={handleSubmit}>
+                Simpan
+              </Button>
+              <Button onClick={handleCancelClick} variant="biru">
+                Batal
+              </Button>
             </div>
           </div>
         </div>
-      </Card>
-      <TambahJadwal isActive={isActive} setIsActive={setIsActive} />
+      </div>
     </div>
   );
 };
-export default BuatJadwal;
+export default TambahJadwal;

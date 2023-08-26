@@ -58,14 +58,14 @@ const KelolaMK = ({ isActive, setIsActive }) => {
         const response = await axios.post(
           "/prodi",
           {
-            headers: {
-              Authorization: token,
-            },
-          },
-          {
             nama_prodi: prodiValue,
             kode_prodi: kodeProdiValue,
             jurusan_id: selectedJurusan,
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
           }
         );
 

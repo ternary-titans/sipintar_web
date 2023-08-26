@@ -32,12 +32,12 @@ const KelolaTA = ({ isActive, setIsActive }) => {
         const response = await axios.post(
           "/tahunAjaran",
           {
+            nama: TahunAjaranValue,
+          },
+          {
             headers: {
               Authorization: token,
             },
-          },
-          {
-            nama: TahunAjaranValue,
           }
         );
 
