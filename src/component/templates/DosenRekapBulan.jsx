@@ -7,8 +7,6 @@ import Table from "../molecules/Tabel";
 import axios from "../../api/axios";
 
 export const DosenRekapBulan = () => {
-  const [selectedBulan, setSelectedBulan] = useState("");
-
   const handleBulanChange = (event) => {
     setSelectedBulan(event.target.value);
   };
@@ -47,7 +45,7 @@ export const DosenRekapBulan = () => {
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
   const pageSizeOptions = [10, 25, 50];
-
+  const [selectedBulan, setSelectedBulan] = useState("");
   const [rekapDosenBlnData, setRekapDosenBlnData] = useState([]);
 
   useEffect(() => {
@@ -169,18 +167,19 @@ export const DosenRekapBulan = () => {
                 style={{ marginTop: "10px" }}
               />
             </div>
-            <div style={{ marginTop: "10px" }}>
+            <div className="mt-10">
               <div className="flex gap-5">
-                <h2>Total Jam Mengajar :</h2>
-                <span>{getTotalJamMengajar(rekapDosenBlnData)} Jam</span>
+                <h2 className="w-60">Total Jam Mengajar </h2>
+                <span>: {getTotalJamMengajar(rekapDosenBlnData)} Jam</span>
               </div>
               <div className="flex gap-5">
-                <h2>Kewajiban Jam Mengajar :</h2>
-                <span>36 Jam</span>
+                <h2 className="w-60">Kewajiban Jam Mengajar </h2>
+                <span>: 36 Jam</span>
               </div>
               <div className="flex gap-5">
-                <h2>Kelebihan Jam Mengajar :</h2>
+                <h2 className="w-60">Kelebihan Jam Mengajar </h2>
                 <span>
+                  :{" "}
                   {getKelebihanJamMengajar(
                     getTotalJamMengajar(rekapDosenBlnData)
                   )}{" "}
@@ -188,9 +187,9 @@ export const DosenRekapBulan = () => {
                 </span>
               </div>
               <div className="flex gap-5">
-                <h2>Honor Kelebihan Jam Mengajar :</h2>
+                <h2 className="w-60">Honor Kelebihan Jam Mengajar </h2>
                 <span>
-                  Rp{" "}
+                  : Rp{" "}
                   {getHonorKelebihanJamMengajar(
                     getTotalJamMengajar(rekapDosenBlnData)
                   )}{" "}

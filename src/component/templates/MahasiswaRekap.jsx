@@ -45,7 +45,8 @@ export const MahasiswaRekap = () => {
   const columns2 = [
     "No",
     "Tanggal Realisasi",
-    "Jam Perkuliahan",
+    "Waktu Realisasi",
+    "Jam Realisasi",
     "Topik",
     "Status",
   ];
@@ -164,12 +165,12 @@ export const MahasiswaRekap = () => {
               <Text type="title3" text="Detail Rekapitulasi Presensi " />
               <div style={{ marginTop: "10px" }}>
                 <div className="flex gap-5">
-                  <h2>Mata Kuliah :</h2>
-                  <span>{rekapMHSData[showDetail].mataKuliah}</span>
+                  <h2 className="w-24">Mata Kuliah </h2>
+                  <span>: {rekapMHSData[showDetail].mataKuliah}</span>
                 </div>
                 <div className="flex gap-5">
-                  <h2>Dosen :</h2>
-                  <span>{rekapMHSData[showDetail].dosen}</span>
+                  <h2 className="w-24">Dosen </h2>
+                  <span>: {rekapMHSData[showDetail].dosen}</span>
                 </div>
               </div>
               <div>
@@ -182,7 +183,8 @@ export const MahasiswaRekap = () => {
                       (item, index) => ({
                         No: index + 1,
                         "Tanggal Realisasi": formatDate(item.waktu_realisasi),
-                        "Jam Perkuliahan": item.total_jam,
+                        "Waktu Realisasi": `${item.jam_mulai} - ${item.jam_akhir}`,
+                        "Jam Realisasi": item.total_jam,
                         Topik: item.topik_perkuliahan,
                         Status: item.status_presensi,
                       })

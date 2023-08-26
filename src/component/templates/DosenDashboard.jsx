@@ -104,8 +104,8 @@ export const DosenDashboard = () => {
     <div>
       <Dosen />
       <div className="flex">
-        <div className="flex-1 mr-2">
-          <div className="flex flex-wrap ml-8 mt-5 gap-6 px-1 pb-8">
+        <div className="w-2/3 ml-8 mt-5">
+          <div className="flex flex-wrap gap-6 px-1 pb-8">
             {mkData &&
               mkData?.map((rifka) => (
                 <Link
@@ -122,42 +122,40 @@ export const DosenDashboard = () => {
               ))}
           </div>
         </div>
-        <div className="flex-1 mt-4 mr-8 overflow-y-auto justify-start">
-          <div>
-            <CardUser
-              width={0}
-              height={420}
-              borderColor="#1e40af"
-              borderWidth={2}
-            >
-              <div className="flex justify-start items-center flex-col h-full">
-                <div className="text-center">
-                  <Text type="title2" text="Jadwal Mengajar Harian" />
-                  <br />
-                  <Text type="title2" text={`${hari}`} />
-                </div>
-                <hr className="w-full h-0.5 bg-black mb-2" />
-                <div>
-                  {jadwalData && (
-                    <TabelData
-                      colomsData={columns}
-                      dataData={jadwalData?.map((item) => ({
-                        Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
-                        Kelas: item.kelas,
-                        Ruangan: item.ruangan,
-                        "Mata Kuliah": item.nama_mk,
-                      }))}
-                      layout="horizontal"
-                      columnWidths={columnWidths}
-                      fontSize={fontSize}
-                      textAlign={textAlign}
-                    />
-                  )}
-                  <hr className="w-full h-0.5 bg-gray-400" />
-                </div>
+        <div className="w-1/3 mt-4 mr-8">
+          <CardUser
+            width={100}
+            height={420}
+            borderColor="#1e40af"
+            borderWidth={2}
+          >
+            <div className="flex justify-start items-center flex-col h-full">
+              <div className="text-center">
+                <Text type="title2" text="Jadwal Mengajar Harian" />
+                <br />
+                <Text type="title2" text={`${hari}`} />
               </div>
-            </CardUser>
-          </div>
+              <hr className="w-full h-0.5 bg-black mb-2" />
+              <div>
+                {jadwalData && (
+                  <TabelData
+                    colomsData={columns}
+                    dataData={jadwalData?.map((item) => ({
+                      Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
+                      Kelas: item.kelas,
+                      Ruangan: item.ruangan,
+                      "Mata Kuliah": item.nama_mk,
+                    }))}
+                    layout="horizontal"
+                    columnWidths={columnWidths}
+                    fontSize={fontSize}
+                    textAlign={textAlign}
+                  />
+                )}
+                <hr className="w-full h-0.5 bg-gray-400" />
+              </div>
+            </div>
+          </CardUser>
         </div>
       </div>
     </div>

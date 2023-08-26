@@ -95,7 +95,21 @@ export const DosenQR = () => {
             borderColor="#1e40af"
             borderWidth={2}
           >
-            <img src={qrCodeData?.qr_code} alt="qr code presensi" />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <img src={qrCodeData?.qr_code} alt="qr code presensi" />
+              <button
+                className="bg-yellow-400 text-blue-950 font-bold w-full px-3 py-1 rounded mt-3 hover:bg-yellow-600"
+                // onClick={handleTutupPresensi}
+              >
+                Tutup Presensi
+              </button>
+            </div>
           </CardUser>
         </div>
         <div className="m-8">
@@ -106,7 +120,7 @@ export const DosenQR = () => {
             borderWidth={2}
           >
             <div>
-              <Text type="text1" text="Rekap Presensi" />
+              <Text type="title3" text="Rekap Presensi" />
             </div>
             <hr className="w-full h-0.5 bg-black" />
             <div>
