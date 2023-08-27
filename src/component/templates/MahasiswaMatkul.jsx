@@ -92,7 +92,16 @@ export const MahasiswaMatkul = () => {
                   Ruangan: item.ruangan,
                   Aksi: (
                     <Link to={`/mahasiswa/qr/${item.id}`}>
-                      <button className="qr-button ml-2 mb-1">Lihat QR</button>
+                      <button
+                        className={`p-2 font-bold mr-2 rounded mb-1 ${
+                          item.status
+                            ? "bg-[#facc15]"
+                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        }`}
+                        disabled={item.status ? false : true}
+                      >
+                        Lihat QR
+                      </button>
                     </Link>
                   ),
                 }))}

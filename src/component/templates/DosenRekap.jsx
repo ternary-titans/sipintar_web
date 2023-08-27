@@ -170,7 +170,7 @@ export const DosenRekap = () => {
                               Hadir: item.detail.total_hadir + " Mahasiswa",
                               Sakit: item.detail.total_sakit + " Mahasiswa",
                               Izin: item.detail.total_izin + " Mahasiswa",
-                              Alpa: item.detail.total_alpha + " Mahasiswa",
+                              Alpa: item.detail.total_alha + " Mahasiswa",
                             })
                           )}
                           columnAlignments={columnAlignments}

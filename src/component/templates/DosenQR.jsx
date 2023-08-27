@@ -103,12 +103,6 @@ export const DosenQR = () => {
               }}
             >
               <img src={qrCodeData?.qr_code} alt="qr code presensi" />
-              <button
-                className="bg-yellow-400 text-blue-950 font-bold w-full px-3 py-1 rounded mt-3 hover:bg-yellow-600"
-                // onClick={handleTutupPresensi}
-              >
-                Tutup Presensi
-              </button>
             </div>
           </CardUser>
         </div>

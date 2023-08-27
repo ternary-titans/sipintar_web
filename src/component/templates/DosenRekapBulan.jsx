@@ -44,7 +44,7 @@ export const DosenRekapBulan = () => {
   ];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [10, 25, 50];
+  const pageSizeOptions = [5, 10, 50];
   const [selectedBulan, setSelectedBulan] = useState("");
   const [rekapDosenBlnData, setRekapDosenBlnData] = useState([]);
 
@@ -68,7 +68,7 @@ export const DosenRekapBulan = () => {
           },
         });
 
-        setRekapDosenBlnData(response.data.data.data);
+        setRekapDosenBlnData(response.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

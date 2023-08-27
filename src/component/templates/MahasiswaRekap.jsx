@@ -137,7 +137,7 @@ export const MahasiswaRekap = () => {
                   Hadir: item.total_hadir,
                   Sakit: item.total_sakit,
                   Izin: item.total_izin,
-                  Alpa: item.total_alpha,
+                  Alpa: item.total_alpa,
                   Presentase: calculatePercentage(
                     item.total_hadir,
                     item.total_jam

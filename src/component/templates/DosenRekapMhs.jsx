@@ -129,10 +129,10 @@ export const DosenRekapMhs = () => {
                           No: index + 1,
                           Nama: item.nama_mahasiswa,
                           NIM: item.nim,
-                          Hadir: item.rekapitulasi.total_hadir,
-                          Sakit: item.rekapitulasi.total_sakit,
-                          Izin: item.rekapitulasi.total_izin,
-                          Alpa: item.rekapitulasi.total_alpha,
+                          Hadir: item.rekapitulasi.total_hadir + " jam",
+                          Sakit: item.rekapitulasi.total_sakit + " jam",
+                          Izin: item.rekapitulasi.total_izin + " jam",
+                          Alpa: item.rekapitulasi.total_alpa + " jam",
                           //  Keterangan
                         }))
                       : rekapDosenMhsData
