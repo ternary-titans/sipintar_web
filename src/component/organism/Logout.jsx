@@ -23,11 +23,11 @@ const Logout = ({ setLogoutOn, setChoice }) => {
         },
       });
 
+      localStorage.removeItem("userData");
+      localStorage.removeItem("kelas_mk_dosen_id");
+      setAuth({});
+      navigate("/login");
       if (response.status === 200) {
-        localStorage.removeItem("userData");
-        localStorage.removeItem("kelas_mk_dosen_id");
-        setAuth({});
-        navigate("/login");
       }
     } catch (error) {
       console.error("Error", error);
