@@ -11,6 +11,7 @@ const Tabel = ({
   totalPages,
   onPageChange,
   totalItem,
+  pagination = true,
 }) => {
   const pageSize = pageSizeOptions[0]; // Using the first option as default
 
@@ -49,36 +50,38 @@ const Tabel = ({
           ))}
         </tbody>
       </table>
-      <div className="flex justify-end items-center mt-5 gap-3">
-        <button
-          className="bg-yellow-500 p-1 text-gray-100 rounded-md"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <div className="entries">
-          <span>Show: </span>
-          <select value={pageSize}>
-            {pageSizeOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <span>
-            {startIndex + 1}-{endIndex > totalItem ? totalItem : endIndex} dari{" "}
-            {totalItem}
-          </span>
+      {pagination && (
+        <div className="flex justify-end items-center mt-5 gap-3">
+          <button
+            className="bg-yellow-500 p-1 text-gray-100 rounded-md"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <div className="entries">
+            <span>Show: </span>
+            <select value={pageSize}>
+              {pageSizeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            <span>
+              {startIndex + 1}-{endIndex > totalItem ? totalItem : endIndex}{" "}
+              dari {totalItem}
+            </span>
+          </div>
+          <button
+            className="bg-yellow-500 p-1 text-gray-100 rounded-md w-14"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
-        <button
-          className="bg-yellow-500 p-1 text-gray-100 rounded-md w-14"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
+      )}
     </div>
   );
 };

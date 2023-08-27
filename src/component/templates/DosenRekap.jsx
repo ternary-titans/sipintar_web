@@ -6,45 +6,9 @@ import Table from "../molecules/Tabel";
 import axios from "../../api/axios";
 
 export const DosenRekap = () => {
-  const [showDetail, setShowDetail] = useState(-1);
-  const columns = [
-    "No",
-    "Kelas",
-    "Mata Kuliah",
-    "Total Jam Pertemuan",
-    "Total Jam Kehadiran",
-    "Presentase",
-    "Aksi",
-  ];
-  const columnAlignments = [
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-  ];
-  const headerBackgroundColor = "white";
-  const headerBorderColor = "#2563eb";
-  const headerBorderColor2 = "#facc15";
-  const pageSizeOptions = [5, 10, 25];
-
   const [rekapDosenData, setRekapDosenData] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const columns2 = [
-    "No",
-    "Tanggal Realisasi",
-    "Jam Perkuliahan",
-    "Topik",
-    "Hadir",
-    "Sakit",
-    "Izin",
-    "Alpa",
-  ];
+  const [showDetail, setShowDetail] = useState(-1);
 
   useEffect(() => {
     async function fetchData() {
@@ -71,6 +35,42 @@ export const DosenRekap = () => {
     }
     fetchData();
   }, [rekapDosenData, setRekapDosenData]);
+
+  const columns = [
+    "No",
+    "Kelas",
+    "Mata Kuliah",
+    "Total Jam Pertemuan",
+    "Total Jam Kehadiran",
+    "Presentase",
+    "Aksi",
+  ];
+  const columnAlignments = [
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+  ];
+  const headerBackgroundColor = "white";
+  const headerBorderColor = "#2563eb";
+  const headerBorderColor2 = "#facc15";
+  const pageSizeOptions = [5, 10, 25];
+
+  const columns2 = [
+    "No",
+    "Tanggal Realisasi",
+    "Jam Perkuliahan",
+    "Topik",
+    "Hadir",
+    "Sakit",
+    "Izin",
+    "Alpa",
+  ];
 
   function formatDate(dateString) {
     const dateObject = new Date(dateString);
@@ -105,6 +105,36 @@ export const DosenRekap = () => {
     return ((present / total) * 100).toFixed(2);
   }
 
+  const formattedRekapitulasi = rekapDosenData?.map((item, index) => ({
+    No: index + 1,
+    Kelas: item.kelas,
+    "Mata Kuliah": item.mataKuliah,
+    "Total Jam Pertemuan": item.total_jam,
+    "Total Jam Kehadiran": item.total_hadir,
+    Presentase: calculatePercentage(item.total_hadir, item.total_jam) + "%",
+    Aksi: (
+      <button
+        style={{ textDecoration: "underline", color: "blue" }}
+        onClick={() => setShowDetail(index)}
+      >
+        Detail
+      </button>
+    ),
+  }));
+
+  const formattedDetail = rekapDosenData[showDetail]?.jadwalPertemuan?.map(
+    (item, index) => ({
+      No: index + 1,
+      "Tanggal Realisasi": formatDate(item.waktu_realisasi),
+      "Jam Perkuliahan": `${item.jam_mulai} - ${item.jam_akhir}`,
+      Topik: item.topik_perkuliahan,
+      Hadir: item.detail.total_hadir + " Mahasiswa",
+      Sakit: item.detail.total_sakit + " Mahasiswa",
+      Izin: item.detail.total_izin + " Mahasiswa",
+      Alpa: item.detail.total_alpha + " Mahasiswa",
+    })
+  );
+
   return (
     <div>
       <Dosen />
@@ -118,24 +148,8 @@ export const DosenRekap = () => {
               ) : (
                 <Table
                   columns={columns}
-                  data={rekapDosenData?.map((item, index) => ({
-                    No: index + 1,
-                    Kelas: item.kelas,
-                    "Mata Kuliah": item.mataKuliah,
-                    "Total Jam Pertemuan": item.total_jam,
-                    "Total Jam Kehadiran": item.total_hadir,
-                    Presentase:
-                      calculatePercentage(item.total_hadir, item.total_jam) +
-                      "%",
-                    Aksi: (
-                      <button
-                        style={{ textDecoration: "underline", color: "blue" }}
-                        onClick={() => setShowDetail(index)}
-                      >
-                        Detail
-                      </button>
-                    ),
-                  }))}
+                  pagination={false}
+                  data={formattedRekapitulasi}
                   columnAlignments={columnAlignments}
                   headerBackgroundColor={headerBackgroundColor}
                   headerBorderColor={headerBorderColor}
@@ -159,20 +173,7 @@ export const DosenRekap = () => {
                       ) : (
                         <Table
                           columns={columns2}
-                          data={rekapDosenData[showDetail].jadwalPertemuan.map(
-                            (item, index) => ({
-                              No: index + 1,
-                              "Tanggal Realisasi": formatDate(
-                                item.waktu_realisasi
-                              ),
-                              "Jam Perkuliahan": `${item.jam_mulai} - ${item.jam_akhir}`,
-                              Topik: item.topik_perkuliahan,
-                              Hadir: item.detail.total_hadir + " Mahasiswa",
-                              Sakit: item.detail.total_sakit + " Mahasiswa",
-                              Izin: item.detail.total_izin + " Mahasiswa",
-                              Alpa: item.detail.total_alha + " Mahasiswa",
-                            })
-                          )}
+                          data={formattedDetail}
                           columnAlignments={columnAlignments}
                           headerBackgroundColor={headerBackgroundColor}
                           headerBorderColor={headerBorderColor2}

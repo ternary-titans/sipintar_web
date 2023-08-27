@@ -10,6 +10,8 @@ export const DosenRekapMhs = () => {
   const content = "Konten CardUser yang panjang";
   const contentHeight = content.length * 16;
 
+  const [rekapDosenMhsData, setRekapDosenMhsData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [selectedKelas, setSelectedKelas] = useState();
   const [kelasOptions, setKelasOptions] = useState([
     {
@@ -17,28 +19,9 @@ export const DosenRekapMhs = () => {
       nama_kelas: "Pilih Kelas",
     },
   ]);
-
-  const handleKelasChange = (event) => {
-    setSelectedKelas(event.target.value);
-  };
-
-  const columns = ["No", "Nama", "NIM", "Hadir", "Sakit", "Izin", "Alpa"];
-
-  const columnAlignments = [
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-  ];
-  const headerBackgroundColor = "white";
-  const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [5, 10, 25];
-
-  const [rekapDosenMhsData, setRekapDosenMhsData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -51,7 +34,6 @@ export const DosenRekapMhs = () => {
           ? JSON.parse(localStorage.getItem("userData")).id
           : null;
 
-        // 1. Ambil data kelas
         const kelasResponse = await axios.get(`/kelas`, {
           headers: {
             Authorization: token,
@@ -68,10 +50,9 @@ export const DosenRekapMhs = () => {
 
         setKelasOptions(dataKelas);
 
-        // 2. Ambil data rekap presensi mahasiswa jika ada kelas terpilih
         if (selectedKelas) {
           setLoading(true);
-          const rekapResponse = await axios.get(
+          const response = await axios.get(
             `/dosen/${id}/rekapitulasiMahasiswa`,
             {
               headers: {
@@ -79,22 +60,59 @@ export const DosenRekapMhs = () => {
               },
               params: {
                 kelas_id: selectedKelas,
+                page: currentPage,
               },
             }
           );
-          setRekapDosenMhsData(rekapResponse.data.data.data);
+          setRekapDosenMhsData(response.data.data);
+          setTotalPages(response.data.paging.total_page);
+          setTotalItem(response.data.paging.total_item);
         }
 
-        // Selesai, matikan loading
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false); // Matikan loading jika terjadi error juga
+        setLoading(false);
       }
     }
 
     fetchData();
   }, [selectedKelas]);
+
+  const handleKelasChange = (event) => {
+    setSelectedKelas(event.target.value);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const columns = ["No", "Nama", "NIM", "Hadir", "Sakit", "Izin", "Alpa"];
+
+  const columnAlignments = [
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+  ];
+  const headerBackgroundColor = "white";
+  const headerBorderColor = "#2563eb";
+  const pageSizeOptions = [10];
+
+  const formattedData = rekapDosenMhsData?.map((item, index) => ({
+    No: index + 1,
+    Nama: item.nama_mahasiswa,
+    NIM: item.nim,
+    Hadir: item.rekapitulasi.total_hadir + " jam",
+    Sakit: item.rekapitulasi.total_sakit + " jam",
+    Izin: item.rekapitulasi.total_izin + " jam",
+    Alpa: item.rekapitulasi.total_alpa + " jam",
+  }));
 
   return (
     <div>
@@ -123,25 +141,16 @@ export const DosenRekapMhs = () => {
               ) : (
                 <Table
                   columns={columns}
-                  data={
-                    selectedKelas
-                      ? rekapDosenMhsData?.map((item, index) => ({
-                          No: index + 1,
-                          Nama: item.nama_mahasiswa,
-                          NIM: item.nim,
-                          Hadir: item.rekapitulasi.total_hadir + " jam",
-                          Sakit: item.rekapitulasi.total_sakit + " jam",
-                          Izin: item.rekapitulasi.total_izin + " jam",
-                          Alpa: item.rekapitulasi.total_alpa + " jam",
-                          //  Keterangan
-                        }))
-                      : rekapDosenMhsData
-                  }
+                  data={formattedData}
                   columnAlignments={columnAlignments}
                   headerBackgroundColor={headerBackgroundColor}
                   headerBorderColor={headerBorderColor}
                   pageSizeOptions={pageSizeOptions}
                   style={{ marginTop: "10px" }}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItem={totalItem}
                 />
               )}
             </div>

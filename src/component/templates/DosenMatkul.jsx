@@ -9,32 +9,8 @@ import { useParams } from "react-router-dom";
 
 export const DosenMatkul = () => {
   const { id } = useParams();
-  const columns = [
-    "No",
-    "Kelas",
-    "Mata Kuliah",
-    "Topik",
-    "Realisasi Tanggal",
-    "Realisasi Jam",
-    "Aksi",
-  ];
-
-  const columnAlignments = [
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-  ];
-  const headerBackgroundColor = "white";
-  const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [5, 10];
-
   const [dosenMKData, setDosenMKData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [presensiClosed, setPresensiClosed] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -65,6 +41,29 @@ export const DosenMatkul = () => {
       setLoading(false);
     }
   }
+
+  const columns = [
+    "No",
+    "Kelas",
+    "Mata Kuliah",
+    "Topik",
+    "Realisasi Tanggal",
+    "Realisasi Jam",
+    "Aksi",
+  ];
+
+  const columnAlignments = [
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+  ];
+  const headerBackgroundColor = "white";
+  const headerBorderColor = "#2563eb";
+  const pageSizeOptions = [5, 10];
 
   function formatDate(dateString) {
     const dateObject = new Date(dateString);
@@ -110,6 +109,39 @@ export const DosenMatkul = () => {
     } catch (error) {}
   };
 
+  const formattedData = dosenMKData?.map((item, index) => ({
+    No: index + 1,
+    Kelas: item.kelas,
+    Topik: item.topik_perkuliahan,
+    "Mata Kuliah": item.mataKuliah,
+    "Realisasi Tanggal": `${item.hari}, ${formatDate(item.waktu_realisasi)}`,
+    "Realisasi Jam": `${item.jam_mulai} - ${item.jam_akhir}`,
+    Aksi: (
+      <>
+        <div className="flex flex-row gap-0 justify-center">
+          <Link to={`/dosen/mk/QR/${item.id}`}>
+            <button
+              className={`p-2 font-bold mr-2 rounded mb-1 ${
+                item.status
+                  ? "bg-[#facc15]"
+                  : "bg-gray-200 text-gray-500 cursor-not-allowed"
+              }`}
+              disabled={item.status ? false : true}
+            >
+              Lihat QR
+            </button>
+          </Link>
+          <button
+            className="bg-red-400 text-blue-950 font-bold w-30 px-2 py-1 rounded hover:bg-red-600"
+            onClick={() => handleTutupPresensi(item.id)}
+          >
+            Tutup Presensi
+          </button>
+        </div>
+      </>
+    ),
+  }));
+
   return (
     <div>
       <Dosen />
@@ -129,70 +161,18 @@ export const DosenMatkul = () => {
             ) : (
               <Table
                 columns={columns}
-                data={dosenMKData.map((item, index) => ({
-                  No: index + 1,
-                  Kelas: item.kelas,
-                  Topik: item.topik_perkuliahan,
-                  "Mata Kuliah": item.mataKuliah,
-                  "Realisasi Tanggal": `${item.hari}, ${formatDate(
-                    item.waktu_realisasi
-                  )}`,
-                  "Realisasi Jam": `${item.jam_mulai} - ${item.jam_akhir}`,
-                  Aksi: (
-                    <>
-                      <div className="flex flex-row gap-0 justify-center">
-                        <Link to={`/dosen/mk/QR/${item.id}`}>
-                          <button
-                            className={`p-2 font-bold mr-2 rounded mb-1 ${
-                              item.status
-                                ? "bg-[#facc15]"
-                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                            }`}
-                            disabled={item.status ? false : true}
-                          >
-                            Lihat QR
-                          </button>
-                        </Link>
-                        <button
-                          className="bg-red-400 text-blue-950 font-bold w-30 px-2 py-1 rounded hover:bg-red-600"
-                          onClick={() => handleTutupPresensi(item.id)}
-                        >
-                          Tutup Presensi
-                        </button>
-                      </div>
-                    </>
-                  ),
-                }))}
+                data={formattedData}
                 columnAlignments={columnAlignments}
                 headerBackgroundColor={headerBackgroundColor}
                 headerBorderColor={headerBorderColor}
                 pageSizeOptions={pageSizeOptions}
                 style={{ marginTop: "10px" }}
+                pagination={false}
               />
             )}
           </div>
         </CardUser>
       </div>
-      <style>
-        {`
-          .qr-button {
-            background-color: #facc15;
-            color: #172554;
-            border-radius: 4px;
-            margin-right: 4px;
-            padding: 2px;
-            font-weight: bold;
-          }
-
-          .rekap-button {
-            background-color: #172554;
-            color: #facc15;;
-            border-radius: 4px;
-            padding: 2px;
-            font-weight: bold;
-          }
-        `}
-      </style>
     </div>
   );
 };
