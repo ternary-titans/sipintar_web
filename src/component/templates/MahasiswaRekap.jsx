@@ -111,6 +111,36 @@ export const MahasiswaRekap = () => {
     return `${percentage.toFixed(2)}%`;
   }
 
+  const formatted = rekapMHSData?.map((item, index) => ({
+    No: index + 1,
+    "Mata Kuliah": item.mataKuliah,
+    "Total Jam Pertemuan": item.total_jam,
+    Hadir: item.total_hadir,
+    Sakit: item.total_sakit,
+    Izin: item.total_izin,
+    Alpa: item.total_alpa,
+    Presentase: calculatePercentage(item.total_hadir, item.total_jam),
+    Aksi: (
+      <button
+        style={{ textDecoration: "underline", color: "blue" }}
+        onClick={() => setShowDetail(index)}
+      >
+        Detail
+      </button>
+    ),
+  }));
+
+  const formattedDetail = rekapMHSData[showDetail]?.jadwalPertemuan?.map(
+    (item, index) => ({
+      No: index + 1,
+      "Tanggal Realisasi": formatDate(item.waktu_realisasi),
+      "Waktu Realisasi": `${item.jam_mulai} - ${item.jam_akhir}`,
+      "Jam Realisasi": item.total_jam,
+      Topik: item.topik_perkuliahan,
+      Status: item.status_presensi,
+    })
+  );
+
   return (
     <div>
       <Mahasiswa />
@@ -130,32 +160,13 @@ export const MahasiswaRekap = () => {
             ) : (
               <Table
                 columns={columns}
-                data={rekapMHSData.map((item, index) => ({
-                  No: index + 1,
-                  "Mata Kuliah": item.mataKuliah,
-                  "Total Jam Pertemuan": item.total_jam,
-                  Hadir: item.total_hadir,
-                  Sakit: item.total_sakit,
-                  Izin: item.total_izin,
-                  Alpa: item.total_alpa,
-                  Presentase: calculatePercentage(
-                    item.total_hadir,
-                    item.total_jam
-                  ),
-                  Aksi: (
-                    <button
-                      style={{ textDecoration: "underline", color: "blue" }}
-                      onClick={() => setShowDetail(index)}
-                    >
-                      Detail
-                    </button>
-                  ),
-                }))}
+                data={formatted}
                 columnAlignments={columnAlignments}
                 headerBackgroundColor={headerBackgroundColor}
                 headerBorderColor={headerBorderColor}
                 pageSizeOptions={pageSizeOptions}
                 style={{ marginTop: "10px" }}
+                pagination={false}
               />
             )}
           </div>
@@ -179,21 +190,13 @@ export const MahasiswaRekap = () => {
                 ) : (
                   <Table
                     columns={columns2}
-                    data={rekapMHSData[showDetail].jadwalPertemuan.map(
-                      (item, index) => ({
-                        No: index + 1,
-                        "Tanggal Realisasi": formatDate(item.waktu_realisasi),
-                        "Waktu Realisasi": `${item.jam_mulai} - ${item.jam_akhir}`,
-                        "Jam Realisasi": item.total_jam,
-                        Topik: item.topik_perkuliahan,
-                        Status: item.status_presensi,
-                      })
-                    )}
+                    data={formattedDetail}
                     columnAlignments={columnAlignments}
                     headerBackgroundColor={headerBackgroundColor}
                     headerBorderColor={headerBorderColor2}
                     pageSizeOptions={pageSizeOptions}
                     style={{ marginTop: "10px" }}
+                    pagination={false}
                   />
                 )}
               </div>

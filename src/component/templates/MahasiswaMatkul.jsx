@@ -9,23 +9,6 @@ import { useParams } from "react-router-dom";
 
 export const MahasiswaMatkul = () => {
   const { id } = useParams();
-  const columns = ["No", "Hari", "Waktu", "Topik", "Dosen", "Ruangan", "Aksi"];
-
-  const columnAlignments = [
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-  ];
-  const headerBackgroundColor = "white";
-  const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [5, 10];
-
-  const [mahasiswaMKData, setMahasiswaMKData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("userData")
@@ -56,6 +39,47 @@ export const MahasiswaMatkul = () => {
     fetchData();
   }, [id]);
 
+  const columns = ["No", "Hari", "Waktu", "Topik", "Dosen", "Ruangan", "Aksi"];
+
+  const columnAlignments = [
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+  ];
+  const headerBackgroundColor = "white";
+  const headerBorderColor = "#2563eb";
+  const pageSizeOptions = [5, 10];
+
+  const [mahasiswaMKData, setMahasiswaMKData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const formatted = mahasiswaMKData?.map((item, index) => ({
+    No: index + 1,
+    Hari: `${item.hari}`,
+    Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
+    Topik: item.topik_perkuliahan,
+    Dosen: item.dosen,
+    Ruangan: item.ruangan,
+    Aksi: (
+      <Link to={`/mahasiswa/qr/${item.id}`}>
+        <button
+          className={`p-2 font-bold mr-2 rounded mb-1 ${
+            item.status
+              ? "bg-[#facc15]"
+              : "bg-gray-200 text-gray-500 cursor-not-allowed"
+          }`}
+          disabled={item.status ? false : true}
+        >
+          Lihat QR
+        </button>
+      </Link>
+    ),
+  }));
+
   return (
     <div>
       <Mahasiswa />
@@ -83,33 +107,13 @@ export const MahasiswaMatkul = () => {
             ) : (
               <Table
                 columns={columns}
-                data={mahasiswaMKData.map((item, index) => ({
-                  No: index + 1,
-                  Hari: `${item.hari}`,
-                  Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
-                  Topik: item.topik_perkuliahan,
-                  Dosen: item.dosen,
-                  Ruangan: item.ruangan,
-                  Aksi: (
-                    <Link to={`/mahasiswa/qr/${item.id}`}>
-                      <button
-                        className={`p-2 font-bold mr-2 rounded mb-1 ${
-                          item.status
-                            ? "bg-[#facc15]"
-                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        }`}
-                        disabled={item.status ? false : true}
-                      >
-                        Lihat QR
-                      </button>
-                    </Link>
-                  ),
-                }))}
+                data={formatted}
                 columnAlignments={columnAlignments}
                 headerBackgroundColor={headerBackgroundColor}
                 headerBorderColor={headerBorderColor}
                 pageSizeOptions={pageSizeOptions}
                 style={{ marginTop: "10px" }}
+                pagination={false}
               />
             )}
           </div>
