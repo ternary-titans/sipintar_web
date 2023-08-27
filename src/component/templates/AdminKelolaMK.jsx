@@ -11,15 +11,15 @@ import axios from "../../api/axios";
 export const AdminKelolaMK = () => {
   const [isActive, setIsActive] = useState(false);
   const [MatakuliahData, setMatakuliahData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const handleSubmit = () => {
-    setIsActive(true);
-  };
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
       try {
+        setLoading(true);
         const token = localStorage.getItem("userData")
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
@@ -28,8 +28,13 @@ export const AdminKelolaMK = () => {
           headers: {
             Authorization: token,
           },
+          params: {
+            page: currentPage,
+          },
         });
         setMatakuliahData(response.data.data);
+        setTotalPages(response.data.paging.total_page);
+        setTotalItem(response.data.paging.total_item);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -38,7 +43,7 @@ export const AdminKelolaMK = () => {
     }
 
     fetchData();
-  }, [MatakuliahData, setMatakuliahData]);
+  }, [currentPage]);
 
   const handleDelete = async (id) => {
     try {
@@ -57,11 +62,36 @@ export const AdminKelolaMK = () => {
       console.error("Error deleting data:", error);
     }
   };
+
+  const handleSubmit = () => {
+    setIsActive(true);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
   const columns = ["No", "Kode MK", "Mata Kuliah", "Aksi"];
   const columnAlignments = ["center", "center", "center", "center"];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
   const pageSizeOptions = [10, 20];
+
+  const formatted = MatakuliahData?.map((item, index) => ({
+    No: index + 1,
+    "Kode MK": item.kode_mk,
+    "Mata Kuliah": item.nama_mk,
+    Aksi: (
+      <div
+        className=" flex justify-center text-center text-red-500 pointer hover:text-red-700 underline"
+        onClick={() => handleDelete(item.id)}
+      >
+        <FaTrash />
+      </div>
+    ),
+  }));
 
   return (
     <div
@@ -87,24 +117,16 @@ export const AdminKelolaMK = () => {
               ) : (
                 <Table
                   columns={columns}
-                  data={MatakuliahData.map((item, index) => ({
-                    No: index + 1,
-                    "Kode MK": item.kode_mk,
-                    "Mata Kuliah": item.nama_mk,
-                    Aksi: (
-                      <div
-                        className=" flex justify-center text-center text-red-500 pointer hover:text-red-700 underline"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        <FaTrash />
-                      </div>
-                    ),
-                  }))}
+                  data={formatted}
                   columnAlignments={columnAlignments}
                   headerBackgroundColor={headerBackgroundColor}
                   headerBorderColor={headerBorderColor}
                   pageSizeOptions={pageSizeOptions}
                   style={{ marginTop: "10px" }}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItem={totalItem}
                 />
               )}
             </div>

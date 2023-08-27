@@ -13,21 +13,16 @@ export const AdminKelas = () => {
   const [isActive, setIsActive] = useState(false);
   const [isActiveTA, setIsActiveTA] = useState(false);
   const [KelasData, setKelasData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [tahunAjaranData, setTahunAjaranData] = useState({});
-
-  const handleOKClick = () => {
-    setIsActive(true);
-  };
-
-  const handleOKClickTA = (item) => {
-    setTahunAjaranData(item);
-    setIsActiveTA(true);
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
       try {
+        setLoading(true);
         const token = localStorage.getItem("userData")
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
@@ -36,8 +31,14 @@ export const AdminKelas = () => {
           headers: {
             Authorization: token,
           },
+          params: {
+            page: currentPage,
+          },
         });
+
         setKelasData(response.data.data);
+        setTotalPages(response.data.paging.total_page);
+        setTotalItem(response.data.paging.total_item);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -75,12 +76,12 @@ export const AdminKelas = () => {
       await axios.put(
         `/tahunAjaran`,
         {
+          tahunAjaran: newTahunAjaran,
+        },
+        {
           headers: {
             Authorization: token,
           },
-        },
-        {
-          tahunAjaran: newTahunAjaran,
         }
       );
 
@@ -98,6 +99,37 @@ export const AdminKelas = () => {
       setIsActiveTA(false);
     }
   };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const handleOKClick = () => {
+    setIsActive(true);
+  };
+
+  const handleOKClickTA = (item) => {
+    setTahunAjaranData(item);
+    setIsActiveTA(true);
+  };
+
+  const formatted = KelasData?.map((item, index) => ({
+    No: index + 1,
+    Kelas: item.nama_kelas,
+    "Program Studi": item.prodi,
+    "Tahun Ajaran": item.tahunAjaran,
+    Jurusan: item.jurusan,
+    Aksi: (
+      <div
+        className=" flex justify-center text-center text-red-500 pointer hover:text-red-700 underline"
+        onClick={() => handleDelete(item.id)}
+      >
+        <FaTrash />
+      </div>
+    ),
+  }));
 
   const columns = [
     "No",
@@ -140,26 +172,16 @@ export const AdminKelas = () => {
               ) : (
                 <Table
                   columns={columns}
-                  data={KelasData.map((item, index) => ({
-                    No: index + 1,
-                    Kelas: item.nama_kelas,
-                    "Program Studi": item.prodi,
-                    "Tahun Ajaran": item.tahunAjaran,
-                    Jurusan: item.jurusan,
-                    Aksi: (
-                      <div
-                        className=" flex justify-center text-center text-red-500 pointer hover:text-red-700 underline"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        <FaTrash />
-                      </div>
-                    ),
-                  }))}
+                  data={formatted}
                   columnAlignments={columnAlignments}
                   headerBackgroundColor={headerBackgroundColor}
                   headerBorderColor={headerBorderColor}
                   pageSizeOptions={pageSizeOptions}
                   style={{ marginTop: "10px" }}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItem={totalItem}
                 />
               )}
             </div>

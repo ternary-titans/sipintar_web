@@ -9,17 +9,17 @@ import axios from "../../api/axios";
 import { FaTrash } from "react-icons/fa";
 
 export const AdminTahunAjaran = () => {
-  const [isActive, setIsActive] = useState(false);
-
-  const handleSubmit = () => {
-    setIsActive(true);
-  };
-  const columns = ["No", "Tahun Ajaran", "Aksi"];
   const [TahunAjaranData, setTahunAjaranData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
+
       const token = localStorage.getItem("userData")
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
@@ -29,8 +29,13 @@ export const AdminTahunAjaran = () => {
           headers: {
             Authorization: token,
           },
+          params: {
+            page: currentPage,
+          },
         });
         setTahunAjaranData(response.data.data);
+        setTotalPages(response.data.paging.total_page);
+        setTotalItem(response.data.paging.total_item);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -40,6 +45,12 @@ export const AdminTahunAjaran = () => {
 
     fetchData();
   }, [TahunAjaranData, setTahunAjaranData]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -59,6 +70,26 @@ export const AdminTahunAjaran = () => {
     }
   };
 
+  const handleSubmit = () => {
+    setIsActive(true);
+  };
+
+  const formatted = TahunAjaranData?.map((item, index) => ({
+    No: index + 1,
+    "Tahun Ajaran": item.nama,
+    Aksi: (
+      <div className="flex flex-row gap-2 justify-center">
+        <div
+          className="text-center text-red-500 pointer hover:text-red-700 underline"
+          onClick={() => handleDelete(item.id)}
+        >
+          <FaTrash />
+        </div>
+      </div>
+    ),
+  }));
+
+  const columns = ["No", "Tahun Ajaran", "Aksi"];
   const columnAlignments = ["center", "center", "center", "center"];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
@@ -88,25 +119,16 @@ export const AdminTahunAjaran = () => {
               ) : (
                 <Table
                   columns={columns}
-                  data={TahunAjaranData.map((item, index) => ({
-                    No: index + 1,
-                    "Tahun Ajaran": item.nama,
-                    Aksi: (
-                      <div className="flex flex-row gap-2 justify-center">
-                        <div
-                          className="text-center text-red-500 pointer hover:text-red-700 underline"
-                          onClick={() => handleDelete(item.id)}
-                        >
-                          <FaTrash />
-                        </div>
-                      </div>
-                    ),
-                  }))}
+                  data={formatted}
                   columnAlignments={columnAlignments}
                   headerBackgroundColor={headerBackgroundColor}
                   headerBorderColor={headerBorderColor}
                   pageSizeOptions={pageSizeOptions}
                   style={{ marginTop: "10px" }}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItem={totalItem}
                 />
               )}
             </div>

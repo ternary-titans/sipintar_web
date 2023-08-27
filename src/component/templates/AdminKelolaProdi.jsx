@@ -11,22 +11,15 @@ import axios from "../../api/axios";
 export const AdminKelolaProdi = () => {
   const [isActive, setIsActive] = useState(false);
   const [ProdiData, setProdiData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const handleSubmit = () => {
-    setIsActive(true);
-  };
-  const columns = [
-    "No",
-    "Program Studi",
-    "Kode Program Studi",
-    "Jurusan",
-    "Aksi",
-  ];
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
       try {
+        setLoading(true);
         const token = localStorage.getItem("userData")
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
@@ -35,8 +28,14 @@ export const AdminKelolaProdi = () => {
           headers: {
             Authorization: token,
           },
+          params: {
+            page: currentPage,
+          },
         });
+
         setProdiData(response.data.data);
+        setTotalPages(response.data.paging.total_page);
+        setTotalItem(response.data.paging.total_item);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -45,7 +44,11 @@ export const AdminKelolaProdi = () => {
     }
 
     fetchData();
-  }, [ProdiData, setProdiData]);
+  }, [currentPage]);
+
+  const handleSubmit = () => {
+    setIsActive(true);
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -65,10 +68,39 @@ export const AdminKelolaProdi = () => {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const columns = [
+    "No",
+    "Program Studi",
+    "Kode Program Studi",
+    "Jurusan",
+    "Aksi",
+  ];
+
   const columnAlignments = ["center", "center", "center", "center"];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [10, 20];
+  const pageSizeOptions = [10];
+
+  const formatted = ProdiData?.map((item, index) => ({
+    No: index + 1,
+    "Program Studi": item.nama_prodi,
+    "Kode Program Studi": item.kode_prodi,
+    Jurusan: item.jurusan,
+    Aksi: (
+      <div
+        className=" flex justify-center text-center text-red-500 pointer hover:text-red-700 underline"
+        onClick={() => handleDelete(item.id)}
+      >
+        <FaTrash />
+      </div>
+    ),
+  }));
 
   return (
     <div
@@ -94,25 +126,16 @@ export const AdminKelolaProdi = () => {
               ) : (
                 <Table
                   columns={columns}
-                  data={ProdiData.map((item, index) => ({
-                    No: index + 1,
-                    "Program Studi": item.nama_prodi,
-                    "Kode Program Studi": item.kode_prodi,
-                    Jurusan: item.jurusan,
-                    Aksi: (
-                      <div
-                        className=" flex justify-center text-center text-red-500 pointer hover:text-red-700 underline"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        <FaTrash />
-                      </div>
-                    ),
-                  }))}
+                  data={formatted}
                   columnAlignments={columnAlignments}
                   headerBackgroundColor={headerBackgroundColor}
                   headerBorderColor={headerBorderColor}
                   pageSizeOptions={pageSizeOptions}
                   style={{ marginTop: "10px" }}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItem={totalItem}
                 />
               )}
             </div>

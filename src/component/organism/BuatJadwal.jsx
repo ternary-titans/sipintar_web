@@ -24,11 +24,20 @@ export const BuatJadwal = () => {
 
   const [mataKuliahOptions, setMataKuliahOptions] = useState([]);
   const [dosenOptions, setDosenOptions] = useState([]);
-  const [formValid, setFormValid] = useState(false);
 
-  const [prodiOptions, setProdiOptions] = useState([]);
-  const [kelasOptions, setKelasOptions] = useState([]);
   const [tahunAjaranOptions, settahunAjaranOptions] = useState([]);
+  const [prodiOptions, setProdiOptions] = useState([
+    {
+      id: "",
+      nama_prodi: "Pilih Prodi",
+    },
+  ]);
+  const [kelasOptions, setKelasOptions] = useState([
+    {
+      id: "",
+      nama_kelas: "Pilih Kelas",
+    },
+  ]);
 
   const handleJurusanChange = (event) => {
     setSelectedJurusan(event.target.value);
@@ -80,8 +89,9 @@ export const BuatJadwal = () => {
     const Total = Math.ceil(diffMinutes / 45);
     return Total;
   };
+
   const jurusanOptions = [
-    { id: "", label: "Pilih Jurusan" },
+    { id: 0, label: "Pilih Jurusan" },
     { id: 1, label: "Teknik Elektro" },
     { id: 2, label: "Teknik Sipil" },
     { id: 3, label: "Teknik Mesin" },
@@ -90,51 +100,75 @@ export const BuatJadwal = () => {
   ];
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const token = localStorage.getItem("userData")
-          ? JSON.parse(localStorage.getItem("userData")).token
-          : null;
+    if (selectedJurusan > 0) {
+      async function fetchData() {
+        try {
+          const token = localStorage.getItem("userData")
+            ? JSON.parse(localStorage.getItem("userData")).token
+            : null;
 
-        const response = await axios.get(
-          `/prodi?jurusan_id=${selectedJurusan}`,
-          {
+          const response = await axios.get(`/prodi`, {
             headers: {
               Authorization: token,
             },
-          }
-        );
-        const prodiOptions = response.data;
-        setProdiOptions(prodiOptions.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
+            params: {
+              jurusan_id: selectedJurusan,
+            },
+          });
 
-    fetchData();
+          const dataProdi = [
+            ...prodiOptions,
+            ...response.data.data.map((prodi) => ({
+              id: prodi.id,
+              nama_prodi: prodi.nama_prodi,
+            })),
+          ];
+
+          setProdiOptions(dataProdi);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      fetchData();
+    }
   }, [selectedJurusan]);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const token = localStorage.getItem("userData")
-          ? JSON.parse(localStorage.getItem("userData")).token
-          : null;
+    if (selectedProdi > 0) {
+      async function fetchData() {
+        try {
+          const token = localStorage.getItem("userData")
+            ? JSON.parse(localStorage.getItem("userData")).token
+            : null;
 
-        const response = await axios.get(`/kelas?prodi_id=${selectedProdi}`, {
-          headers: {
-            Authorization: token,
-          },
-        });
-        const kelasOptions = response.data;
-        setKelasOptions(kelasOptions.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+          const response = await axios.get(`/kelas?prodi_id=${selectedProdi}`, {
+            headers: {
+              Authorization: token,
+            },
+            params: {
+              prodi_id: selectedProdi,
+            },
+          });
+
+          const dataKelas = [
+            ...kelasOptions,
+            ...response.data.data.map((kelas) => ({
+              id: kelas.id,
+              nama_kelas: kelas.nama_kelas,
+            })),
+          ];
+
+          setKelasOptions(dataKelas);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
       }
-    }
 
-    fetchData();
+      fetchData();
+    }
   }, [selectedProdi]);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -201,43 +235,52 @@ export const BuatJadwal = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (
-      setHariValue.trim() !== "" &&
-      setWaktuMulaiValue.trim() !== "" &&
-      setWaktuAkhirValue.trim() !== "" &&
-      setSelectedMatkul !== "" &&
-      setTotalValue.trim() !== "" &&
-      setSelectedDosen !== "" &&
-      setRuangValue.trim() !== ""
-    ) {
-      try {
-        const response = await axios.post("/jadwal", {
-          hari: hariValue,
-          jam_mulai: waktuMulaiValue,
-          jam_akhir: waktuAkhirValue,
-          mata_kuliah_id: selectedMatkul,
-          total_jam: totalValue,
-          dosen_id: selectedDosen,
-          ruangan: ruangValue,
-        });
-        console.log("Data berhasil disimpan:", response.data);
+    console.log(hariValue);
+    console.log(waktuMulaiValue);
+    console.log(waktuAkhirValue);
+    console.log(selectedMatkul);
+    console.log(totalValue);
+    console.log(selectedDosen);
+    console.log(selectedKls);
+    console.log(ruangValue);
 
-        alert("Jadwal berhasil disimpan.");
+    // if (
+    //   setHariValue.trim() !== "" &&
+    //   setWaktuMulaiValue.trim() !== "" &&
+    //   setWaktuAkhirValue.trim() !== "" &&
+    //   setSelectedMatkul !== "" &&
+    //   setTotalValue.trim() !== "" &&
+    //   setSelectedDosen !== "" &&
+    //   setRuangValue.trim() !== ""
+    // ) {
+    //   try {
+    //     const response = await axios.post("/jadwal", {
+    //       hari: hariValue,
+    //       jam_mulai: waktuMulaiValue,
+    //       jam_akhir: waktuAkhirValue,
+    //       mata_kuliah_id: selectedMatkul,
+    //       total_jam: totalValue,
+    //       dosen_id: selectedDosen,
+    //       ruangan: ruangValue,
+    //     });
+    //     console.log("Data berhasil disimpan:", response.data);
 
-        setHariValue("");
-        setWaktuMulaiValue("");
-        setWaktuAkhirValue("");
-        setSelectedMatkul("");
-        setTotalValue("");
-        setSelectedDosen("");
-        setRuangValue("");
-        setIsActive(false);
-      } catch (error) {
-        console.error("Terjadi kesalahan saat menyimpan data:", error);
+    //     alert("Jadwal berhasil disimpan.");
 
-        alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
-      }
-    }
+    //     setHariValue("");
+    //     setWaktuMulaiValue("");
+    //     setWaktuAkhirValue("");
+    //     setSelectedMatkul("");
+    //     setTotalValue("");
+    //     setSelectedDosen("");
+    //     setRuangValue("");
+    //     setIsActive(false);
+    //   } catch (error) {
+    //     console.error("Terjadi kesalahan saat menyimpan data:", error);
+
+    //     alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+    //   }
+    // }
   };
 
   return (
@@ -345,7 +388,7 @@ export const BuatJadwal = () => {
                 />
               </div>
               <div className="mt-2">
-                <Button variant="biru" onClick={handleSubmit}>
+                <Button variant="biru" onClick={() => handleSubmit}>
                   Tambah
                 </Button>
               </div>

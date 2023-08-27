@@ -59,7 +59,7 @@ const Tabel = ({
           >
             Previous
           </button>
-          <div className="entries">
+          <div className=" text-gray-800">
             <span>Show: </span>
             <select value={pageSize}>
               {pageSizeOptions.map((option) => (

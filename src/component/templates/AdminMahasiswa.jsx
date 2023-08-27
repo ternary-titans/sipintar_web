@@ -10,48 +10,47 @@ import Admin from "./Admin";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 export const AdminMahasiswa = () => {
-  const columns = ["No", "Nama", "NIM", "Kelas", "Prodi", "Jurusan", "Aksi"];
-
-  const columnAlignments = [
-    "center",
-    "left",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-    "center",
-  ];
-
-  const headerBackgroundColor = "white";
-  const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [10, 25, 50];
-
   const [mahasiswaData, setMahasiswaData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentPage]);
 
   async function fetchData(query = "") {
     try {
+      setLoading(true);
       const token = localStorage.getItem("userData")
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      const response = await axios.get(`/mahasiswa?nama=${query}`, {
+      const response = await axios.get(`/mahasiswa`, {
         headers: {
           Authorization: token,
         },
+        params: {
+          nama: query,
+          page: currentPage,
+        },
       });
       setMahasiswaData(response.data.data);
+      setTotalPages(response.data.paging.total_page);
+      setTotalItem(response.data.paging.total_item);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
       setLoading(false);
     }
   }
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -74,6 +73,50 @@ export const AdminMahasiswa = () => {
   const handleSearch = async (searchTerm) => {
     fetchData(searchTerm);
   };
+
+  const formatted = mahasiswaData?.map((item, index) => ({
+    No: index + 1,
+    Nama: item.nama_mahasiswa,
+    NIM: item.nim,
+    Kelas: item.kelas,
+    Prodi: item.prodi,
+    Jurusan: item.jurusan,
+    Aksi: (
+      <div className="flex flex-row gap-2 justify-center items-center">
+        <div className="text-center">
+          <Link
+            to={`/admin/mahasiswa/edit/${item.id}`}
+            className="text-blue-500 hover:text-blue-700 underline"
+          >
+            <FaEdit />
+          </Link>
+        </div>
+        <div
+          className="text-center text-red-500 pointer hover:text-red-700 underline"
+          onClick={() => handleDelete(item.id)}
+        >
+          <FaTrash />
+        </div>
+      </div>
+    ),
+  }));
+
+  const columns = ["No", "Nama", "NIM", "Kelas", "Prodi", "Jurusan", "Aksi"];
+
+  const columnAlignments = [
+    "center",
+    "left",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+  ];
+
+  const headerBackgroundColor = "white";
+  const headerBorderColor = "#2563eb";
+  const pageSizeOptions = [10];
 
   return (
     <div className="bg-gray-300 h-screen">
@@ -103,38 +146,16 @@ export const AdminMahasiswa = () => {
             ) : (
               <Table
                 columns={columns}
-                data={mahasiswaData.map((item, index) => ({
-                  No: index + 1,
-                  Nama: item.nama_mahasiswa,
-                  NIM: item.nim,
-                  Kelas: item.kelas,
-                  Prodi: item.prodi,
-                  Jurusan: item.jurusan,
-                  // Password: item.password,
-                  Aksi: (
-                    <div className="flex flex-row gap-2 justify-center items-center">
-                      <div className="text-center">
-                        <Link
-                          to={`/admin/mahasiswa/edit/${item.id}`}
-                          className="text-blue-500 hover:text-blue-700 underline"
-                        >
-                          <FaEdit />
-                        </Link>
-                      </div>
-                      <div
-                        className="text-center text-red-500 pointer hover:text-red-700 underline"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        <FaTrash />
-                      </div>
-                    </div>
-                  ),
-                }))}
+                data={formatted}
                 columnAlignments={columnAlignments}
                 headerBackgroundColor={headerBackgroundColor}
                 headerBorderColor={headerBorderColor}
                 pageSizeOptions={pageSizeOptions}
                 style={{ marginTop: "10px" }}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItem={totalItem}
               />
             )}
           </Card>

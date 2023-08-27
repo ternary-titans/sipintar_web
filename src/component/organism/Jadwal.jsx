@@ -10,20 +10,31 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import TambahJadwal from "./TambahJadwal";
 
 export const Jadwal = () => {
-  const [isActive, setIsActive] = useState(false);
   const [selectedJurusan, setSelectedJurusan] = useState(0);
   const [selectedProdi, setSelectedProdi] = useState("0");
   const [selectedKls, setSelectedKelas] = useState("0");
   const [selectedTahunAjaran, setSelectedTahunAjaran] = useState("0");
 
-  const [prodiOptions, setProdiOptions] = useState([]);
-  const [kelasOptions, setKelasOptions] = useState([]);
+  const [prodiOptions, setProdiOptions] = useState([
+    {
+      id: "",
+      nama_prodi: "Pilih Prodi",
+    },
+  ]);
+  const [kelasOptions, setKelasOptions] = useState([
+    {
+      id: "",
+      nama_kelas: "Pilih Kelas",
+    },
+  ]);
   const [tahunAjaranOptions, settahunAjaranOptions] = useState([]);
   const [jadwalData, setJadwalData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [jadwalOptions, setJadwalOptions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
 
-  const [filteredJadwalData, setFilteredJadwalData] = useState([]);
+  const [isActive, setIsActive] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleOKClick = () => {
     setIsActive(true);
@@ -67,8 +78,16 @@ export const Jadwal = () => {
               },
             }
           );
-          const prodiOptions = response.data;
-          setProdiOptions(prodiOptions.data);
+
+          const dataProdi = [
+            ...prodiOptions,
+            ...response.data.data.map((prodi) => ({
+              id: prodi.id,
+              nama_prodi: prodi.nama_prodi,
+            })),
+          ];
+
+          setProdiOptions(dataProdi);
           setLoading(false);
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -89,13 +108,24 @@ export const Jadwal = () => {
             ? JSON.parse(localStorage.getItem("userData")).token
             : null;
 
-          const response = await axios.get(`/kelas?prodi_id=${selectedProdi}`, {
+          const response = await axios.get(`/kelas`, {
             headers: {
               Authorization: token,
             },
+            params: {
+              prodi_id: selectedProdi,
+            },
           });
-          const kelasOptions = response.data;
-          setKelasOptions(kelasOptions.data);
+
+          const dataKelas = [
+            ...kelasOptions,
+            ...response.data.data.map((kelas) => ({
+              id: kelas.id,
+              nama_kelas: kelas.nama_kelas,
+            })),
+          ];
+
+          setKelasOptions(dataKelas);
           setLoading(false);
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -106,33 +136,6 @@ export const Jadwal = () => {
       fetchData();
     }
   }, [selectedProdi]);
-
-  useEffect(() => {
-    if (selectedKls > 0) {
-      setLoading(true);
-      async function fetchData() {
-        try {
-          const token = localStorage.getItem("userData")
-            ? JSON.parse(localStorage.getItem("userData")).token
-            : null;
-
-          const response = await axios.get(`/jadwal?kelas_id=${selectedKls}`, {
-            headers: {
-              Authorization: token,
-            },
-          });
-
-          setFilteredJadwalData(response.data.data);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          setLoading(false);
-        }
-      }
-
-      fetchData();
-    }
-  }, [selectedKls]);
 
   useEffect(() => {
     async function fetchData() {
@@ -155,15 +158,89 @@ export const Jadwal = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (selectedKls > 0) {
+      setLoading(true);
+      async function fetchData() {
+        try {
+          const token = localStorage.getItem("userData")
+            ? JSON.parse(localStorage.getItem("userData")).token
+            : null;
+
+          const response = await axios.get(`/jadwal`, {
+            headers: {
+              Authorization: token,
+            },
+            params: {
+              kelas_id: selectedKls,
+              page: currentPage,
+            },
+          });
+
+          setJadwalData(response.data.data);
+          setTotalPages(response.data.paging.total_page);
+          setTotalItem(response.data.paging.total_item);
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        }
+      }
+
+      fetchData();
+    }
+  }, [selectedKls, currentPage]);
+
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/jadwal/${id}`);
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      await axios.delete(`/jadwal/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
       const updatedData = jadwalData.filter((item) => item.id !== id);
       setJadwalData(updatedData);
     } catch (error) {
       console.error("Error deleting data:", error);
     }
   };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const formatted = jadwalData?.map((item, index) => ({
+    No: index + 1,
+    Hari: item.hari,
+    Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
+    "Mata Kuliah": item.nama_mk,
+    "Total Jam": item.total_jam,
+    Dosen: item.dosen,
+    Ruangan: item.ruangan,
+    Aksi: (
+      <div className="flex flex-row justify-center">
+        <Link to={`/admin/editjadwal/${item.id}`}>
+          <div className=" text-center text-blue-500 hover:text-blue-700">
+            <FaEdit />
+          </div>
+        </Link>
+
+        <div
+          className=" text-red-500 pointer hover:text-red-700 underline"
+          onClick={() => handleDelete(item.id)}
+        >
+          <FaTrash />
+        </div>
+      </div>
+    ),
+  }));
 
   const columns = [
     "No",
@@ -188,14 +265,14 @@ export const Jadwal = () => {
   ];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [5];
+  const pageSizeOptions = [10];
 
   return (
     <div className="p-0">
       <Card size={{ height: "31rem", width: "78%" }}>
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-between">
-            <Text type="title3" text="Jadwal Kuliah"></Text>
+            <Text type="title3" text="Jadwal Kuliah" />
             <Button variant="biru" onClick={handleOKClick}>
               Buat Jadwal
             </Button>
@@ -237,66 +314,35 @@ export const Jadwal = () => {
                     options={tahunAjaranOptions}
                     onChange={handleTahunAjaranChange}
                   />
-                  {/* <Button
-                    variant="kuning"
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      marginTop: "1.2rem",
-                      height: "28px",
-                      marginRight: "6px",
-                    }}
-                    onClick={handleSearch}
-                  >
-                    Cari
-                  </Button> */}
                 </div>
               </div>
               <div></div>
             </div>
-
-            <div className="flex justify-end mt-6"></div>
-            <div>
+            <div className="mt-4">
               <Text type="title3" text=" Tabel Jadwal Kuliah"></Text>
-              <div className="mr-2 overflow-y-scroll">
-                {loading ? (
-                  <p>Loading...</p>
-                ) : (
-                  <Table
-                    columns={columns}
-                    data={jadwalData.map((item, index) => ({
-                      No: index + 1,
-                      Hari: item.hari,
-                      Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
-                      "Mata Kuliah": item.nama_mk,
-                      "Total Jam": item.total_jam,
-                      Dosen: item.dosen,
-                      Ruangan: item.ruangan,
-                      Aksi: (
-                        <div className="flex flex-row justify-center">
-                          <Link to={`/admin/editjadwal/${item.id}`}>
-                            <div className="  text-center text-blue-500 hover:text-blue-700">
-                              <FaEdit />
-                            </div>
-                          </Link>
-
-                          <div
-                            className=" text-red-500 pointer hover:text-red-700 underline"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            <FaTrash />
-                          </div>
-                        </div>
-                      ),
-                    }))}
-                    columnAlignments={columnAlignments}
-                    headerBackgroundColor={headerBackgroundColor}
-                    headerBorderColor={headerBorderColor}
-                    pageSizeOptions={pageSizeOptions}
-                    style={{ marginTop: "10px" }}
-                  />
-                )}
-              </div>
+              {selectedKls > 0 ? (
+                <div className="mr-2 overflow-y-scroll">
+                  {loading ? (
+                    <span className="text-gray-800 animate-ping duration-75">
+                      Loading...
+                    </span>
+                  ) : (
+                    <Table
+                      columns={columns}
+                      data={formatted}
+                      columnAlignments={columnAlignments}
+                      headerBackgroundColor={headerBackgroundColor}
+                      headerBorderColor={headerBorderColor}
+                      pageSizeOptions={pageSizeOptions}
+                      style={{ marginTop: "10px" }}
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      totalItem={totalItem}
+                    />
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
