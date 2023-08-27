@@ -68,7 +68,6 @@ export const DosenRekapMhs = () => {
 
         setKelasOptions(dataKelas);
 
-        // 2. Ambil data rekap presensi mahasiswa jika ada kelas terpilih
         if (selectedKelas) {
           setLoading(true);
           const rekapResponse = await axios.get(
@@ -85,11 +84,10 @@ export const DosenRekapMhs = () => {
           setRekapDosenMhsData(rekapResponse.data.data.data);
         }
 
-        // Selesai, matikan loading
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false); // Matikan loading jika terjadi error juga
+        setLoading(false);
       }
     }
 

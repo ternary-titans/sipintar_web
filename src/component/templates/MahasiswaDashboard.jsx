@@ -37,6 +37,35 @@ export const MahasiswaDashboard = () => {
     navigate(`/mahasiswa/mk/${id}`);
   };
 
+  const [rekapMHSData, setRekapMHsData] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).token
+      : null;
+
+    const id = localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")).id
+      : null;
+
+    async function fetchData() {
+      try {
+        const response = await axios.get(`/mahasiswa/${id}/rekapitulasi`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        setRekapMHsData(response.data.data.rekapitulasi);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    if (!rekapMHSData) {
+      fetchData();
+    }
+  }, [rekapMHSData]);
+
   return (
     <div className="min-h-screen">
       <Mahasiswa />
@@ -45,36 +74,39 @@ export const MahasiswaDashboard = () => {
           <div style={{ marginTop: "20px", marginLeft: "30px" }}>
             <Text
               type="warning"
-              text="*PERINGATAN: Sudah 15 Jam Anda Alpa, "
+              text="*PERINGATAN: 16 Jam Alpa SP1, 24 Jam Alpa SP2, 32 Jam Alpa SP3 !"
             ></Text>
-            <Text type="warning" text="1 Jam lagi Anda terkena SP1"></Text>
           </div>
 
-          <div className="flex justify-between gap-10 absolute mt-4 ml-8">
-            <CardManage
-              width="380px"
-              height="100px"
-              icon={<BsFillPersonFill />}
-              iconColor="#fde047"
-              text1="000 Jam"
-              text2="Izin"
-            />
-            <CardManage
-              width="380px"
-              height="100px"
-              icon={<BsFillPersonFill />}
-              iconColor="32CD32"
-              text1="000 Jam"
-              text2="Sakit"
-            />
-            <CardManage
-              width="380px"
-              height="100px"
-              icon={<BsFillPersonFill />}
-              iconColor="#dc2626"
-              text1="000 Jam"
-              text2="Alpa"
-            />
+          <div>
+            {rekapMHSData && (
+              <div className="flex justify-between gap-10 absolute mt-4 ml-8">
+                <CardManage
+                  width="375px"
+                  height="100px"
+                  icon={<BsFillPersonFill />}
+                  iconColor="#fde047"
+                  text1={`${rekapMHSData[0]?.total_izin || "000"} Jam`}
+                  text2="Izin"
+                />
+                <CardManage
+                  width="375px"
+                  height="100px"
+                  icon={<BsFillPersonFill />}
+                  iconColor="32CD32"
+                  text1={`${rekapMHSData[0]?.total_sakit || "000"} Jam`}
+                  text2="Sakit"
+                />
+                <CardManage
+                  width="375px"
+                  height="100px"
+                  icon={<BsFillPersonFill />}
+                  iconColor="#dc2626"
+                  text1={`${rekapMHSData[0]?.total_alpa || "000"} Jam`}
+                  text2="Alpa"
+                />
+              </div>
+            )}
           </div>
           <div className="ml-8 mt-40">
             <Text type="title" text="DAFTAR MATA KULIAH"></Text>
