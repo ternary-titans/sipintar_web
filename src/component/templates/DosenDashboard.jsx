@@ -5,6 +5,7 @@ import CardMk from "../molecules/CardMk";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import TabelData from "../molecules/TabelData";
+import axios from "../../api/axios";
 
 export const DosenDashboard = () => {
   const columns = ["Waktu", "Kelas", "Ruangan", "Mata Kuliah"];
@@ -25,14 +26,19 @@ export const DosenDashboard = () => {
       ? JSON.parse(localStorage.getItem("userData")).id
       : null;
 
-    fetch(`http://localhost:3000/api/dosen/${id}/mataKuliah`, {
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => setMkData(data.data))
-      .catch((error) => console.error("Error fetching data:", error));
+    axios
+      .get(`/dosen/${id}/mataKuliah`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        setMkData(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        console.log("Error response:", error.response);
+      });
   }, []);
 
   useEffect(() => {
@@ -45,19 +51,19 @@ export const DosenDashboard = () => {
       : null;
 
     getNamaHari();
-    fetch(`http://localhost:3000/api/dosen/${id}/jadwal?hari=${hari}`, {
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setJadwalData(data.data);
-        if (data.data.length > 0) {
-          setHari(data.data[0].hari);
-        }
-      })
-      .catch((error) => console.error("Error fetching data:", error));
+
+    if (hari !== "") {
+      axios
+        .get(`/dosen/${id}/jadwal?hari=${hari}`, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          setJadwalData(response.data.data);
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+    }
   }, [hari]);
 
   const getNamaHari = () => {
@@ -98,8 +104,8 @@ export const DosenDashboard = () => {
     <div>
       <Dosen />
       <div className="flex">
-        <div className="flex-1 mr-2">
-          <div className="flex flex-wrap ml-8 mt-5 gap-6 px-1 pb-8">
+        <div className="w-2/3 ml-8 mt-5">
+          <div className="flex flex-wrap gap-6 px-1 pb-8">
             {mkData &&
               mkData?.map((rifka) => (
                 <Link
@@ -116,42 +122,40 @@ export const DosenDashboard = () => {
               ))}
           </div>
         </div>
-        <div className="flex-1 mt-4 mr-8 overflow-y-auto justify-start">
-          <div>
-            <CardUser
-              width={0}
-              height={420}
-              borderColor="#1e40af"
-              borderWidth={2}
-            >
-              <div className="flex justify-start items-center flex-col h-full">
-                <div className="text-center">
-                  <Text type="title2" text="Jadwal Mengajar Harian" />
-                  <br />
-                  <Text type="title2" text={`${hari}`} />
-                </div>
-                <hr className="w-full h-0.5 bg-black mb-2" />
-                <div>
-                  {jadwalData && (
-                    <TabelData
-                      colomsData={columns}
-                      dataData={jadwalData?.map((item) => ({
-                        Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
-                        Kelas: item.kelas,
-                        Ruangan: item.ruangan,
-                        "Mata Kuliah": item.nama_mk,
-                      }))}
-                      layout="horizontal"
-                      columnWidths={columnWidths}
-                      fontSize={fontSize}
-                      textAlign={textAlign}
-                    />
-                  )}
-                  <hr className="w-full h-0.5 bg-gray-400" />
-                </div>
+        <div className="w-1/3 mt-4 mr-8">
+          <CardUser
+            width={100}
+            height={420}
+            borderColor="#1e40af"
+            borderWidth={2}
+          >
+            <div className="flex justify-start items-center flex-col h-full">
+              <div className="text-center">
+                <Text type="title2" text="Jadwal Mengajar Harian" />
+                <br />
+                <Text type="title2" text={`${hari}`} />
               </div>
-            </CardUser>
-          </div>
+              <hr className="w-full h-0.5 bg-black mb-2" />
+              <div>
+                {jadwalData && (
+                  <TabelData
+                    colomsData={columns}
+                    dataData={jadwalData?.map((item) => ({
+                      Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
+                      Kelas: item.kelas,
+                      Ruangan: item.ruangan,
+                      "Mata Kuliah": item.nama_mk,
+                    }))}
+                    layout="horizontal"
+                    columnWidths={columnWidths}
+                    fontSize={fontSize}
+                    textAlign={textAlign}
+                  />
+                )}
+                <hr className="w-full h-0.5 bg-gray-400" />
+              </div>
+            </div>
+          </CardUser>
         </div>
       </div>
     </div>

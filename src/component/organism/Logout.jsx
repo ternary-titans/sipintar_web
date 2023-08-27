@@ -1,5 +1,5 @@
 import Button from "../atoms/Button";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../../context/AuthProvider";
@@ -17,14 +17,11 @@ const Logout = ({ setLogoutOn, setChoice }) => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      const response = await axios.delete(
-        `http://localhost:3000/api/users/logout`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.delete(`/users/logout`, {
+        headers: {
+          Authorization: token,
+        },
+      });
 
       localStorage.removeItem("userData");
       localStorage.removeItem("kelas_mk_dosen_id");
@@ -43,7 +40,7 @@ const Logout = ({ setLogoutOn, setChoice }) => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center">
+    <div className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center z-20">
       <div className="flex-col justify-center bg-white py-8 px-24 shadow-md shadow-gray-400 rounded-xl text-center">
         <div className="text-lg text-black font-semibold mb-6">
           Apakah Anda yakin ingin keluar?

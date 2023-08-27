@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../../api/axios";
 import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
@@ -94,32 +94,51 @@ const FormTambahMhs = () => {
     { id: 4, label: "Akuntansi" },
     { id: 5, label: "Administrasi Bisnis" },
   ];
-
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`)
-      .then((response) => {
-        const prodiData = response.data;
-        setProdiOptions(prodiData.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching Prodi data:", error);
-      });
+    async function fetchData() {
+      try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(
+          `/prodi?jurusan_id=${selectedJurusan}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        const prodiOptions = response.data;
+        setProdiOptions(prodiOptions.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
   }, [selectedJurusan]);
 
   useEffect(() => {
-    if (selectedProdi) {
-      axios
-        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`)
-        .then((response) => {
-          const kelasData = response.data;
-          setKelasOptions(kelasData.data);
-        })
-        .catch((error) => {
-          setKelasOptions([]);
-          console.error("Error fetching Kelas data:", error);
+    async function fetchData() {
+      try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const response = await axios.get(`/kelas?prodi_id=${selectedProdi}`, {
+          headers: {
+            Authorization: token,
+          },
         });
+        const kelasOptions = response.data;
+        setKelasOptions(kelasOptions.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
+
+    fetchData();
   }, [selectedProdi]);
 
   const handleSubmit = async (event) => {
@@ -169,16 +188,24 @@ const FormTambahMhs = () => {
       passwordValue !== ""
     ) {
       try {
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
         const response = await axios.post(
-          "http://localhost:3000/api/mahasiswa",
+          "/mahasiswa",
           {
             nama_mahasiswa: namaValue,
             nim: nimValue,
             kelas_id: selectedKls,
             password: passwordValue,
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
           }
         );
-
         console.log("Data berhasil disimpan:", response.data);
 
         alert("Data mahasiswa berhasil disimpan.");
@@ -202,6 +229,7 @@ const FormTambahMhs = () => {
         navigate("/admin/mahasiswa");
       } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error);
+        console.log("Error response:", error.response);
 
         alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
       }

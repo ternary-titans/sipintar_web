@@ -3,7 +3,7 @@ import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Button from "../atoms/Button";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 const FormEditMhs = ({ id }) => {
@@ -93,9 +93,7 @@ const FormEditMhs = ({ id }) => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/jadwal/${id}`
-        );
+        const response = await axios.get(`/jadwal/${id}`);
         const data = response.data.data;
         setSelectedHari(data.hari);
         setWaktumulaiValue(data.jam_mulai);
@@ -114,7 +112,7 @@ const FormEditMhs = ({ id }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/mataKuliah`)
+      .get(`/mataKuliah`)
       .then((response) => {
         const mataKuliahData = response.data;
         setMataKuliahOptions(mataKuliahData.data);
@@ -137,10 +135,7 @@ const FormEditMhs = ({ id }) => {
     };
 
     try {
-      const response = await axios.put(
-        `http://localhost:3000/api/jadwal/${id}`,
-        dataToUpdate
-      );
+      const response = await axios.put(`/jadwal/${id}`, dataToUpdate);
 
       navigate("/admin/jadwal");
 

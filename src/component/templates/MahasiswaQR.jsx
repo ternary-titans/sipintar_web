@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useParams } from "react-router-dom";
 
 export const MahasiswaQR = () => {
@@ -27,14 +27,11 @@ export const MahasiswaQR = () => {
       : null;
 
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/aktivasiPerkuliahan/${id}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.get(`/aktivasiPerkuliahan/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setQrCodeData(response.data.data);
     } catch (error) {
       console.error("Error fetching QR Code data:", error);
@@ -47,14 +44,11 @@ export const MahasiswaQR = () => {
       : null;
 
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/listPresensi/${qrId}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.get(`/listPresensi/${qrId}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setDataPresensi(response.data.data);
     } catch (error) {
       console.error("Error fetching List Presensi:", error);

@@ -5,6 +5,7 @@ import CardManage from "../molecules/CardManage";
 import CardMk from "../molecules/CardMk";
 import Text from "../atoms/Text";
 import { useNavigate } from "react-router-dom";
+import axios from "../../api/axios";
 
 export const MahasiswaDashboard = () => {
   const navigate = useNavigate();
@@ -19,13 +20,15 @@ export const MahasiswaDashboard = () => {
       ? JSON.parse(localStorage.getItem("userData")).id
       : null;
 
-    fetch(`http://localhost:3000/api/mahasiswa/${id}/mataKuliah`, {
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => setMkData(data.data))
+    axios
+      .get(`/mahasiswa/${id}/mataKuliah`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        setMkData(response.data.data);
+      })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
@@ -73,7 +76,10 @@ export const MahasiswaDashboard = () => {
               text2="Alpa"
             />
           </div>
-          <div className="flex flex-wrap mt-36 gap-5 px-8 pb-8">
+          <div className="ml-8 mt-40">
+            <Text type="title" text="DAFTAR MATA KULIAH"></Text>
+          </div>
+          <div className="flex flex-wrap mt-4 gap-5 px-8 pb-8">
             {mkData.map((rifka) => (
               <button
                 onClick={() => handleClick(rifka.kelas_mk_id)}

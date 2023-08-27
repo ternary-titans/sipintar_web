@@ -6,7 +6,7 @@ import Button from "../atoms/Button";
 import Table from "../molecules/Tabel.jsx";
 import KelolaMK from "../organism/KelolaMK";
 import { FaTrash } from "react-icons/fa";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const AdminKelolaMK = () => {
   const [isActive, setIsActive] = useState(false);
@@ -24,14 +24,11 @@ export const AdminKelolaMK = () => {
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
 
-        const response = await axios.get(
-          "http://localhost:3000/api/mataKuliah",
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get("/mataKuliah", {
+          headers: {
+            Authorization: token,
+          },
+        });
         setMatakuliahData(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -49,7 +46,7 @@ export const AdminKelolaMK = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      await axios.delete(`http://localhost:3000/api/mataKuliah/${id}`, {
+      await axios.delete(`/mataKuliah/${id}`, {
         headers: {
           Authorization: token,
         },

@@ -15,7 +15,7 @@ const NavbarLink = ({ showDropdown, dropdownItems, userType }) => {
 
   return (
     <nav>
-      <div className="flex justify-start bg-white shadow shadow-gray-400 p-0 h-[3rem] border-b border-black">
+      <div className="flex justify-start bg-white shadow shadow-gray-400 p-0 h-[3rem] border-b border-black inset-1 z-20">
         <ul className="flex items-center mt-6 gap-8">
           <li className="ml-8">
             <Link to="/dosen">
@@ -34,12 +34,12 @@ const NavbarLink = ({ showDropdown, dropdownItems, userType }) => {
       </div>
 
       {isOpen && showDropdown && (
-        <ul className="absolute right-0 mt-0 ml-[7.5rem] w-[16rem] bg-white border border-gray-300 rounded-md shadow-lg">
+        <ul className="absolute z-20 right-0 mt-0 ml-[7.5rem] w-[16rem] bg-white border border-gray-300 rounded-md shadow-lg">
           {dropdownItems.map((item, index) => (
             <Link to={item.path}>
               <li
                 key={index}
-                className="px-4 py-2 hover:bg-gray-100"
+                className="px-4 py-2 hover:bg-gray-200"
                 onClick={() => handleMenuItemClick(item)}
               >
                 {item.name}

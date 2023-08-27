@@ -6,7 +6,7 @@ import TableData from "../molecules/TabelData";
 import Table from "../molecules/Tabel";
 import Button from "../atoms/Button";
 import { BsTrash } from "react-icons/bs";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const DosenLihatRekap = ({ id }) => {
   const content = "Konten CardUser yang panjang";
@@ -61,9 +61,7 @@ export const DosenLihatRekap = ({ id }) => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/listPresensi/1`
-        );
+        const response = await axios.get(`/listPresensi/1`);
         setListRekapData(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -76,7 +74,7 @@ export const DosenLihatRekap = ({ id }) => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/listPresensi/${id}`);
+      await axios.delete(`/listPresensi/${id}`);
       const updatedData = listRekapData.filter((item) => item.id !== id);
       setListRekapData(updatedData);
     } catch (error) {

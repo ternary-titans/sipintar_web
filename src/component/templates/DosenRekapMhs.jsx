@@ -10,17 +10,17 @@ export const DosenRekapMhs = () => {
   const content = "Konten CardUser yang panjang";
   const contentHeight = content.length * 16;
 
-  const [selectedKelas, setSelectedKelas] = useState("");
+  const [selectedKelas, setSelectedKelas] = useState();
+  const [kelasOptions, setKelasOptions] = useState([
+    {
+      id: "",
+      nama_kelas: "Pilih Kelas",
+    },
+  ]);
 
   const handleKelasChange = (event) => {
     setSelectedKelas(event.target.value);
   };
-
-  const KelasOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
 
   const columns = ["No", "Nama", "NIM", "Hadir", "Sakit", "Izin", "Alpa"];
 
@@ -38,7 +38,7 @@ export const DosenRekapMhs = () => {
   const pageSizeOptions = [5, 10, 25];
 
   const [rekapDosenMhsData, setRekapDosenMhsData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -51,23 +51,50 @@ export const DosenRekapMhs = () => {
           ? JSON.parse(localStorage.getItem("userData")).id
           : null;
 
-        const response = await axios.get(
-          `http://localhost:3000/api/dosen/${id}/rekapitulasiMahasiswa`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        setRekapDosenMhsData(response.data.data.data);
+        // 1. Ambil data kelas
+        const kelasResponse = await axios.get(`/kelas`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+
+        const dataKelas = [
+          ...kelasOptions,
+          ...kelasResponse.data.data.map((kelas) => ({
+            id: kelas.id,
+            nama_kelas: kelas.nama_kelas,
+          })),
+        ];
+
+        setKelasOptions(dataKelas);
+
+        // 2. Ambil data rekap presensi mahasiswa jika ada kelas terpilih
+        if (selectedKelas) {
+          setLoading(true);
+          const rekapResponse = await axios.get(
+            `/dosen/${id}/rekapitulasiMahasiswa`,
+            {
+              headers: {
+                Authorization: token,
+              },
+              params: {
+                kelas_id: selectedKelas,
+              },
+            }
+          );
+          setRekapDosenMhsData(rekapResponse.data.data.data);
+        }
+
+        // Selesai, matikan loading
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false);
+        setLoading(false); // Matikan loading jika terjadi error juga
       }
     }
+
     fetchData();
-  }, [rekapDosenMhsData, setRekapDosenMhsData]);
+  }, [selectedKelas]);
 
   return (
     <div>
@@ -84,8 +111,9 @@ export const DosenRekapMhs = () => {
             <div className="flex gap-8 mt-5 w-72">
               <Input2
                 label="Kelas"
+                uniqueKeys="nama_kelas"
                 value={selectedKelas}
-                options={KelasOptions}
+                options={kelasOptions}
                 onChange={handleKelasChange}
               />
             </div>
@@ -95,16 +123,20 @@ export const DosenRekapMhs = () => {
               ) : (
                 <Table
                   columns={columns}
-                  data={rekapDosenMhsData?.map((item, index) => ({
-                    No: index + 1,
-                    Nama: item.nama_mahasiswa,
-                    NIM: item.nim,
-                    Hadir: item.rekapitulasi.total_hadir,
-                    Sakit: item.rekapitulasi.total_sakit,
-                    Izin: item.rekapitulasi.total_izin,
-                    Alpa: item.rekapitulasi.total_alpha,
-                    //  Keterangan
-                  }))}
+                  data={
+                    selectedKelas
+                      ? rekapDosenMhsData?.map((item, index) => ({
+                          No: index + 1,
+                          Nama: item.nama_mahasiswa,
+                          NIM: item.nim,
+                          Hadir: item.rekapitulasi.total_hadir + " jam",
+                          Sakit: item.rekapitulasi.total_sakit + " jam",
+                          Izin: item.rekapitulasi.total_izin + " jam",
+                          Alpa: item.rekapitulasi.total_alpa + " jam",
+                          //  Keterangan
+                        }))
+                      : rekapDosenMhsData
+                  }
                   columnAlignments={columnAlignments}
                   headerBackgroundColor={headerBackgroundColor}
                   headerBorderColor={headerBorderColor}

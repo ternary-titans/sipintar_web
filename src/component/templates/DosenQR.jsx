@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import axios from "../../api/axios";
 import Dosen from "./Dosen";
 import Text from "../atoms/Text";
 import CardUser from "../atoms/CardUser";
@@ -28,14 +28,11 @@ export const DosenQR = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      const response = await axios.get(
-        `http://localhost:3000/api/aktivasiPerkuliahan/${id}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.get(`/aktivasiPerkuliahan/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setQrCodeData(response.data.data);
     } catch (error) {
       console.error("Error fetching QR Code data:", error);
@@ -48,14 +45,11 @@ export const DosenQR = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      const response = await axios.get(
-        `http://localhost:3000/api/listPresensi/${qrId}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.get(`/listPresensi/${qrId}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setDataPresensi(response.data.data);
     } catch (error) {
       console.error("Error fetching List Presensi:", error);
@@ -78,7 +72,7 @@ export const DosenQR = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      await axios.delete(`http://localhost:3000/api/presensi/${id}`, {
+      await axios.delete(`/presensi/${id}`, {
         headers: {
           Authorization: token,
         },
@@ -101,7 +95,15 @@ export const DosenQR = () => {
             borderColor="#1e40af"
             borderWidth={2}
           >
-            <img src={qrCodeData?.qr_code} alt="qr code presensi" />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <img src={qrCodeData?.qr_code} alt="qr code presensi" />
+            </div>
           </CardUser>
         </div>
         <div className="m-8">
@@ -112,7 +114,7 @@ export const DosenQR = () => {
             borderWidth={2}
           >
             <div>
-              <Text type="text1" text="Rekap Presensi" />
+              <Text type="title3" text="Rekap Presensi" />
             </div>
             <hr className="w-full h-0.5 bg-black" />
             <div>

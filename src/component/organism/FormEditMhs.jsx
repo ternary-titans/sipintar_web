@@ -4,7 +4,7 @@ import Card from "../atoms/Card";
 import Input from "../atoms/Input";
 import InputDropdown from "../atoms/InputDropdown";
 import Button from "../atoms/Button";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const FormEditMhs = ({ id }) => {
   const navigate = useNavigate();
@@ -33,14 +33,11 @@ const FormEditMhs = ({ id }) => {
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
 
-        const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/${id}`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get(`/mahasiswa/${id}`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         const data = response.data.data;
         setNamaValue(data.nama_mahasiswa);
         setNIMValue(data.nim);
@@ -66,7 +63,7 @@ const FormEditMhs = ({ id }) => {
       : null;
 
     axios
-      .get(`http://localhost:3000/api/prodi?jurusan_id=${selectedJurusan}`, {
+      .get(`/prodi?jurusan_id=${selectedJurusan}`, {
         headers: {
           Authorization: token,
         },
@@ -90,7 +87,7 @@ const FormEditMhs = ({ id }) => {
         : null;
 
       axios
-        .get(`http://localhost:3000/api/kelas?prodi_id=${selectedProdi}`, {
+        .get(`/kelas?prodi_id=${selectedProdi}`, {
           headers: {
             Authorization: token,
           },
@@ -146,7 +143,7 @@ const FormEditMhs = ({ id }) => {
         : null;
 
       const response = await axios.put(
-        `http://localhost:3000/api/mahasiswa/${id}`,
+        `/mahasiswa/${id}`,
         {
           headers: {
             Authorization: token,

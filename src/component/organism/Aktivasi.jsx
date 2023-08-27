@@ -74,7 +74,7 @@ export const Aktivasi = ({ id }) => {
     if (realisasiTanggal !== "" && jamPertama !== "" && jamKedua !== "") {
       try {
         const response = await axios.post(
-          `http://localhost:3000/api/aktivasiPerkuliahan`,
+          `/aktivasiPerkuliahan`,
           {
             hari: hariRealisasi,
             jam_mulai: jamPertama,

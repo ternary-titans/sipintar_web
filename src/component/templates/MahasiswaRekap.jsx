@@ -3,7 +3,7 @@ import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const MahasiswaRekap = () => {
   const content = "Konten CardUser yang panjang";
@@ -45,7 +45,8 @@ export const MahasiswaRekap = () => {
   const columns2 = [
     "No",
     "Tanggal Realisasi",
-    "Jam Perkuliahan",
+    "Waktu Realisasi",
+    "Jam Realisasi",
     "Topik",
     "Status",
   ];
@@ -61,14 +62,11 @@ export const MahasiswaRekap = () => {
 
     async function fetchData() {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/${id}/rekapitulasi`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get(`/mahasiswa/${id}/rekapitulasi`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setRekapMHsData(response.data.data.rekapitulasi);
         setLoading(false);
       } catch (error) {
@@ -105,6 +103,14 @@ export const MahasiswaRekap = () => {
     return formattedDate;
   }
 
+  function calculatePercentage(hadir, totalJam) {
+    if (totalJam === 0) {
+      return "0%";
+    }
+    const percentage = (hadir / totalJam) * 100;
+    return `${percentage.toFixed(2)}%`;
+  }
+
   return (
     <div>
       <Mahasiswa />
@@ -131,8 +137,11 @@ export const MahasiswaRekap = () => {
                   Hadir: item.total_hadir,
                   Sakit: item.total_sakit,
                   Izin: item.total_izin,
-                  Alpa: item.total_alpha,
-                  Presentase: "50%",
+                  Alpa: item.total_alpa,
+                  Presentase: calculatePercentage(
+                    item.total_hadir,
+                    item.total_jam
+                  ),
                   Aksi: (
                     <button
                       style={{ textDecoration: "underline", color: "blue" }}
@@ -156,12 +165,12 @@ export const MahasiswaRekap = () => {
               <Text type="title3" text="Detail Rekapitulasi Presensi " />
               <div style={{ marginTop: "10px" }}>
                 <div className="flex gap-5">
-                  <h2>Mata Kuliah :</h2>
-                  <span>{rekapMHSData[showDetail].mataKuliah}</span>
+                  <h2 className="w-24">Mata Kuliah </h2>
+                  <span>: {rekapMHSData[showDetail].mataKuliah}</span>
                 </div>
                 <div className="flex gap-5">
-                  <h2>Dosen :</h2>
-                  <span>{rekapMHSData[showDetail].dosen}</span>
+                  <h2 className="w-24">Dosen </h2>
+                  <span>: {rekapMHSData[showDetail].dosen}</span>
                 </div>
               </div>
               <div>
@@ -174,7 +183,8 @@ export const MahasiswaRekap = () => {
                       (item, index) => ({
                         No: index + 1,
                         "Tanggal Realisasi": formatDate(item.waktu_realisasi),
-                        "Jam Perkuliahan": item.total_jam,
+                        "Waktu Realisasi": `${item.jam_mulai} - ${item.jam_akhir}`,
+                        "Jam Realisasi": item.total_jam,
                         Topik: item.topik_perkuliahan,
                         Status: item.status_presensi,
                       })

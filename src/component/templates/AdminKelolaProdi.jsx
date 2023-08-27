@@ -6,7 +6,7 @@ import Button from "../atoms/Button";
 import Table from "../molecules/Tabel.jsx";
 import KelolaProdi from "../organism/KelolaProdi";
 import { FaTrash } from "react-icons/fa";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const AdminKelolaProdi = () => {
   const [isActive, setIsActive] = useState(false);
@@ -31,7 +31,7 @@ export const AdminKelolaProdi = () => {
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
 
-        const response = await axios.get("http://localhost:3000/api/prodi", {
+        const response = await axios.get("/prodi", {
           headers: {
             Authorization: token,
           },
@@ -53,7 +53,7 @@ export const AdminKelolaProdi = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      await axios.delete(`http://localhost:3000/api/prodi/${id}`, {
+      await axios.delete(`/prodi/${id}`, {
         headers: {
           Authorization: token,
         },

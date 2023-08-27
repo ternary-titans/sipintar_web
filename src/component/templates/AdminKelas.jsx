@@ -7,7 +7,7 @@ import Table from "../molecules/Tabel.jsx";
 import KelolaKelas from "../organism/KelolaKelas";
 import UbahTA from "../organism/UbahTA";
 import { FaTrash } from "react-icons/fa";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const AdminKelas = () => {
   const [isActive, setIsActive] = useState(false);
@@ -32,7 +32,7 @@ export const AdminKelas = () => {
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
 
-        const response = await axios.get("http://localhost:3000/api/kelas", {
+        const response = await axios.get("/kelas", {
           headers: {
             Authorization: token,
           },
@@ -54,7 +54,7 @@ export const AdminKelas = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      await axios.delete(`http://localhost:3000/api/kelas/${id}`, {
+      await axios.delete(`/kelas/${id}`, {
         headers: {
           Authorization: token,
         },
@@ -73,7 +73,7 @@ export const AdminKelas = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
       await axios.put(
-        `http://localhost:3000/api/tahunAjaran`,
+        `/tahunAjaran`,
         {
           headers: {
             Authorization: token,

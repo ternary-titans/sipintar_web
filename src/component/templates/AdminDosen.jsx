@@ -7,7 +7,7 @@ import Table from "../molecules/Tabel";
 import Text from "../atoms/Text";
 import Search from "../molecules/Search";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const AdminDosen = () => {
   const columns = ["No", "Nama", "NIP", "Aksi"];
@@ -29,14 +29,11 @@ export const AdminDosen = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      const response = await axios.get(
-        `http://localhost:3000/api/dosen?nama=${query}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.get(`/dosen?nama=${query}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setdosenData(response.data.data);
       console.log(response.data.data);
       setLoading(false);
@@ -52,7 +49,7 @@ export const AdminDosen = () => {
         ? JSON.parse(localStorage.getItem("userData")).token
         : null;
 
-      await axios.delete(`http://localhost:3000/api/dosen/${id}`, {
+      await axios.delete(`/dosen/${id}`, {
         headers: {
           Authorization: token,
         },

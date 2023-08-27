@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { BsPersonCircle } from "react-icons/bs";
 import Logout from "../organism/Logout";
 import logo from "./../../assest/polines.png";
-import { useMahasiswaContext } from "../../context/MahasiswaContext";
 
 const HeaderMhs = () => {
-  const { mahasiswaData } = useMahasiswaContext();
   const [isOpen, setIsOpen] = useState(false);
   const [isLogoutVisible, setLogoutVisible] = useState(false);
+  const nama = localStorage.getItem("userData")
+    ? JSON.parse(localStorage.getItem("userData")).nama
+    : null;
+
+  const username = localStorage.getItem("userData")
+    ? JSON.parse(localStorage.getItem("userData")).username
+    : null;
 
   const handleProfileClick = () => {
     setIsOpen(!isOpen);
@@ -40,14 +45,14 @@ const HeaderMhs = () => {
               <BsPersonCircle className="text-blue-900 text-4xl" />
             </div>
             <div className="ml-4 mr-4 text-lg font-bold text-blue-900 flex flex-col">
-              <div>{mahasiswaData.userName}</div>
+              <div>{nama}</div>
               <div
                 style={{
                   fontSize: "12px",
                   fontWeight: "bold",
                 }}
               >
-                {mahasiswaData.nim}
+                {username}
               </div>
             </div>
           </div>

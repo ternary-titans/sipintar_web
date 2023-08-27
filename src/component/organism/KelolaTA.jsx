@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const KelolaTA = ({ isActive, setIsActive }) => {
   const [TahunAjaranValue, setTahunAjaranValue] = useState("");
@@ -30,14 +30,14 @@ const KelolaTA = ({ isActive, setIsActive }) => {
 
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/tahunAjaran",
+          "/tahunAjaran",
+          {
+            nama: TahunAjaranValue,
+          },
           {
             headers: {
               Authorization: token,
             },
-          },
-          {
-            nama: TahunAjaranValue,
           }
         );
 

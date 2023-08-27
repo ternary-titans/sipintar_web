@@ -3,7 +3,7 @@ import Dosen from "./Dosen";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const DosenRekap = () => {
   const [showDetail, setShowDetail] = useState(-1);
@@ -13,7 +13,7 @@ export const DosenRekap = () => {
     "Mata Kuliah",
     "Total Jam Pertemuan",
     "Total Jam Kehadiran",
-    "Total Ketidakhadiran",
+    "Presentase",
     "Aksi",
   ];
   const columnAlignments = [
@@ -57,14 +57,11 @@ export const DosenRekap = () => {
         : null;
 
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/dosen/${id}/rekapitulasiPresensi`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await axios.get(`/dosen/${id}/rekapitulasiPresensi`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setRekapDosenData(response.data.data.rekapitulasi);
         setLoading(false);
       } catch (error) {
@@ -101,6 +98,13 @@ export const DosenRekap = () => {
     return formattedDate;
   }
 
+  function calculatePercentage(present, total) {
+    if (total === 0) {
+      return 0;
+    }
+    return ((present / total) * 100).toFixed(2);
+  }
+
   return (
     <div>
       <Dosen />
@@ -120,8 +124,9 @@ export const DosenRekap = () => {
                     "Mata Kuliah": item.mataKuliah,
                     "Total Jam Pertemuan": item.total_jam,
                     "Total Jam Kehadiran": item.total_hadir,
-                    "Total Ketidakhadiran": item.total_alpha,
-                    // Presentase: "50%",
+                    Presentase:
+                      calculatePercentage(item.total_hadir, item.total_jam) +
+                      "%",
                     Aksi: (
                       <button
                         style={{ textDecoration: "underline", color: "blue" }}
@@ -148,7 +153,6 @@ export const DosenRekap = () => {
                 />
                 <div style={{ marginTop: "30px" }}>
                   <div style={{ marginTop: "20px" }}>
-                    <Text type="title3" text="Detail Rekapitulasi Presensi" />
                     <div>
                       {loading ? (
                         <p>Loading...</p>
@@ -166,7 +170,7 @@ export const DosenRekap = () => {
                               Hadir: item.detail.total_hadir + " Mahasiswa",
                               Sakit: item.detail.total_sakit + " Mahasiswa",
                               Izin: item.detail.total_izin + " Mahasiswa",
-                              Alpa: item.detail.total_alpha + " Mahasiswa",
+                              Alpa: item.detail.total_alha + " Mahasiswa",
                             })
                           )}
                           columnAlignments={columnAlignments}

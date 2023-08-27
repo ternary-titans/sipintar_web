@@ -4,7 +4,7 @@ import Mahasiswa from "./Mahasiswa";
 import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useParams } from "react-router-dom";
 
 export const MahasiswaMatkul = () => {
@@ -32,14 +32,14 @@ export const MahasiswaMatkul = () => {
       ? JSON.parse(localStorage.getItem("userData")).token
       : null;
 
-    const idMhs = localStorage.getItem("userData")
+    const mahasiswaId = localStorage.getItem("userData")
       ? JSON.parse(localStorage.getItem("userData")).id
       : null;
 
     async function fetchData() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/mahasiswa/${idMhs}/listPertemuan/${id}`,
+          `/mahasiswa/${mahasiswaId}/listPertemuan/${id}`,
           {
             headers: {
               Authorization: token,
@@ -85,14 +85,23 @@ export const MahasiswaMatkul = () => {
                 columns={columns}
                 data={mahasiswaMKData.map((item, index) => ({
                   No: index + 1,
-                  Hari: `${item.hari}, ${item.waktu_realisasi}`,
+                  Hari: `${item.hari}`,
                   Waktu: `${item.jam_mulai} - ${item.jam_akhir}`,
                   Topik: item.topik_perkuliahan,
                   Dosen: item.dosen,
                   Ruangan: item.ruangan,
                   Aksi: (
                     <Link to={`/mahasiswa/qr/${item.id}`}>
-                      <button className="qr-button ml-2 mb-1">Lihat QR</button>
+                      <button
+                        className={`p-2 font-bold mr-2 rounded mb-1 ${
+                          item.status
+                            ? "bg-[#facc15]"
+                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        }`}
+                        disabled={item.status ? false : true}
+                      >
+                        Lihat QR
+                      </button>
                     </Link>
                   ),
                 }))}

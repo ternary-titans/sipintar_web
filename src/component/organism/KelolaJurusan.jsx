@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const KelolaJurusan = ({ isActive, setIsActive }) => {
   const [jurusanValue, setjurusanValue] = useState("");
@@ -19,25 +19,21 @@ const KelolaJurusan = ({ isActive, setIsActive }) => {
   useEffect(() => {
     setFormValid(jurusanValue.trim() !== "");
   }, [jurusanValue]);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     if (jurusanValue.trim() !== "") {
       try {
         const token = localStorage.getItem("userData")
           ? JSON.parse(localStorage.getItem("userData")).token
           : null;
-
         const response = await axios.post(
-          "http://localhost:3000/api/jurusan",
-          {
-            headers: {
-              Authorization: token,
-            },
-          },
+          "/jurusan",
           {
             nama_jurusan: jurusanValue,
+          },
+
+          {
+            headers: { Authorization: token },
           }
         );
 

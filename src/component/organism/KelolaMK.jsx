@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const KelolaMK = ({ isActive, setIsActive }) => {
   const [kodeMKValue, setkodeMKValue] = useState("");
@@ -34,15 +34,15 @@ const KelolaMK = ({ isActive, setIsActive }) => {
           : null;
 
         const response = await axios.post(
-          "http://localhost:3000/api/mataKuliah",
+          "/mataKuliah",
+          {
+            nama_mk: matakuliahValue,
+            kode_mk: kodeMKValue,
+          },
           {
             headers: {
               Authorization: token,
             },
-          },
-          {
-            nama_mk: matakuliahValue,
-            kode_mk: kodeMKValue,
           }
         );
 
@@ -55,6 +55,8 @@ const KelolaMK = ({ isActive, setIsActive }) => {
         setFormValid(false);
       } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error);
+
+        console.log("Error response:", error.response);
 
         alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
       }

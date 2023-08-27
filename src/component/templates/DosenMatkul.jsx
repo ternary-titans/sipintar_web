@@ -4,7 +4,7 @@ import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Table from "../molecules/Tabel";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useParams } from "react-router-dom";
 
 export const DosenMatkul = () => {
@@ -34,6 +34,7 @@ export const DosenMatkul = () => {
 
   const [dosenMKData, setDosenMKData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [presensiClosed, setPresensiClosed] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -50,7 +51,7 @@ export const DosenMatkul = () => {
         : null;
 
       const response = await axios.get(
-        `http://localhost:3000/api/dosen/${dosenId}/listPertemuan/${id}`,
+        `/dosen/${dosenId}/listPertemuan/${id}`,
         {
           headers: {
             Authorization: token,
@@ -91,6 +92,24 @@ export const DosenMatkul = () => {
     return formattedDate;
   }
 
+  const handleTutupPresensi = async (aktivasiId) => {
+    try {
+      const token = localStorage.getItem("userData")
+        ? JSON.parse(localStorage.getItem("userData")).token
+        : null;
+
+      const response = await axios.put(
+        `/aktivasiPerkuliahan/${aktivasiId}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+    } catch (error) {}
+  };
+
   return (
     <div>
       <Dosen />
@@ -121,9 +140,26 @@ export const DosenMatkul = () => {
                   "Realisasi Jam": `${item.jam_mulai} - ${item.jam_akhir}`,
                   Aksi: (
                     <>
-                      <Link to={`/dosen/mk/QR/${item.id}`}>
-                        <button className="qr-button mb-1">Lihat QR</button>
-                      </Link>
+                      <div className="flex flex-row gap-0 justify-center">
+                        <Link to={`/dosen/mk/QR/${item.id}`}>
+                          <button
+                            className={`p-2 font-bold mr-2 rounded mb-1 ${
+                              item.status
+                                ? "bg-[#facc15]"
+                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                            }`}
+                            disabled={item.status ? false : true}
+                          >
+                            Lihat QR
+                          </button>
+                        </Link>
+                        <button
+                          className="bg-red-400 text-blue-950 font-bold w-30 px-2 py-1 rounded hover:bg-red-600"
+                          onClick={() => handleTutupPresensi(item.id)}
+                        >
+                          Tutup Presensi
+                        </button>
+                      </div>
                     </>
                   ),
                 }))}

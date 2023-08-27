@@ -4,14 +4,56 @@ import CardUser from "../atoms/CardUser";
 import Text from "../atoms/Text";
 import Input2 from "../atoms/InputDropdown";
 import Table from "../molecules/Tabel";
-import axios from "axios";
+import axios from "../../api/axios";
 
 export const DosenRekapBulan = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedBulan, setSelectedBulan] = useState("");
+  const [rekapDosenBlnData, setRekapDosenBlnData] = useState([]);
+  const [rekapitulasi, setRekapitulasi] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
 
-  const handleBulanChange = (event) => {
-    setSelectedBulan(event.target.value);
-  };
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).token
+          : null;
+
+        const id = localStorage.getItem("userData")
+          ? JSON.parse(localStorage.getItem("userData")).id
+          : null;
+
+        const response = await axios.get(`/dosen/${id}/rekapitulasiMengajar`, {
+          headers: {
+            Authorization: token,
+          },
+          params: {
+            bulan: selectedBulan,
+            page: currentPage,
+          },
+        });
+
+        setRekapDosenBlnData(response.data.data);
+        setRekapitulasi(response.data.rekapitulasi);
+        setTotalPages(response.data.paging.total_page);
+        setTotalItem(response.data.paging.total_item);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    if (selectedBulan) {
+      fetchData();
+    }
+  }, [selectedBulan, currentPage]);
+
+  useEffect(() => {}, [rekapDosenBlnData]);
 
   const BulanOptions = [
     { id: "", label: "Pilih Bulan" },
@@ -46,40 +88,19 @@ export const DosenRekapBulan = () => {
   ];
   const headerBackgroundColor = "white";
   const headerBorderColor = "#2563eb";
-  const pageSizeOptions = [10, 25, 50];
+  const pageSizeOptions = [10];
 
-  const [rekapDosenBlnData, setRekapDosenBlnData] = useState([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const token = localStorage.getItem("userData")
-          ? JSON.parse(localStorage.getItem("userData")).token
-          : null;
-
-        const id = localStorage.getItem("userData")
-          ? JSON.parse(localStorage.getItem("userData")).id
-          : null;
-
-        const response = await axios.get(
-          `http://localhost:3000/api/dosen/${id}/rekapitulasiMengajar`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-
-        setRekapDosenBlnData(response.data.data.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
     }
+  };
 
-    fetchData();
-  }, [selectedBulan]);
+  const handleBulanChange = (event) => {
+    setSelectedBulan(event.target.value);
+  };
 
-  function formatDate(dateString) {
+  const formatDate = (dateString) => {
     const dateObject = new Date(dateString);
 
     const months = [
@@ -103,32 +124,25 @@ export const DosenRekapBulan = () => {
 
     const formattedDate = `${day} ${months[month]} ${year}`;
     return formattedDate;
-  }
-
-  const getTotalJamMengajar = (data) => {
-    const totalJamSum = data?.reduce((accumulator, currentValue) => {
-      return accumulator + currentValue.total_jam;
-    }, 0);
-
-    return totalJamSum;
-  };
-
-  const getKelebihanJamMengajar = (data) => {
-    const result = data - 36;
-    if (result <= 0) {
-      return 0;
-    }
-    return result;
   };
 
   const getHonorKelebihanJamMengajar = (data) => {
-    const result = (data - 36) * 30000;
+    const result = data * 30000;
 
     if (result <= 0) {
       return 0;
     }
+
     return result;
   };
+
+  const formattedData = rekapDosenBlnData?.map((item, index) => ({
+    No: (currentPage - 1) * pageSizeOptions[0] + index + 1,
+    "Mata Kuliah": item.mataKuliah,
+    Kelas: item.kelas,
+    "Waktu Realisasi": formatDate(item.waktu_realisasi),
+    "Total Jam Mengajar": item.total_jam + " Jam",
+  }));
 
   return (
     <div>
@@ -147,50 +161,49 @@ export const DosenRekapBulan = () => {
               />
             </div>
             <div style={{ marginTop: "30px" }}>
-              <Table
-                columns={columns}
-                data={rekapDosenBlnData?.map((item, index) => ({
-                  No: index + 1,
-                  "Mata Kuliah": item.mataKuliah,
-                  Kelas: item.kelas,
-                  "Waktu Realisasi": formatDate(item.waktu_realisasi),
-                  "Total Jam Mengajar": item.total_jam,
-                }))}
-                columnAlignments={columnAlignments}
-                headerBackgroundColor={headerBackgroundColor}
-                headerBorderColor={headerBorderColor}
-                pageSizeOptions={pageSizeOptions}
-                style={{ marginTop: "10px" }}
-              />
+              {isLoading ? (
+                <p>loading...</p>
+              ) : (
+                <Table
+                  columns={columns}
+                  data={formattedData}
+                  columnAlignments={columnAlignments}
+                  headerBackgroundColor={headerBackgroundColor}
+                  headerBorderColor={headerBorderColor}
+                  pageSizeOptions={pageSizeOptions}
+                  style={{ marginTop: "10px" }}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItem={totalItem}
+                />
+              )}
             </div>
-            <div style={{ marginTop: "10px" }}>
-              <div className="flex gap-5">
-                <h2>Total Jam Mengajar :</h2>
-                <span>{getTotalJamMengajar(rekapDosenBlnData)} Jam</span>
+            {!isLoading && (
+              <div className="mt-10">
+                <div className="flex gap-5">
+                  <h2 className="w-60">Total Jam Mengajar </h2>
+                  <span>: {rekapitulasi?.total_jam_mengajar} Jam</span>
+                </div>
+                <div className="flex gap-5">
+                  <h2 className="w-60">Kewajiban Jam Mengajar </h2>
+                  <span>: {rekapitulasi?.total_kewajiban_mengajar} Jam</span>
+                </div>
+                <div className="flex gap-5">
+                  <h2 className="w-60">Kelebihan Jam Mengajar </h2>
+                  <span>: {rekapitulasi?.total_kelebihan_mengajar} Jam</span>
+                </div>
+                <div className="flex gap-5">
+                  <h2 className="w-60">Honor Kelebihan Jam Mengajar </h2>
+                  <span>
+                    : Rp{" "}
+                    {getHonorKelebihanJamMengajar(
+                      rekapitulasi?.total_jam_mengajar
+                    )}
+                  </span>
+                </div>
               </div>
-              <div className="flex gap-5">
-                <h2>Kewajiban Jam Mengajar :</h2>
-                <span>36 Jam</span>
-              </div>
-              <div className="flex gap-5">
-                <h2>Kelebihan Jam Mengajar :</h2>
-                <span>
-                  {getKelebihanJamMengajar(
-                    getTotalJamMengajar(rekapDosenBlnData)
-                  )}{" "}
-                  Jam
-                </span>
-              </div>
-              <div className="flex gap-5">
-                <h2>Honor Kelebihan Jam Mengajar :</h2>
-                <span>
-                  {getHonorKelebihanJamMengajar(
-                    getTotalJamMengajar(rekapDosenBlnData)
-                  )}{" "}
-                  Jam
-                </span>
-              </div>
-            </div>
+            )}
           </div>
         </CardUser>
       </div>

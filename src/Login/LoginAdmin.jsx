@@ -29,13 +29,10 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/users/login",
-        {
-          username: user,
-          password: pwd,
-        }
-      );
+      const response = await axios.post("users/login", {
+        username: user,
+        password: pwd,
+      });
 
       const token = response?.data.data.token;
       const { user_id, username, role, id, nama } = jwt_decode(token);
@@ -86,7 +83,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <div className="text-xl font-semibold mb-6 text-center text-white">
-              Login
+              LOGIN
             </div>
             <div className="mb-4">
               <input
