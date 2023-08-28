@@ -111,12 +111,6 @@ export const Aktivasi = ({ id }) => {
   };
 
   const columns = [
-    "Tahun Ajaran",
-    "Kode Mata Kuliah",
-    "Mata Kuliah",
-    "Jadwal",
-    "Dosen",
-    "Ruangan",
     "Realisasi Tanggal",
     "Jam Perkuliahan",
     "Topik",
@@ -125,12 +119,6 @@ export const Aktivasi = ({ id }) => {
 
   const data = [
     {
-      "Tahun Ajaran": "2022 - 2023",
-      "Kode Mata Kuliah": "334-191-605",
-      "Mata Kuliah": "Pemr. Basis Data Jaringan",
-      Jadwal: "1-6(07.00-11.50)",
-      Dosen: "Amran Yobioktabera, S.Kom., M.Kom.",
-      Ruangan: "MSTIII/05",
       "Realisasi Tanggal": (
         <TanggalInput onTanggalChange={handleTanggalChange} />
       ),
